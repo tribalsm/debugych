@@ -1,3 +1,4 @@
+import {navigate,preparePlan,openDiff} from './redesign-helpers';
 import {test,expect} from '../../apps/web/node_modules/@playwright/test';
 
 test('Загрузка → Bug Proof → diff → gVisor regression → отдельное применение',async({page})=>{
@@ -12,24 +13,24 @@ test('Загрузка → Bug Proof → diff → gVisor regression → отде
  ]);
  await expect(page.getByText('requirements.md',{exact:true})).toBeVisible();
  page.once('dialog',dialog=>dialog.accept());
- await page.getByRole('button',{name:'AI-анализ',exact:true}).click();
- await page.getByRole('button',{name:'Открыть Test Studio'}).click();
+ await preparePlan(page);
+ await navigate(page,'Тесты');
  await expect(page.getByRole('heading',{name:'Сложение двух положительных чисел',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Запустить тесты'}).click();
  await expect(page.getByText('2 passed · 1 failed',{exact:false})).toBeVisible();
  await page.getByRole('tab',{name:'Результаты',exact:true}).click();
  await expect(page.getByText('Runtime: runsc',{exact:false})).toBeVisible();
- await page.getByRole('button',{name:'Bug Lab',exact:false}).click();
- await expect(page.getByText('Reproduced · требует проверки').first()).toBeVisible();
- await expect(page.getByRole('button',{name:'Предложить патч'})).toBeDisabled();
+ await navigate(page,'Ошибки');
+ await expect(page.getByText('Воспроизведено, требует проверки').first()).toBeVisible();
+ await expect(page.getByRole('button',{name:'Предложить исправление'})).toBeDisabled();
  await page.getByLabel('Обоснование ожидания').fill('R1 требует математическую сумму: 2 + 3 = 5; assertion соответствует требованию.');
  await page.getByRole('checkbox').check();
  await page.getByRole('button',{name:'Подтвердить ожидание и воспроизвести'}).click();
- await expect(page.getByText('Confirmed',{exact:true}).first()).toBeVisible();
+ await expect(page.getByText('Подтверждено тестом',{exact:true}).first()).toBeVisible();
  page.once('dialog',dialog=>dialog.accept());
- await page.getByRole('button',{name:'Предложить патч'}).click();
- await expect(page.getByText('+def add(a,b): return a+b',{exact:true})).toBeVisible();
- await page.getByRole('button',{name:'Проверить в копии'}).click();
+ await page.getByRole('button',{name:'Предложить исправление'}).click();
+ await openDiff(page); await expect(page.getByText('+def add(a,b): return a+b',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Проверить исправление'}).click();
  await expect(page.getByRole('button',{name:'Подтвердить применение'})).toBeEnabled({timeout:30000});
  await expect(page.getByRole('heading',{name:'После исправления · полный регрессионный набор'})).toBeVisible();
  page.once('dialog',dialog=>dialog.dismiss());
@@ -41,7 +42,7 @@ test('Загрузка → Bug Proof → diff → gVisor regression → отде
  const downloaded=page.waitForEvent('download');
  await page.getByRole('link',{name:'Скачать исправленный проект'}).click();
  expect((await downloaded).suggestedFilename()).toBe('debugych-project.zip');
- await page.getByRole('button',{name:'Test Studio',exact:true}).click();
+ await navigate(page,'Тесты');
  await page.getByRole('button',{name:'Запустить тесты'}).click();
  await expect(page.getByText('3 passed · 0 failed',{exact:false})).toBeVisible();
 });

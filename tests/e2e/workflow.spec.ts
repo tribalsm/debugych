@@ -1,25 +1,26 @@
+import {navigate,openDiff} from './redesign-helpers';
 import {test,expect} from '../../apps/web/node_modules/@playwright/test';
 
-test('Демо: требования → тест → доказательство → патч → проверка → применение',async({page})=>{
+test('Демо: требования → тест → доказательство → патч → проверка → применение',async({page,request})=>{
  await page.goto('/');
- await expect(page.getByRole('heading',{name:'Всё под контролем.'})).toBeVisible();
- await page.getByRole('button',{name:'Попробовать на демопроекте'}).click();
+ await expect(page.getByRole('heading',{name:'Привет! Я Дебагыч. Проверим твой код?'})).toBeVisible();
+ const demo=await (await request.post('/api/demo')).json();await page.goto('/#/workspace/overview?project='+demo.id);
  await expect(page.getByText('DEMO · подготовленные тесты')).toBeVisible();
  await page.getByRole('button',{name:'Загрузить демоплан'}).click();
- await page.getByRole('button',{name:'Открыть Test Studio'}).click();
+ await navigate(page,'Тесты');
  await expect(page.getByRole('heading',{name:'Границы оплаты, скидки и количества',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Запустить тесты'}).click();
  await expect(page.getByText('13 passed · 1 failed', {exact:false})).toBeVisible();
- await page.getByRole('button',{name:'Bug Lab'}).click();
+ await navigate(page,'Ошибки');
  await expect(page.getByText('False — платёж отклонён')).toBeVisible();
- await page.getByRole('button',{name:'Предложить патч'}).click();
- await expect(page.getByText('+    return balance >= amount',{exact:true})).toBeVisible();
- await page.getByRole('button',{name:'Проверить в копии'}).click();
+ await page.getByRole('button',{name:'Предложить исправление'}).click();
+ await openDiff(page); await expect(page.getByText('+    return balance >= amount',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Проверить исправление'}).click();
  await expect(page.getByRole('button',{name:'Подтвердить применение'})).toBeEnabled();
  page.once('dialog',dialog=>dialog.accept());
  await page.getByRole('button',{name:'Подтвердить применение'}).click();
  await expect(page.getByRole('button',{name:'Патч применён'})).toBeDisabled();
- await page.getByRole('button',{name:'Reports'}).click();
+ await navigate(page,'Отчёт');
  await expect(page.getByText('14', {exact:true}).first()).toBeVisible();
  const download=page.waitForEvent('download');
  await page.getByRole('button',{name:'.feature',exact:true}).click();
@@ -33,18 +34,18 @@ test('Создание проекта, сохранение файла и чес
  await page.getByRole('button',{name:'Создать проект'}).click();
  await page.getByLabel('Загрузить файлы').setInputFiles({name:'requirements.md',mimeType:'text/markdown',buffer:Buffer.from('# Требования\nR1. Проверить баланс.')});
  await expect(page.getByText('requirements.md',{exact:true})).toBeVisible();
- await page.getByRole('button',{name:'Test Studio',exact:true}).click();
+ await navigate(page,'Тесты');
  await expect(page.getByRole('button',{name:'Запустить тесты'})).toBeDisabled();
 });
 
 test('Адаптивный Dashboard на мобильном экране',async({page})=>{
  await page.setViewportSize({width:390,height:844});
  await page.goto('/');
- await expect(page.getByRole('heading',{name:'Всё под контролем.'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Привет! Я Дебагыч. Проверим твой код?'})).toBeVisible();
  await expect(page.getByRole('button',{name:'Новый проект'})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
  await page.getByRole('button',{name:'Меню',exact:true}).click();
- await page.getByRole('button',{name:'Projects'}).click();
+ await navigate(page,'Мои проекты');
  await expect(page.getByRole('heading',{name:'Ваши проекты'})).toBeVisible();
 });
 

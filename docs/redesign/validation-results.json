@@ -1,0 +1,91 @@
+{
+  "recorded_at": "2026-10-20T20:11:26.687133+00:00",
+  "branch": "release/ux-redesign-2",
+  "base_commit": "5267811",
+  "backend": {
+    "passed": 178,
+    "duration_seconds": 23.07,
+    "warnings": 1
+  },
+  "frontend": {
+    "typecheck": "passed",
+    "eslint": "passed, 0 warnings",
+    "production_build": "passed",
+    "docker_web_build": "passed",
+    "assets": [
+      "/assets/index-BCqVNtXJ.js",
+      "/assets/index-B2BuGWDL.css"
+    ]
+  },
+  "browser": {
+    "stats": {
+      "startTime": "2026-10-20T20:01:03.570Z",
+      "duration": 387151.41599999997,
+      "expected": 27,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0
+    },
+    "targeted_react_retry": {
+      "startTime": "2026-10-20T20:08:16.151Z",
+      "duration": 102858.909,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "all_green_in_one_final_run": false,
+    "browser_scenarios": 25,
+    "pure_frontend_contracts": 3,
+    "new_cases_since_uiux_base": 11,
+    "screens": 6,
+    "viewports": [
+      390,
+      1440,
+      1920,
+      2560
+    ],
+    "axe_violations": 0
+  },
+  "api_e2e": {
+    "cases": 4,
+    "passed": true,
+    "provider_mode": "contract-test",
+    "external_llm_requests": 0
+  },
+  "security": {
+    "runner_runtime": "runsc, checked by uploaded-project E2E",
+    "execution_network_internal": true,
+    "original_3d_worktree_edited": false,
+    "paid_llm_requests": 0,
+    "patch_application_requires_explicit_confirmation": true
+  },
+  "prior_attempts": {
+    "first_dev": {
+      "passed": 14,
+      "unexpected": 3
+    },
+    "second_dev": "interrupted after hidden-menu helper lookup",
+    "production_before_polish": {
+      "expected": 26,
+      "unexpected": 0
+    },
+    "production_polish": {
+      "passed": 24,
+      "unexpected": 2,
+      "causes": [
+        "page fixture setup timeout before test actions",
+        "obsolete empty-state heading assertion after progressive disclosure change"
+      ]
+    },
+    "wide_separate": {
+      "expected": 1,
+      "unexpected": 0
+    }
+  },
+  "limits": [
+    "No real user study",
+    "No new live LLM evaluation",
+    "Not a WCAG certificate"
+  ]
+}

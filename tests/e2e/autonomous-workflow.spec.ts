@@ -1,3 +1,4 @@
+import {navigate,startFullQA} from './redesign-helpers';
 import {test,expect} from '../../apps/web/node_modules/@playwright/test';
 
 test('Автономный QA: одно согласие → проверенный патч без ручного review и применения',async({page,request})=>{
@@ -13,8 +14,8 @@ test('Автономный QA: одно согласие → проверенн�
  ]);
  await expect(page.getByText('requirements.md',{exact:true})).toBeVisible();
  let dialogs=0;page.on('dialog',async d=>{dialogs++;expect(d.message()).toContain('Полный автономный QA');await d.accept();});
- await page.getByRole('button',{name:'Автономный QA',exact:true}).click();
- await page.getByRole('button',{name:'Reports',exact:true}).click();
+ await startFullQA(page);
+ await navigate(page,'Отчёт');
  await expect(page.getByText('Цикл завершён без ручной корректировки результатов.',{exact:true})).toBeVisible({timeout:90000});
  await expect(page.getByText(/Исправление проверено.*Патч не применён/)).toBeVisible();
  expect(dialogs).toBe(1);

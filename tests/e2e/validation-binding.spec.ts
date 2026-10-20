@@ -19,3 +19,5 @@ test('Агент не объявляет успех по прошедшему т
  expect(agentState([{status:'manual_review_required',operation:'autonomous'}],[])).toBe('idle');
  expect(agentState([{status:'completed',operation:'verify',verified:true}],[{status:'fix_verified'}])).toBe('success');
 });
+
+test('Исторический Fix Verified не подтверждает неуспешную новую версию патча',()=>{expect(agentState([{operation:'verify',status:'completed',verified:false}],[{status:'fix_verified'}])).not.toBe('success')});

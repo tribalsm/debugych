@@ -1,0 +1,25 @@
+# Separate offline verification stack. Never load the real .env.
+# docker compose --env-file /dev/null -p debugych-redesign2
+#   -f docker-compose.yml -f compose.test.yml -f compose.redesign.yml ...
+services:
+  api:
+    image: debugych-uiux-api:local
+    ports: !override ["127.0.0.1:8012:8000"]
+    environment: &offline-limits
+      LLM_MAX_CALLS: "6"
+      LLM_MAX_JOB_USD: "20"
+  worker:
+    image: debugych-uiux-api:local
+    environment:
+      <<: *offline-limits
+  token-init:
+    image: debugych-uiux-api:local
+  llm-stub:
+    image: debugych-uiux-api:local
+  runner:
+    image: debugych-uiux-runner:local
+  supervisor:
+    image: debugych-uiux-supervisor:local
+  web:
+    image: debugych-redesign2-web:local
+    ports: !override ["127.0.0.1:8082:8080"]
