@@ -1,0 +1,145 @@
+services:
+  token-init:
+    build: {context: ., dockerfile: infra/api.Dockerfile}
+    user: "0:0"
+    network_mode: none
+    volumes: ["runner-token:/tokens"]
+    entrypoint: [python, -c]
+    command: ["import pathlib,secrets; p=pathlib.Path('/tokens/token'); p.write_text(secrets.token_hex(32)) if not p.exists() else None; p.chmod(0o444)"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: debugych
+      POSTGRES_USER: debugych
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-debugych}
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    networks: [backend]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U debugych"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  redis:
+    image: redis:7-alpine
+    networks: [backend]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  api:
+    build: {context: ., dockerfile: infra/api.Dockerfile}
+    command: [sh, -c, "alembic upgrade head && uvicorn apps.api.main:app --host 0.0.0.0 --port 8000"]
+    environment: &environment
+      DATABASE_URL: postgresql+psycopg://debugych:${POSTGRES_PASSWORD:-debugych}@postgres:5432/debugych
+      REDIS_URL: redis://redis:6379/0
+      DATA_DIR: /data
+      TASK_MODE: celery
+      RUNNER_URL: http://runner:8090
+      SANDBOX_ENABLED: "1"
+      SUPERVISOR_URL: http://supervisor:8091
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4.1-mini}
+      LLM_REASONING_EFFORT: ${LLM_REASONING_EFFORT:-}
+      LLM_TEST_REVIEW: ${LLM_TEST_REVIEW:-0}
+      LLM_MAX_CALLS: ${LLM_MAX_CALLS:-4}
+      LLM_CONTEXT_CHARS: ${LLM_CONTEXT_CHARS:-40000}
+      LLM_RESPONSE_FORMAT: ${LLM_RESPONSE_FORMAT:-json_schema}
+      LLM_MAX_OUTPUT_TOKENS: ${LLM_MAX_OUTPUT_TOKENS:-4000}
+      LLM_MAX_JOB_TOKENS: ${LLM_MAX_JOB_TOKENS:-120000}
+      LLM_MAX_DAILY_TOKENS: ${LLM_MAX_DAILY_TOKENS:-1000000}
+      LLM_MAX_DAILY_CALLS: ${LLM_MAX_DAILY_CALLS:-50}
+      LLM_MAX_JOB_USD: ${LLM_MAX_JOB_USD:-1}
+      LLM_MAX_DAILY_USD: ${LLM_MAX_DAILY_USD:-20}
+      LLM_INPUT_USD_PER_MILLION: ${LLM_INPUT_USD_PER_MILLION:-10}
+      LLM_OUTPUT_USD_PER_MILLION: ${LLM_OUTPUT_USD_PER_MILLION:-30}
+      LLM_TIMEOUT_SECONDS: ${LLM_TIMEOUT_SECONDS:-40}
+      LLM_JOB_DEADLINE_SECONDS: ${LLM_JOB_DEADLINE_SECONDS:-160}
+    volumes: ["project-data:/data"]
+    ports: ["127.0.0.1:8000:8000"]
+    networks: [backend, execution]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  worker:
+    build: {context: ., dockerfile: infra/api.Dockerfile}
+    command: [celery, -A, apps.api.jobs.celery, worker, --loglevel=INFO, --concurrency=2]
+    environment:
+      <<: *environment
+      RUNNER_TOKEN_FILE: /run/runner-token/token
+    volumes: ["project-data:/data", "runner-token:/run/runner-token:ro"]
+    networks: [backend, execution]
+    depends_on:
+      api: {condition: service_healthy}
+      runner: {condition: service_started}
+      supervisor: {condition: service_healthy}
+  runner:
+    build: {context: ., dockerfile: infra/runner.Dockerfile}
+    networks: [execution]
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=128m,uid=10002,gid=10002,mode=1770"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 64
+    mem_limit: 384m
+    cpus: 1.0
+    restart: unless-stopped
+  web:
+    build: {context: ., dockerfile: infra/web.Dockerfile}
+    ports: ["127.0.0.1:8080:8080"]
+    networks: [backend]
+    depends_on:
+      api: {condition: service_healthy}
+  sandbox-image:
+    image: debugych-sandbox:local
+    build: {context: ., dockerfile: infra/sandbox.Dockerfile}
+    network_mode: none
+    entrypoint: [python, -c, "print('Sandbox image prepared; jobs are created by supervisor')"]
+    read_only: true
+    cap_drop: [ALL]
+  supervisor:
+    build: {context: ., dockerfile: infra/supervisor.Dockerfile}
+    environment:
+      SANDBOX_IMAGE: debugych-sandbox:local
+      PLAYWRIGHT_IMAGE: debugych-playwright:local
+      RUNNER_TOKEN_FILE: /run/runner-token/token
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock", "runner-token:/run/runner-token:ro"]
+    networks: [execution]
+    read_only: true
+    tmpfs: ["/tmp:rw,nosuid,noexec,size=16m"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 256m
+    pids_limit: 64
+    depends_on:
+      token-init: {condition: service_completed_successfully}
+      sandbox-image: {condition: service_completed_successfully}
+      playwright-image: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8091/health')"]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+  playwright-image:
+    image: debugych-playwright:local
+    build: {context: ., dockerfile: infra/playwright.Dockerfile}
+    network_mode: none
+    entrypoint: [node, -e, "console.log('Playwright sandbox image prepared')"]
+    read_only: true
+    cap_drop: [ALL]
+volumes:
+  postgres-data:
+  project-data:
+  runner-token:
+networks:
+  backend:
+  execution:
+    internal: true

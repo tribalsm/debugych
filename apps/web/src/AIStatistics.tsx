@@ -1,0 +1,8 @@
+import {useEffect,useState} from 'react';
+type Stats={attempts:number;succeeded:number;failed:number;reserved_tokens:number;reserved_cost_micro_usd:number;provider_usage_available:number;notice:string;calls:{id:string;operation:string;mode:string;outcome:string;error_code?:string;usage?:{prompt_tokens:number;completion_tokens:number}}[]};
+export function AIStatistics({projectId,revision}:{projectId:string;revision:string}){
+ const [stats,setStats]=useState<Stats|null>(null),[error,setError]=useState('');
+ useEffect(()=>{let alive=true;setStats(null);setError('');if(projectId)fetch(`/api/projects/${projectId}/ai-statistics`).then(r=>{if(!r.ok)throw Error('Статистика AI недоступна');return r.json()}).then(s=>alive&&setStats(s)).catch(e=>alive&&setError(e.message));return()=>{alive=false}},[projectId,revision]);
+ if(!projectId)return null;
+ return <section className="panel"><div className="panel-title"><div><h2>AI Engine · журнал генераций</h2><p>{error||'Структурная валидность ответа и фактические тестовые результаты учитываются отдельно'}</p></div></div>{stats&&<div className="assessment"><p>Попыток: {stats.attempts} · валидных ответов: {stats.succeeded} · ошибок: {stats.failed}</p><p>Резерв токенов: {stats.reserved_tokens} · оценка резерва: ${(stats.reserved_cost_micro_usd/1000000).toFixed(4)}</p><p>Usage провайдера доступен для {stats.provider_usage_available} попыток. Отсутствующий usage не считается нулевым расходом.</p>{stats.calls.map(c=><p key={c.id}><code>{c.operation}</code> · {c.mode==='contract-test'?'Подготовленный контрактный ответ':'Live LLM'} · {c.outcome}{c.error_code?' · '+c.error_code:''}{c.usage?` · tokens ${c.usage.prompt_tokens} + ${c.usage.completion_tokens}`:''}</p>)}<p>{stats.notice}</p></div>}</section>
+}

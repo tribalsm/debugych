@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Demo Shop · Доверенный браузерный пример</title><style>
+body{font:16px system-ui;color:#dfe9ff;background:#111722;max-width:500px;margin:70px auto;padding:20px}h1{font-size:28px}label{display:block;margin:20px 0}input{display:block;width:90%;padding:12px;margin-top:8px;background:#1f2b40;color:white;border:1px solid #506584;border-radius:7px}button{background:#3376f4;color:white;padding:12px 22px;border:0;border-radius:7px;cursor:pointer}output{display:block;margin-top:25px;padding:16px;background:#233048;border-radius:7px}small{color:#8fa4c7}
+</style></head><body><small>DEBUGYCH · ПОДГОТОВЛЕННЫЙ ЛОКАЛЬНЫЙ ПРИМЕР</small><h1>Оплата заказа</h1><p>R1: баланс должен быть больше или равен положительной сумме.</p><form id="payment"><label>Баланс<input name="balance" type="number" value="1000" required></label><label>Сумма платежа<input name="amount" type="number" value="1000" required></label><button>Оплатить</button></form><output aria-live="polite" id="result">Ожидание платежа</output><script>
+const fixed = new URLSearchParams(location.search).get('fixed') === 'true';
+document.querySelector('form').addEventListener('submit', event => {
+ event.preventDefault();
+ const data = new FormData(event.target);
+ const balance = Number(data.get('balance')), amount = Number(data.get('amount'));
+ const accepted = amount > 0 && balance >= 0 && (fixed ? balance >= amount : balance > amount);
+ document.querySelector('output').textContent = accepted ? 'Платёж принят' : 'Платёж отклонён';
+});
+</script></body></html>

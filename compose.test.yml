@@ -1,0 +1,27 @@
+# Explicit local contract-test provider; never part of normal app startup.
+services:
+  llm-stub:
+    build: {context: ., dockerfile: infra/api.Dockerfile}
+    entrypoint: [python, -m, uvicorn, llm_stub:app, --host, 0.0.0.0, --port, "8101"]
+    volumes: ["./tests/compose/llm_stub.py:/app/llm_stub.py:ro", "./tests/compose/planner_fixtures.py:/app/planner_fixtures.py:ro"]
+    networks: [backend]
+  api:
+    environment:
+      LLM_TEST_REVIEW: "0"
+      LLM_API_KEY: contract-test-only
+      LLM_BASE_URL: http://llm-stub:8101/v1
+      LLM_PROVIDER_MODE: contract-test
+      LLM_MAX_DAILY_TOKENS: "10000000"
+      LLM_MAX_DAILY_CALLS: "500"
+      LLM_MAX_DAILY_USD: "1000"
+  worker:
+    environment:
+      LLM_TEST_REVIEW: "0"
+      LLM_API_KEY: contract-test-only
+      LLM_PROVIDER_MODE: contract-test
+      LLM_MAX_DAILY_TOKENS: "10000000"
+      LLM_MAX_DAILY_CALLS: "500"
+      LLM_MAX_DAILY_USD: "1000"
+      LLM_BASE_URL: http://llm-stub:8101/v1
+    depends_on:
+      llm-stub: {condition: service_started}

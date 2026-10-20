@@ -1,0 +1,5 @@
+import {test,expect} from '@playwright/test';
+test('all seats',async({page})=>{await page.goto('/');await page.getByLabel('Количество').fill('6');await page.getByRole('button',{name:'Забронировать',exact:true}).click();await expect(page.getByTestId('available')).toHaveText('0');});
+test('reset quantity',async({page})=>{await page.goto('/');await page.getByLabel('Количество').fill('2');await page.getByRole('button',{name:'Сбросить',exact:true}).click();await expect(page.getByLabel('Количество')).toHaveValue('1');});
+test('partial reservation',async({page})=>{await page.goto('/');await page.getByLabel('Количество').fill('2');await page.getByRole('button',{name:'Забронировать',exact:true}).click();await expect(page.getByTestId('available')).toHaveText('4');});
+test('zero',async({page})=>{await page.goto('/');await page.getByLabel('Количество').fill('0');await page.getByRole('button',{name:'Забронировать',exact:true}).click();await expect(page.locator('p[role="status"]')).toHaveText('Введите количество от 1 до остатка');});

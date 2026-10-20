@@ -1,0 +1,8 @@
+# Apply after docker-compose.yml + compose.test.yml; NEVER with a live provider.
+services:
+  api:
+    environment:
+      LLM_TEST_REVIEW: "1"
+  worker:
+    environment:
+      LLM_TEST_REVIEW: "1"

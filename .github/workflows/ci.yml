@@ -1,0 +1,81 @@
+name: checks
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install -r requirements.txt
+      - run: pytest
+      - uses: actions/setup-node@v4
+        with: {node-version: '22', cache: npm, cache-dependency-path: apps/web/package-lock.json}
+      - run: npm ci && npm run build
+        working-directory: apps/web
+      - run: docker compose config --quiet
+      - run: npx playwright install --with-deps chromium
+        working-directory: apps/web
+      - name: Start local integration services
+        run: |
+          python -m uvicorn services.runner.main:app --host 127.0.0.1 --port 8090 > /tmp/debugych-runner.log 2>&1 &
+          python -m uvicorn apps.api.main:app --host 127.0.0.1 --port 8000 > /tmp/debugych-api.log 2>&1 &
+          npm --prefix apps/web run dev > /tmp/debugych-web.log 2>&1 &
+          curl --retry 20 --retry-connrefused --retry-delay 1 --fail http://127.0.0.1:8000/api/health
+          curl --retry 20 --retry-connrefused --retry-delay 1 --fail http://127.0.0.1:5173
+      - run: npm run test:e2e
+        working-directory: apps/web
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-evidence
+          path: |
+            apps/web/playwright-report
+            apps/web/test-results
+  compose-sandbox:
+    runs-on: ubuntu-latest
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: npm ci
+        working-directory: apps/web
+      - run: npx playwright install --with-deps chromium
+        working-directory: apps/web
+      - name: Install mandatory gVisor runtime
+        run: sudo bash infra/install-gvisor.sh
+      - run: docker compose -f docker-compose.yml -f compose.test.yml up --build -d --wait
+      - run: python tests/compose/stack_smoke.py
+      - run: python tests/compose/fix_verify_smoke.py
+      - run: python tests/compose/playwright_smoke.py
+      - run: python tests/compose/novel_projects.py
+      - run: pip install -r requirements.txt
+      - run: python tests/compose/benchmark.py
+      - run: python tests/compose/ai_negative_smoke.py
+      - run: python tests/compose/build_oracle_probe.py
+      - name: Independent control oracle, never provider input
+        run: docker compose exec -T supervisor python < work/oracle-probe.py
+      - name: Verify React TSX and CSS inside gVisor
+        run: docker compose exec -T supervisor python < tests/compose/react_smoke.py
+      - run: npm run test:e2e
+        working-directory: apps/web
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
+          COMPOSE_CONTRACT_TEST: "1"
+      - name: Run sandbox boundary and resource probes
+        run: docker compose exec -T supervisor python < tests/compose/sandbox_probe.py
+      - name: Run Playwright sandbox probes
+        run: docker compose exec -T supervisor python < tests/compose/playwright_probe.py
+      - if: always()
+        run: docker compose logs --no-color > compose-ci.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: compose-logs, path: compose-ci.log}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: compose-browser-evidence, path: apps/web/playwright-report}
+      - if: always()
+        run: docker compose -f docker-compose.yml -f compose.test.yml down

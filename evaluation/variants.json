@@ -1,0 +1,197 @@
+{
+  "private_evaluator_data_never_uploaded": true,
+  "python_dispatch": {
+    "reference": [
+      [
+        "dispatch_api.py",
+        "weight<1000",
+        "weight<=1000"
+      ],
+      [
+        "dispatch_api.py",
+        "weight<200",
+        "weight<=200"
+      ]
+    ],
+    "defects": [
+      {
+        "id": "PY-TIER",
+        "changes": [
+          [
+            "dispatch_api.py",
+            "weight<=1000",
+            "weight<1000"
+          ]
+        ]
+      },
+      {
+        "id": "PY-PICKUP",
+        "changes": [
+          [
+            "dispatch_api.py",
+            "weight<=200",
+            "weight<200"
+          ]
+        ]
+      }
+    ],
+    "mutations": [
+      {
+        "id": "PY-PRICE",
+        "changes": [
+          [
+            "dispatch_api.py",
+            "price=700",
+            "price=701"
+          ]
+        ]
+      }
+    ]
+  },
+  "react_booking": {
+    "reference": [
+      [
+        "SeatDesk.tsx",
+        "amount<available",
+        "amount<=available"
+      ],
+      [
+        "SeatDesk.tsx",
+        "function reset(){setAvailable(6);setMessage('');}",
+        "function reset(){setAvailable(6);setQuantity('1');setMessage('');}"
+      ]
+    ],
+    "defects": [
+      {
+        "id": "TS-CAPACITY",
+        "changes": [
+          [
+            "SeatDesk.tsx",
+            "amount<=available",
+            "amount<available"
+          ]
+        ]
+      },
+      {
+        "id": "TS-RESET",
+        "changes": [
+          [
+            "SeatDesk.tsx",
+            "setQuantity('1');",
+            ""
+          ]
+        ]
+      }
+    ],
+    "mutations": [
+      {
+        "id": "TS-INITIAL",
+        "changes": [
+          [
+            "SeatDesk.tsx",
+            "useState(6)",
+            "useState(5)"
+          ]
+        ]
+      }
+    ]
+  },
+  "parcel_cart_v2": {
+    "oracle_test": "cart_v2_checks.py",
+    "reference": [
+      [
+        "cart_api.py",
+        "round(subtotal*0.8)",
+        "subtotal*80//100"
+      ],
+      [
+        "cart_api.py",
+        "delivery=60 if subtotal<500 else 0",
+        "delivery=60 if discounted<500 else 0"
+      ]
+    ],
+    "defects": [
+      {
+        "id": "CART-FLOOR",
+        "changes": [
+          [
+            "cart_api.py",
+            "subtotal*80//100",
+            "round(subtotal*0.8)"
+          ]
+        ]
+      },
+      {
+        "id": "CART-DELIVERY",
+        "changes": [
+          [
+            "cart_api.py",
+            "delivery=60 if discounted<500 else 0",
+            "delivery=60 if subtotal<500 else 0"
+          ]
+        ]
+      }
+    ],
+    "mutations": [
+      {
+        "id": "parcel_cart_v2-extra",
+        "changes": [
+          [
+            "cart_api.py",
+            "else subtotal",
+            "else subtotal+1"
+          ]
+        ]
+      }
+    ]
+  },
+  "team_invoice_v2": {
+    "oracle_test": "invoice_v2_checks.spec.ts",
+    "reference": [
+      [
+        "Invoice.tsx",
+        "Math.floor((base+30)*75/100)",
+        "Math.floor(base*75/100)+30"
+      ],
+      [
+        "Invoice.tsx",
+        "  setQuote(String(value));\n  if(!accepted){setNotice('Accept terms');return;}",
+        "  if(!accepted){setNotice('Accept terms');return;}\n  setQuote(String(value));"
+      ]
+    ],
+    "defects": [
+      {
+        "id": "INVOICE-FEE",
+        "changes": [
+          [
+            "Invoice.tsx",
+            "Math.floor(base*75/100)+30",
+            "Math.floor((base+30)*75/100)"
+          ]
+        ]
+      },
+      {
+        "id": "INVOICE-TERMS",
+        "changes": [
+          [
+            "Invoice.tsx",
+            "  if(!accepted){setNotice('Accept terms');return;}\n  setQuote(String(value));",
+            "  setQuote(String(value));\n  if(!accepted){setNotice('Accept terms');return;}"
+          ]
+        ]
+      }
+    ],
+    "mutations": [
+      {
+        "id": "team_invoice_v2-extra",
+        "changes": [
+          [
+            "Invoice.tsx",
+            "plan==='basic'?120:200",
+            "plan==='basic'?121:200"
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+import {test,expect} from '@playwright/test';
+test('monthly',async({page})=>{await page.goto('/');await page.getByLabel('Terms',{exact:true}).check();await page.getByRole('button',{name:'Quote',exact:true}).click();await expect(page.getByTestId('quote')).toHaveText('270');});
+test('annual fee',async({page})=>{await page.goto('/');await page.getByLabel('Terms',{exact:true}).check();await page.getByLabel('Annual',{exact:true}).check();await page.getByRole('button',{name:'Quote',exact:true}).click();await expect(page.getByTestId('quote')).toHaveText('210');});
+test('terms preserve',async({page})=>{await page.goto('/');await page.getByRole('button',{name:'Quote',exact:true}).click();await expect(page.getByTestId('quote')).toHaveText('—');});
+test('invalid seats',async({page})=>{await page.goto('/');await page.getByLabel('Seats',{exact:true}).fill('9');await page.getByRole('button',{name:'Quote',exact:true}).click();await expect(page.getByTestId('quote')).toHaveText('—');await expect(page.getByTestId('notice')).toHaveText('Seats must be an integer from 1 to 8');});

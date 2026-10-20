@@ -1,0 +1,11 @@
+{
+  "excluded_from_ai_input": true,
+  "python_dispatch": [
+    {"id":"PY-TIER","requirement":"R1","description":"weight=1000 должен стоить 700, реализация возвращает 1100","path":"dispatch_api.py","historical_contract_detection":true},
+    {"id":"PY-PICKUP","requirement":"R4","description":"pickup=true при weight=200 должен стоить 0, реализация возвращает 700","path":"dispatch_api.py","historical_contract_detection":false}
+  ],
+  "react_booking": [
+    {"id":"TS-CAPACITY","requirement":"R1","description":"Бронирование всех 6 мест отклоняется из-за строгого <","path":"SeatDesk.tsx","historical_contract_detection":true},
+    {"id":"TS-RESET","requirement":"R3","description":"Сброс не возвращает quantity к 1","path":"SeatDesk.tsx","historical_contract_detection":false}
+  ]
+}

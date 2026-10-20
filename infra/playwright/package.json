@@ -1,0 +1,1 @@
+{"name":"debugych-playwright-runtime","version":"1.0.0","private":true,"dependencies":{"@playwright/test":"1.64.1","esbuild":"0.28.2","istanbul-lib-instrument":"6.0.3","istanbul-lib-coverage":"3.2.2","react":"19.1.0","react-dom":"19.1.0"}}
