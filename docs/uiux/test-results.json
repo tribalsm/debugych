@@ -1,0 +1,43 @@
+{
+  "environment": "isolated production nginx 8081 / API 8011; contract-test provider; no paid LLM",
+  "playwright": {
+    "startTime": "2026-10-20T19:10:05.985Z",
+    "duration": 166652.25199999998,
+    "expected": 17,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "browser_scenarios": 15,
+  "pure_ui_contracts": 2,
+  "backend": {
+    "passed": 178,
+    "warnings": 1,
+    "duration_seconds": 15.23
+  },
+  "typecheck": "passed",
+  "eslint": "passed, zero warnings",
+  "production_build": "passed locally and Docker",
+  "axe": {
+    "pages": 5,
+    "tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21aa",
+      "wcag22aa"
+    ],
+    "violations": []
+  },
+  "npm_audit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "limitations": [
+    "One Playwright test intentionally fails against the documented buggy fixture and has test.fail expectation.",
+    "No full WCAG certification or real LLM evaluation in this UI task."
+  ]
+}

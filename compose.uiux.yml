@@ -1,0 +1,24 @@
+# UI-only verification environment. No .env or paid provider is loaded.
+# Use with docker-compose.yml and compose.test.yml; project name debugych-uiux.
+services:
+  api:
+    image: debugych-uiux-api:local
+    ports: !override ["127.0.0.1:8011:8000"]
+    environment: &contract-limits
+      # Offline fixture accounting only. No real credentials or paid calls.
+      LLM_MAX_CALLS: "6"
+      LLM_MAX_JOB_USD: "20"
+  worker:
+    image: debugych-uiux-api:local
+    environment:
+      <<: *contract-limits
+  token-init:
+    image: debugych-uiux-api:local
+  llm-stub:
+    image: debugych-uiux-api:local
+  runner:
+    image: debugych-uiux-runner:local
+  supervisor:
+    image: debugych-uiux-supervisor:local
+  web:
+    ports: !override ["127.0.0.1:8081:8080"]

@@ -7,7 +7,7 @@ test('Демо: требования → тест → доказательств
  await expect(page.getByText('DEMO · подготовленные тесты')).toBeVisible();
  await page.getByRole('button',{name:'Загрузить демоплан'}).click();
  await page.getByRole('button',{name:'Открыть Test Studio'}).click();
- await expect(page.getByText('Границы оплаты, скидки и количества')).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Границы оплаты, скидки и количества',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Запустить тесты'}).click();
  await expect(page.getByText('13 passed · 1 failed', {exact:false})).toBeVisible();
  await page.getByRole('button',{name:'Bug Lab'}).click();

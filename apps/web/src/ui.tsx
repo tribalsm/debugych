@@ -1,0 +1,24 @@
+import {useEffect, useRef, useState, type ReactNode} from 'react';
+import {Check, Copy, FlaskConical, X} from 'lucide-react';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-gherkin';
+import 'prismjs/components/prism-diff';
+
+const labels:Record<string,string>={generated:'Generated · создан',validated:'Validated · проверен',not_run:'Generated · не запускался',queued:'В очереди',analyzing:'Анализ требований',generating:'Генерация',running:'Running · выполняется',completed:'Завершён',failed:'Failed · assertion',passed:'Passed',skipped:'Skipped',error:'Infrastructure Error',infrastructure_error:'Infrastructure Error',manual_review_required:'Manual Review Required',confirmed:'Confirmed',reproduced:'Reproduced · требует проверки',suspected:'Suspected',fix_verified:'Fix Verified'};
+export function StatusBadge({status}:{status:string}){return <span className={'badge '+status}>{labels[status]||status}</span>}
+export function EmptyState({title,children,action}:{title:string;children?:ReactNode;action?:ReactNode}){return <div className="empty"><FlaskConical size={26}/><h3>{title}</h3>{children&&<p>{children}</p>}{action}</div>}
+export function Skeleton(){return <div className="skeleton-layout" role="status" aria-label="Загружаем рабочее пространство"><div className="skeleton"/><div className="skeleton"/><div className="skeleton"/><span className="sr-only">Загружаем рабочее пространство…</span></div>}
+function tokens(items:(string|Prism.Token)[],prefix=''):ReactNode{return items.map((item,i)=>typeof item==='string'?item:<span key={prefix+i} className={'token '+item.type}>{typeof item.content==='string'?item.content:tokens(Array.isArray(item.content)?item.content:[item.content],prefix+i+'-')}</span>)}
+export function CodeView({code,language='text',title='Код'}:{code:string;language?:string;title?:string}){
+ const [copied,setCopied]=useState(false),[error,setError]=useState(false);
+ async function copy(){try{await navigator.clipboard.writeText(code);setCopied(true);setError(false)}catch{setError(true)}}
+ return <div className="code-view"><div className="code-toolbar"><span>{title}</span><button className="textbutton" onClick={copy} aria-label={'Копировать '+title}>{copied?<Check size={14}/>:<Copy size={14}/>} {copied?'Скопировано':'Копировать'}</button></div>{error&&<p role="alert">Не удалось скопировать. Выделите код вручную.</p>}<pre tabIndex={0} aria-label={title}><code>{Prism.languages[language]?tokens(Prism.tokenize(code,Prism.languages[language])):code}</code></pre></div>
+}
+export function Dialog({title,onClose,children,wide=false}:{title:string;onClose:()=>void;children:ReactNode;wide?:boolean}){
+ const ref=useRef<HTMLDivElement>(null);
+ useEffect(()=>{const previous=document.activeElement as HTMLElement;const panel=ref.current!;const focusables=()=>Array.from(panel.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]')).filter(el=>el.offsetParent!==null);(focusables().find(el=>el.tagName==='INPUT')||focusables()[0]||panel).focus();const original=document.body.style.overflow;document.body.style.overflow='hidden';function key(e:KeyboardEvent){if(e.key==='Escape'){e.preventDefault();onClose()}if(e.key==='Tab'){const all=focusables();if(!all.length){e.preventDefault();return}const first=all[0],last=all[all.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}panel.addEventListener('keydown',key);return()=>{panel.removeEventListener('keydown',key);document.body.style.overflow=original;if(previous?.isConnected)previous.focus()}},[onClose]);
+ return <div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}><div className={'modal '+(wide?'wide':'')} ref={ref} role="dialog" aria-modal="true" aria-label={title} tabIndex={-1}><div className="modal-title"><h2>{title}</h2><button type="button" aria-label="Закрыть" onClick={onClose}><X/></button></div>{children}</div></div>
+}
+export function Tabs({items,value,onChange,label}:{items:string[];value:string;onChange:(v:string)=>void;label:string}){return <div className="tabs" role="tablist" aria-label={label}>{items.map((item,i)=><button type="button" role="tab" aria-selected={value===item} tabIndex={value===item?0:-1} key={item} onClick={()=>onChange(item)} onKeyDown={e=>{let next:number|undefined;if(e.key==='ArrowRight')next=(i+1)%items.length;if(e.key==='ArrowLeft')next=(i+items.length-1)%items.length;if(e.key==='Home')next=0;if(e.key==='End')next=items.length-1;if(next!==undefined){e.preventDefault();onChange(items[next]);const parent=e.currentTarget.parentElement; (parent?.children[next] as HTMLElement)?.focus()}}}>{item}</button>)}</div>}

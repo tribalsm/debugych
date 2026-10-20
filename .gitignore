@@ -12,3 +12,6 @@ outputs/*.zip
 playwright-report/
 test-results/
 *.tsbuildinfo
+outputs/uiux-before/
+outputs/uiux-after/
+outputs/uiux-checks/

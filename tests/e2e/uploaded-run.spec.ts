@@ -14,9 +14,10 @@ test('Загрузка → Bug Proof → diff → gVisor regression → отде
  page.once('dialog',dialog=>dialog.accept());
  await page.getByRole('button',{name:'AI-анализ',exact:true}).click();
  await page.getByRole('button',{name:'Открыть Test Studio'}).click();
- await expect(page.getByText('Сложение двух положительных чисел',{exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Сложение двух положительных чисел',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Запустить тесты'}).click();
  await expect(page.getByText('2 passed · 1 failed',{exact:false})).toBeVisible();
+ await page.getByRole('tab',{name:'Результаты',exact:true}).click();
  await expect(page.getByText('Runtime: runsc',{exact:false})).toBeVisible();
  await page.getByRole('button',{name:'Bug Lab',exact:false}).click();
  await expect(page.getByText('Reproduced · требует проверки').first()).toBeVisible();

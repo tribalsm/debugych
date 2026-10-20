@@ -17,7 +17,7 @@ test('Новый React/TS проект → согласие → AI Engine → Bu
  page.once('dialog',dialog=>dialog.accept());
  await page.getByRole('button',{name:'AI-анализ',exact:true}).click();
  await page.getByRole('button',{name:'Открыть Test Studio'}).click();
- await expect(page.getByText('Seat Desk: бронирование',{exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Seat Desk: бронирование',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Запустить тесты'}).click();
  await expect(page.getByText('2 passed · 2 failed',{exact:false})).toBeVisible({timeout:45000});
  await page.getByRole('button',{name:'Bug Lab',exact:false}).click();

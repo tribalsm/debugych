@@ -15,9 +15,10 @@ test('Загруженный TypeScript → Playwright в gVisor → отчёт 
  page.once('dialog',dialog=>dialog.accept());
  await page.getByRole('button',{name:'AI-анализ',exact:true}).click();
  await page.getByRole('button',{name:'Открыть Test Studio'}).click();
- await expect(page.getByText('Браузерный счётчик · Playwright',{exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Браузерный счётчик · Playwright',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Запустить тесты'}).click();
  await expect(page.getByText('2 passed · 1 failed',{exact:false})).toBeVisible({timeout:45000});
+ await page.getByRole('tab',{name:'Результаты',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Фактические результаты Playwright'})).toBeVisible();
  await expect(page.getByText('Runtime: runsc',{exact:false})).toBeVisible();
  const images=page.getByRole('img',{name:/Скриншот screenshot-/});
@@ -27,6 +28,7 @@ test('Загруженный TypeScript → Playwright в gVisor → отчёт 
  await page.getByRole('link',{name:'playwright-report.json',exact:true}).click();
  expect((await download).suggestedFilename()).toBe('playwright-report.json');
  await page.getByRole('button',{name:'Reports',exact:true}).click();
+ await expect(page.getByText('требований связаны с выполненными assertions',{exact:false})).toBeVisible();
  await expect(page.getByText('Istanbul · собранный JavaScript',{exact:false})).toBeVisible();
  await expect(page.getByRole('link',{name:'coverage-istanbul.json',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Bug Lab',exact:false}).click();
