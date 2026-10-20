@@ -1,0 +1,1216 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\apps\\web\\playwright.config.ts",
+    "rootDir": "C:/Users/tribal/.release/worktrees/debugych-redesign-2/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ],
+      [
+        "html"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/tribal/.release/worktrees/debugych-redesign-2/outputs/uiux-checks/gvisor-full-28-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/tribal/.release/worktrees/debugych-redesign-2/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "ai-novel-workflow.spec.ts",
+      "file": "ai-novel-workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Новый React/TS проект → согласие → AI Engine → Bug Proof → исправление и регрессия",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 86278,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:27:31.547Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "00e49f12b89176b01554-343f4a45e3b4546a9d2c",
+          "file": "ai-novel-workflow.spec.ts",
+          "line": 5,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "autonomous-workflow.spec.ts",
+      "file": "autonomous-workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Автономный QA: одно согласие → проверенный патч без ручного review и применения",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15561,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:28:58.000Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "720d7bd2176d4949cc78-23a7117d2f0699d6d136",
+          "file": "autonomous-workflow.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "redesign-wide.spec.ts",
+      "file": "redesign-wide.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Большие мониторы: шесть экранов на 1920 и 2560 без переполнения страницы",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2255,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:13.590Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "88c5a287d0bd39ef3c94-e8c5362364fe5f6729f8",
+          "file": "redesign-wide.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "redesign.spec.ts",
+      "file": "redesign.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Первый визит: понятный старт на пустом состоянии, без запроса к LLM",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 581,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:15.876Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8c55c0801a27607fa79e-8527c4029f2e08a490b6",
+          "file": "redesign.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "Вход в существующее демо работает без дублирования проекта и AI-запросов",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 798,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:16.485Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8c55c0801a27607fa79e-88fd274ba0dc8b12cc38",
+          "file": "redesign.spec.ts",
+          "line": 11,
+          "column": 5
+        },
+        {
+          "title": "Мастер: код, требования, настройки, отказ от отправки данных",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2032,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:17.303Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8c55c0801a27607fa79e-79474fffab62d7ab3ab3",
+          "file": "redesign.spec.ts",
+          "line": 17,
+          "column": 5
+        },
+        {
+          "title": "Старые URL, project ID, Назад и выбор проекта сохраняют контекст",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1053,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:19.356Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8c55c0801a27607fa79e-9806cd7080e68b584325",
+          "file": "redesign.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "Смена проекта не переносит статус и завершившийся запоздалый ответ",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 949,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "Expect \"poll toBe\"",
+                      "duration": 107
+                    }
+                  ],
+                  "startTime": "2026-10-20T20:29:20.440Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8c55c0801a27607fa79e-343a332ac9c7518181f7",
+          "file": "redesign.spec.ts",
+          "line": 36,
+          "column": 5
+        },
+        {
+          "title": "Демо: простой обзор, раскрытие кода, доказательство и безопасная проверка патча",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5868,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "Expect \"poll toBe\"",
+                      "duration": 135
+                    },
+                    {
+                      "title": "Expect \"poll toBe\"",
+                      "duration": 1936
+                    }
+                  ],
+                  "startTime": "2026-10-20T20:29:21.420Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8c55c0801a27607fa79e-c76d9bb7c33945153032",
+          "file": "redesign.spec.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "title": "Прогресс не приписывает пропущенные этапы и чужие доказательства текущему циклу",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 485,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:27.306Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8c55c0801a27607fa79e-c566f2cd21ffb6e29883",
+          "file": "redesign.spec.ts",
+          "line": 56,
+          "column": 5
+        },
+        {
+          "title": "Старый отказ не становится текущим статусом после завершившейся повторной проверки",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 471,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:27.807Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8c55c0801a27607fa79e-31f0cb3a9ddddad82d16",
+          "file": "redesign.spec.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "title": "Без API-ключа импорт доступен, AI-запуск недоступен и это объяснено",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 615,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:28.303Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8c55c0801a27607fa79e-5c72e9248b5dcc669609",
+          "file": "redesign.spec.ts",
+          "line": 67,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "shop-browser.spec.ts",
+      "file": "shop-browser.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Доверенный Shop: доказательство ошибки точного баланса (ожидаемое падение)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "fail",
+                  "description": "Подготовленная buggy-версия нарушает R1. Этот assertion должен выявить ошибку.",
+                  "location": {
+                    "file": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\shop-browser.spec.ts",
+                    "line": 13,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "failed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1290,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('status')\nExpected string: \u001b[32m\"Платёж \u001b[7mпринят\u001b[27m\"\u001b[39m\nReceived string: \u001b[31m\"Платёж \u001b[7mотклонён\u001b[27m\"\u001b[39m\nTimeout: 800ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" with timeout 800ms\u001b[22m\n\u001b[2m  - waiting for getByRole('status')\u001b[22m\n\u001b[2m    4 × locator resolved to <output id=\"result\" aria-live=\"polite\">Платёж отклонён</output>\u001b[22m\n\u001b[2m      - unexpected value \"Платёж отклонён\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('status')\nExpected string: \u001b[32m\"Платёж \u001b[7mпринят\u001b[27m\"\u001b[39m\nReceived string: \u001b[31m\"Платёж \u001b[7mотклонён\u001b[27m\"\u001b[39m\nTimeout: 800ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" with timeout 800ms\u001b[22m\n\u001b[2m  - waiting for getByRole('status')\u001b[22m\n\u001b[2m    4 × locator resolved to <output id=\"result\" aria-live=\"polite\">Платёж отклонён</output>\u001b[22m\n\u001b[2m      - unexpected value \"Платёж отклонён\"\u001b[22m\n\n    at C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\shop-browser.spec.ts:14:41",
+                    "location": {
+                      "file": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\shop-browser.spec.ts",
+                      "column": 41,
+                      "line": 14
+                    },
+                    "snippet": "  12 |  await testInfo.attach('exact-balance.png',{body:await page.screenshot({fullPage:true}),contentType:'image/png'});\n  13 |  test.fail(true,'Подготовленная buggy-версия нарушает R1. Этот assertion должен выявить ошибку.');\n> 14 |  await expect(page.getByRole('status')).toHaveText('Платёж принят',{timeout:800});\n     |                                         ^\n  15 | });\n  16 |\n  17 | test('Доверенный Shop: исправленная версия принимает точный баланс',async({page})=>{"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\shop-browser.spec.ts",
+                        "column": 41,
+                        "line": 14
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('status')\nExpected string: \u001b[32m\"Платёж \u001b[7mпринят\u001b[27m\"\u001b[39m\nReceived string: \u001b[31m\"Платёж \u001b[7mотклонён\u001b[27m\"\u001b[39m\nTimeout: 800ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" with timeout 800ms\u001b[22m\n\u001b[2m  - waiting for getByRole('status')\u001b[22m\n\u001b[2m    4 × locator resolved to <output id=\"result\" aria-live=\"polite\">Платёж отклонён</output>\u001b[22m\n\u001b[2m      - unexpected value \"Платёж отклонён\"\u001b[22m\n\n\n  12 |  await testInfo.attach('exact-balance.png',{body:await page.screenshot({fullPage:true}),contentType:'image/png'});\n  13 |  test.fail(true,'Подготовленная buggy-версия нарушает R1. Этот assertion должен выявить ошибку.');\n> 14 |  await expect(page.getByRole('status')).toHaveText('Платёж принят',{timeout:800});\n     |                                         ^\n  15 | });\n  16 |\n  17 | test('Доверенный Shop: исправленная версия принимает точный баланс',async({page})=>{\n    at C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\shop-browser.spec.ts:14:41"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "Ввести баланс и сумму 1000",
+                      "duration": 60
+                    },
+                    {
+                      "title": "Нажать «Оплатить»",
+                      "duration": 52
+                    }
+                  ],
+                  "startTime": "2026-10-20T20:30:58.625Z",
+                  "annotations": [
+                    {
+                      "type": "fail",
+                      "description": "Подготовленная buggy-версия нарушает R1. Этот assertion должен выявить ошибку.",
+                      "location": {
+                        "file": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\shop-browser.spec.ts",
+                        "line": 13,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "bug-proof.json",
+                      "contentType": "application/json",
+                      "body": "eyJyZXF1aXJlbWVudCI6IlIxIiwiZXhwZWN0ZWQiOiLQn9C70LDRgtGR0LYg0L/RgNC40L3Rj9GCIiwiYWN0dWFsIjoi0J/Qu9Cw0YLRkdC2INC+0YLQutC70L7QvdGR0L0iLCJzdGVwcyI6WyJiYWxhbmNlPTEwMDAiLCJhbW91bnQ9MTAwMCIsImNsaWNrINCe0L/Qu9Cw0YLQuNGC0YwiXX0="
+                    },
+                    {
+                      "name": "exact-balance.png",
+                      "contentType": "image/png",
+                      "body": "iVBORw0KGgoAAAANSUhEUgAABQAAAALQCAIAAABAH0oBAAAQAElEQVR4nOzdC5CU5YEv/EcERhQmjkDIAkZgrIwSRVH4QsDjLQvGxEBqiVZ0rD1Ez2o4H9FsyIJJJDfcBNiwG43fmniOyqYYTUVnS8htxUTUoxy2IBJHQ5xdR/ACG+WimcEgN/3et3u6p7vnCqI28/x+NVXT/fbz3p5+u6v//Vy6b9WwMQEAAAB6u74BAAAAIiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABREIABAACIggAMAABAFARgAAAAoiAAAwAAEAUBGAAAgCgIwAAAAERBAAYAACAKAjAAAABR6BMAoDepmXfdN+aNSG9d+ddLb/9ETYjN2dfV/fWF6Y0RV97+9euuDABAzlFVw8YEAOhFkuB39fjjkhuvbfjBLcvXhugkyf/iUemN538x96u/DQBAKwEYAACAKBgDDJSVSZ/4xhcmVLbd3/yL2h8/1Ho736yX8fr626/5ZWNR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QBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKIgAAMAABAFARgAAIAoCMAAAABEQQAGAAAgCgIwAAAAURCAAQAAiIIADAAAQBQEYAAAAKLw/wMAAP//eYhFywAAAAZJREFUAwBG4jzJMzBrqgAAAABJRU5ErkJggg=="
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\outputs\\uiux-checks\\gvisor-full-28-results\\shop-browser-Доверенный-Sh-fefba--баланса-ожидаемое-падение--chromium\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\outputs\\uiux-checks\\gvisor-full-28-results\\shop-browser-Доверенный-Sh-fefba--баланса-ожидаемое-падение--chromium\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\shop-browser.spec.ts",
+                    "column": 41,
+                    "line": 14
+                  }
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4b5ada5c8a2b003a00a7-3b2ec0cbaa2e88e6c8e3",
+          "file": "shop-browser.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "Доверенный Shop: исправленная версия принимает точный баланс",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 360,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:31:00.182Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\outputs\\uiux-checks\\gvisor-full-28-results\\shop-browser-Доверенный-Sh-cc65e-сия-принимает-точный-баланс-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4b5ada5c8a2b003a00a7-729a7e00757cea2fcc43",
+          "file": "shop-browser.spec.ts",
+          "line": 17,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "uiux.spec.ts",
+      "file": "uiux.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Навигация: адрес, Назад, перезагрузка, вкладки и клавиатура диалога",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1319,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:29.026Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "63892a527ed55238e488-b4c12bbcdcbd2efa712a",
+          "file": "uiux.spec.ts",
+          "line": 11,
+          "column": 5
+        },
+        {
+          "title": "Ошибки реальной загрузки и частично загруженный набор видны пользователю",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2671,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:30.368Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "63892a527ed55238e488-825331ce287a2c947e43",
+          "file": "uiux.spec.ts",
+          "line": 24,
+          "column": 5
+        },
+        {
+          "title": "Сетевой сбой не превращается в пустой успешный экран; повторное подключение",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 544,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:33.062Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "63892a527ed55238e488-15e2333e083586ac77e4",
+          "file": "uiux.spec.ts",
+          "line": 33,
+          "column": 5
+        },
+        {
+          "title": "Явный UI-контракт: стадии задачи, infrastructure и manual review не становятся дефектом",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4752,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:33.628Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "63892a527ed55238e488-cbba937574aba4f7d93a",
+          "file": "uiux.spec.ts",
+          "line": 38,
+          "column": 5
+        },
+        {
+          "title": "Пять экранов: реальные демопрогоны, desktop/mobile, a11y, экспорт, скриншоты",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15950,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "Expect \"poll toBe\"",
+                      "duration": 123
+                    },
+                    {
+                      "title": "Expect \"poll toBe\"",
+                      "duration": 1933
+                    },
+                    {
+                      "title": "Expect \"poll toBe\"",
+                      "duration": 10
+                    },
+                    {
+                      "title": "Expect \"poll toBe\"",
+                      "duration": 1942
+                    }
+                  ],
+                  "startTime": "2026-10-20T20:29:38.402Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "63892a527ed55238e488-d037433bcc7578994d4f",
+          "file": "uiux.spec.ts",
+          "line": 46,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "uploaded-playwright.spec.ts",
+      "file": "uploaded-playwright.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Загруженный TypeScript → Playwright в gVisor → отчёт и скриншоты",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18234,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:29:54.377Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "db06b9d869b4c92e40e7-e8598ecb1d9e18257bb5",
+          "file": "uploaded-playwright.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "uploaded-run.spec.ts",
+      "file": "uploaded-run.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Загрузка → Bug Proof → diff → gVisor regression → отдельное применение",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 27978,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:30:12.637Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0be08053094096a02a5a-26172cc77fa02ac2684c",
+          "file": "uploaded-run.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "validation-binding.spec.ts",
+      "file": "validation-binding.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Редактирование кода или требований не сохраняет статус Validated по старому ID",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:30:40.802Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2bc8a21402fb5d455237-6139d38885a6a5c18ee2",
+          "file": "validation-binding.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "Агент не объявляет успех по прошедшему тесту или неподтверждённому отклонению",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:30:40.876Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2bc8a21402fb5d455237-938645833c9a7938b607",
+          "file": "validation-binding.spec.ts",
+          "line": 15,
+          "column": 5
+        },
+        {
+          "title": "Исторический Fix Verified не подтверждает неуспешную новую версию патча",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:30:40.915Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2bc8a21402fb5d455237-f6a5e37d977f5df6829a",
+          "file": "validation-binding.spec.ts",
+          "line": 23,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "workflow.spec.ts",
+      "file": "workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Демо: требования → тест → доказательство → патч → проверка → применение",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13220,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:30:40.941Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c601ceb5ecfc8efa4a14-12794626e91f855b936b",
+          "file": "workflow.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "Создание проекта, сохранение файла и честное ограничение исполнения",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1197,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:30:54.193Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c601ceb5ecfc8efa4a14-cf3d371612657ee7e8d6",
+          "file": "workflow.spec.ts",
+          "line": 30,
+          "column": 5
+        },
+        {
+          "title": "Адаптивный Dashboard на мобильном экране",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 905,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:30:55.421Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c601ceb5ecfc8efa4a14-f81556cc8798f308b0d7",
+          "file": "workflow.spec.ts",
+          "line": 41,
+          "column": 5
+        },
+        {
+          "title": "Устаревший выбранный проект восстанавливается после смены backend",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 628,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:30:56.355Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c601ceb5ecfc8efa4a14-3759f187d09ea647fdfb",
+          "file": "workflow.spec.ts",
+          "line": 52,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-20T20:27:30.158Z",
+    "duration": 210811.682,
+    "expected": 28,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

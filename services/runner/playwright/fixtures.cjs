@@ -2,8 +2,18 @@ const base = require('@playwright/test');
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const test = base.test.extend({
+  browser: [async ({playwright}, use) => {
+    const endpoint = process.env.DEBUGYCH_BROWSER_ENDPOINT;
+    if (!endpoint || !endpoint.startsWith('ws://127.0.0.1:')) throw Error('Missing job-local browser');
+    const browser = await playwright.chromium.connect(endpoint);
+    try {await use(browser);} finally {
+      // For connect(), close disconnects this worker, leaving job ownership in
+      // globalSetup. Playwright still creates and closes a fresh context/test.
+      await browser.close();
+    }
+  }, {scope:'worker'}],
   page: async ({page}, use, info) => {
-    const observations = {console:[], page_errors:[]};
+    const observations = {console:[], page_errors:[], worker_index:info.workerIndex};
     page.on('console', message => {if(observations.console.length<30) observations.console.push(message.text().slice(0,500));});
     page.on('pageerror', error => {if(observations.page_errors.length<10) observations.page_errors.push(error.message.slice(0,1000));});
     // Container has no network. This also blocks browser requests to arbitrary origins.

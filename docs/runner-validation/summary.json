@@ -1,0 +1,146 @@
+{
+  "browser": {
+    "startTime": "2026-10-20T20:27:30.158Z",
+    "duration": 210811.682,
+    "expected": 28,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "browser_workers": 1,
+  "browser_retries": 0,
+  "investigation_failed_attempt": {
+    "startTime": "2026-10-20T20:25:01.275Z",
+    "duration": 111217.07299999999,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "backend": {
+    "passed": 178,
+    "warnings": 1,
+    "duration_seconds": 40.14
+  },
+  "node_lifecycle_unit": {
+    "passed": 2,
+    "failed": 0
+  },
+  "lifecycle_before": {
+    "status": "completed",
+    "runtime": "runsc",
+    "image_id": "sha256:cf3a732dba4a8eccce58620488f27b1d4c82b654cb3c446cd685ef33b4f6e7ab",
+    "duration": 18.911,
+    "passed": 3,
+    "failed": 3,
+    "errors": 0,
+    "error": null,
+    "browser_pids": [
+      "117",
+      "200",
+      "282",
+      "44"
+    ]
+  },
+  "lifecycle_after": {
+    "status": "completed",
+    "runtime": "runsc",
+    "image_id": "sha256:3526ff509e682d1151a06ea4792b9f8f5879b8345c4b81d3c136bb7fc255a76f",
+    "duration": 12.038,
+    "stats": {
+      "passed": 3,
+      "failed": 3,
+      "error": 0,
+      "skipped": 0
+    },
+    "worker_indices": [
+      0,
+      1,
+      1,
+      2,
+      2,
+      3
+    ],
+    "browser_launches": 1,
+    "browser_pids": [
+      "32"
+    ],
+    "isolated_contexts": 6,
+    "screenshots": 6,
+    "llm_requests": 0
+  },
+  "lifecycle_discovery": {
+    "status": "completed",
+    "runtime": "runsc",
+    "image_id": "sha256:3526ff509e682d1151a06ea4792b9f8f5879b8345c4b81d3c136bb7fc255a76f",
+    "duration": 11.986,
+    "stats": {
+      "passed": 3,
+      "failed": 3,
+      "error": 0,
+      "skipped": 0
+    },
+    "worker_indices": [
+      0,
+      1,
+      1,
+      2,
+      2,
+      3
+    ],
+    "browser_launches": 1,
+    "browser_pids": [
+      "32"
+    ],
+    "isolated_contexts": 6,
+    "screenshots": 6,
+    "llm_requests": 0,
+    "discovery_without_browser": true
+  },
+  "security_probe_passed": true,
+  "api_e2e": {
+    "cases": 4,
+    "passed": true,
+    "provider_mode": "contract-test",
+    "external_llm_requests": 0
+  },
+  "compose": {
+    "web_http": 200,
+    "api_health": {
+      "status": "ok",
+      "ai_available": true,
+      "ai_status": "ready",
+      "ai_provider_mode": "contract-test",
+      "execution": "gvisor-python",
+      "sandbox_configured": true,
+      "sandbox_available": true,
+      "playwright_available": true
+    },
+    "execution_network_internal": true,
+    "services": [
+      "debugych-redesign2-supervisor-1 | Up 10 minutes (healthy) | debugych-redesign2-supervisor:local",
+      "debugych-redesign2-web-1 | Up 34 minutes | debugych-redesign2-web:local",
+      "debugych-redesign2-worker-1 | Up 53 minutes | debugych-uiux-api:local",
+      "debugych-redesign2-api-1 | Up 54 minutes (healthy) | debugych-uiux-api:local",
+      "debugych-redesign2-postgres-1 | Up 54 minutes (healthy) | postgres:16-alpine",
+      "debugych-redesign2-redis-1 | Up 54 minutes (healthy) | redis:7-alpine",
+      "debugych-redesign2-runner-1 | Up 54 minutes | debugych-uiux-runner:local",
+      "debugych-redesign2-llm-stub-1 | Up 54 minutes | debugych-uiux-api:local"
+    ],
+    "provider": {
+      "LLM_BASE_URL": "http://llm-stub:8101/v1",
+      "LLM_PROVIDER_MODE": "contract-test"
+    }
+  },
+  "sandbox_policy_changed": false,
+  "paid_llm_requests": 0,
+  "evidence_sha256": {
+    "api-e2e.json": "8485f3dbd7c883231ba295342b8cc868b60f433df28ae6c6eff3821301643a7f",
+    "browser-results.json": "6ad32fb4d58b02d7d20ce9b9c38c5757dc512475a6cee6cea521d77c528c391a",
+    "investigation-failed-attempt.json": "b64378c5104cf035bd4a2b4660755741ad643a9f5d172b16392bcd2aa00381fd",
+    "lifecycle-after.json": "847798cbe423cc24567a4c0fb0905daba9939e5e6ca9ab0586145f1612d0356a",
+    "lifecycle-before.json": "5aec040131338da98f99ecdbca7968ff75f30b8bb57982972342b19330667ccb",
+    "lifecycle-discovery.json": "68fc6ae8d6fbf30345ee34011938b1d8a94cf6e7fa47d40f5ec097f0a56bc995",
+    "security-probe.txt": "10517e6e3e359d0b130d662913b92e436f5e4bcf3e34cb7f211e3b71eb25a905"
+  }
+}

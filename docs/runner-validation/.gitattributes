@@ -1,0 +1,2 @@
+# Keep evidence line endings stable so summary.json digests survive checkout.
+* text eol=lf

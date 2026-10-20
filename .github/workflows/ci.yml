@@ -11,6 +11,7 @@ jobs:
       - run: pytest
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm, cache-dependency-path: apps/web/package-lock.json}
+      - run: node --test tests/unit/browser_lifecycle.test.cjs
       - run: npm ci && npm run build
         working-directory: apps/web
       - run: docker compose config --quiet
@@ -60,6 +61,8 @@ jobs:
         run: docker compose exec -T supervisor python < work/oracle-probe.py
       - name: Verify React TSX and CSS inside gVisor
         run: docker compose exec -T supervisor python < tests/compose/react_smoke.py
+      - name: Verify browser ownership and context isolation after failed tests
+        run: docker compose exec -T supervisor python < tests/compose/browser_lifecycle_probe.py
       - run: npm run test:e2e
         working-directory: apps/web
         env:

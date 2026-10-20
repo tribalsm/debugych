@@ -19,7 +19,11 @@ services:
   runner:
     image: debugych-uiux-runner:local
   supervisor:
-    image: debugych-uiux-supervisor:local
+    image: debugych-redesign2-supervisor:local
+    environment:
+      PLAYWRIGHT_IMAGE: debugych-redesign2-playwright:local
+  playwright-image:
+    image: debugych-redesign2-playwright:local
   web:
     image: debugych-redesign2-web:local
     ports: !override ["127.0.0.1:8082:8080"]

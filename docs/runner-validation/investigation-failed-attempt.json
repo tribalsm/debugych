@@ -1,0 +1,148 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\apps\\web\\playwright.config.ts",
+    "rootDir": "C:/Users/tribal/.release/worktrees/debugych-redesign-2/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/tribal/.release/worktrees/debugych-redesign-2/outputs/uiux-checks/gvisor-react-targeted",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/tribal/.release/worktrees/debugych-redesign-2/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "ai-novel-workflow.spec.ts",
+      "file": "ai-novel-workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Новый React/TS проект → согласие → AI Engine → Bug Proof → исправление и регрессия",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 69674,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByText('2 passed · 2 failed')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  45000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 45000ms\u001b[22m\n\u001b[2m  - waiting for getByText('2 passed · 2 failed')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByText('2 passed · 2 failed')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  45000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 45000ms\u001b[22m\n\u001b[2m  - waiting for getByText('2 passed · 2 failed')\u001b[22m\n\n    at C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\ai-novel-workflow.spec.ts:23:68",
+                    "location": {
+                      "file": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\ai-novel-workflow.spec.ts",
+                      "column": 68,
+                      "line": 23
+                    },
+                    "snippet": "  21 |  await expect(page.getByRole('heading',{name:'Seat Desk: бронирование',exact:true})).toBeVisible();\n  22 |  await page.getByRole('button',{name:'Запустить тесты'}).click();\n> 23 |  await expect(page.getByText('2 passed · 2 failed',{exact:false})).toBeVisible({timeout:45000});\n     |                                                                    ^\n  24 |  await navigate(page,'Ошибки');\n  25 |  await page.getByRole('button').filter({hasText:'Весь остаток'}).click();\n  26 |  await page.getByLabel('Обоснование ожидания').fill('R1 разрешает бронировать весь остаток: исходные 6 мест минус запрошенные 6 должны дать 0.');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\ai-novel-workflow.spec.ts",
+                        "column": 68,
+                        "line": 23
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByText('2 passed · 2 failed')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  45000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 45000ms\u001b[22m\n\u001b[2m  - waiting for getByText('2 passed · 2 failed')\u001b[22m\n\n\n  21 |  await expect(page.getByRole('heading',{name:'Seat Desk: бронирование',exact:true})).toBeVisible();\n  22 |  await page.getByRole('button',{name:'Запустить тесты'}).click();\n> 23 |  await expect(page.getByText('2 passed · 2 failed',{exact:false})).toBeVisible({timeout:45000});\n     |                                                                    ^\n  24 |  await navigate(page,'Ошибки');\n  25 |  await page.getByRole('button').filter({hasText:'Весь остаток'}).click();\n  26 |  await page.getByLabel('Обоснование ожидания').fill('R1 разрешает бронировать весь остаток: исходные 6 мест минус запрошенные 6 должны дать 0.');\n    at C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\ai-novel-workflow.spec.ts:23:68"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T20:25:03.907Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\outputs\\uiux-checks\\gvisor-react-targeted\\ai-novel-workflow-Новый-Re-261c2-f-→-исправление-и-регрессия-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\outputs\\uiux-checks\\gvisor-react-targeted\\ai-novel-workflow-Новый-Re-261c2-f-→-исправление-и-регрессия-chromium\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\outputs\\uiux-checks\\gvisor-react-targeted\\ai-novel-workflow-Новый-Re-261c2-f-→-исправление-и-регрессия-chromium\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\tribal\\.Workspace\\worktrees\\debugych-redesign-2\\tests\\e2e\\ai-novel-workflow.spec.ts",
+                    "column": 68,
+                    "line": 23
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "00e49f12b89176b01554-343f4a45e3b4546a9d2c",
+          "file": "ai-novel-workflow.spec.ts",
+          "line": 5,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-20T20:25:01.275Z",
+    "duration": 111217.07299999999,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

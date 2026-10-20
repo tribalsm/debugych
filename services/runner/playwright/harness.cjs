@@ -24,7 +24,7 @@ async function main(job) {
     const code=t.code.replace(/(['"])@playwright\/test\1/g,"'/opt/runtime/fixtures.cjs'");
     fs.writeFileSync(root+'/tests/'+filename,code);
   }
-  fs.writeFileSync(root+'/playwright.config.cjs',`module.exports={testDir:'./tests',workers:1,fullyParallel:false,retries:0,forbidOnly:true,timeout:7000,globalTimeout:35000,maxFailures:20,expect:{timeout:2500},outputDir:'./reports/results',reporter:[['json',{outputFile:'./reports/report.json'}]],use:{baseURL:'http://127.0.0.1:4173',browserName:'chromium',headless:true,viewport:{width:960,height:640},actionTimeout:3000,navigationTimeout:5000,serviceWorkers:'block',launchOptions:{chromiumSandbox:false,args:['--disable-dev-shm-usage','--disable-gpu','--disable-background-networking']}}};`);
+  fs.writeFileSync(root+'/playwright.config.cjs',`module.exports={globalSetup:'/opt/runtime/browser-setup.cjs',testDir:'./tests',workers:1,fullyParallel:false,retries:0,forbidOnly:true,timeout:7000,globalTimeout:35000,maxFailures:20,expect:{timeout:2500},outputDir:'./reports/results',reporter:[['json',{outputFile:'./reports/report.json'}]],use:{baseURL:'http://127.0.0.1:4173',browserName:'chromium',headless:true,viewport:{width:960,height:640},actionTimeout:3000,navigationTimeout:5000,serviceWorkers:'block',launchOptions:{chromiumSandbox:false,args:['--disable-dev-shm-usage','--disable-gpu','--disable-background-networking']}}};`);
   const env={PATH:'/usr/local/bin:/usr/bin:/bin',HOME:'/tmp',TMPDIR:'/tmp',LANG:'C.UTF-8',PLAYWRIGHT_BROWSERS_PATH:'/opt/browsers',NODE_OPTIONS:'--max-old-space-size=256'};
   if(job.phase==='validate') {
     try {

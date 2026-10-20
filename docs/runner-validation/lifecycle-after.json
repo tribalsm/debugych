@@ -1,0 +1,1 @@
+{"status": "completed", "runtime": "runsc", "image_id": "sha256:3526ff509e682d1151a06ea4792b9f8f5879b8345c4b81d3c136bb7fc255a76f", "duration": 12.038, "stats": {"passed": 3, "failed": 3, "error": 0, "skipped": 0}, "worker_indices": [0, 1, 1, 2, 2, 3], "browser_launches": 1, "browser_pids": ["32"], "isolated_contexts": 6, "screenshots": 6, "llm_requests": 0}
