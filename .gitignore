@@ -15,6 +15,7 @@ test-results/
 outputs/uiux-before/
 outputs/uiux-after/
 outputs/uiux-checks/
+outputs/integration/
 
 playwright-report-redesign/
 test-results-production/

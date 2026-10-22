@@ -1,0 +1,32 @@
+# Isolated offline preview. Do not load the real .env or use another project name.
+# docker compose --env-file /dev/null -p debugych-integration
+#   -f docker-compose.yml -f compose.test.yml -f compose.integration.yml up -d --wait
+services:
+  api:
+    image: debugych-integration-api:local
+    ports: !override ["127.0.0.1:8013:8000"]
+    environment: &offline-limits
+      LLM_MAX_CALLS: "6"
+      LLM_MAX_JOB_USD: "20"
+  worker:
+    image: debugych-integration-api:local
+    environment:
+      <<: *offline-limits
+  token-init:
+    image: debugych-integration-api:local
+  llm-stub:
+    image: debugych-integration-api:local
+  runner:
+    image: debugych-integration-runner:local
+  supervisor:
+    image: debugych-integration-supervisor:local
+    environment:
+      SANDBOX_IMAGE: debugych-integration-sandbox:local
+      PLAYWRIGHT_IMAGE: debugych-integration-playwright:local
+  sandbox-image:
+    image: debugych-integration-sandbox:local
+  playwright-image:
+    image: debugych-integration-playwright:local
+  web:
+    image: debugych-integration-web:local
+    ports: !override ["127.0.0.1:8083:8080"]

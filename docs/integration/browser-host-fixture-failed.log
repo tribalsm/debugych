@@ -1,0 +1,31 @@
+
+> debugych-web@0.1.0 test:e2e
+> playwright test --output=../../outputs/integration/browser-artifacts-green --reporter=list,json,html
+
+
+Running 28 tests using 1 worker
+
+(node:4136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chromium] › ..\..\tests\e2e\ai-novel-workflow.spec.ts:5:5 › Новый React/TS проект → согласие → AI Engine → Bug Proof → исправление и регрессия (1.2m)
+  ok  2 [chromium] › ..\..\tests\e2e\autonomous-workflow.spec.ts:4:5 › Автономный QA: одно согласие → проверенный патч без ручного review и применения (16.5s)
+  ok  3 [chromium] › ..\..\tests\e2e\redesign-wide.spec.ts:4:5 › Большие мониторы: шесть экранов на 1920 и 2560 без переполнения страницы (3.4s)
+  ok  4 [chromium] › ..\..\tests\e2e\redesign.spec.ts:4:5 › Первый визит: понятный старт на пустом состоянии, без запроса к LLM (558ms)
+  ok  5 [chromium] › ..\..\tests\e2e\redesign.spec.ts:11:5 › Вход в существующее демо работает без дублирования проекта и AI-запросов (688ms)
+  ok  6 [chromium] › ..\..\tests\e2e\redesign.spec.ts:17:5 › Мастер: код, требования, настройки, отказ от отправки данных (1.6s)
+  x   7 [chromium] › ..\..\tests\e2e\redesign.spec.ts:29:5 › Старые URL, project ID, Назад и выбор проекта сохраняют контекст (1.0m)
+(node:22628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  8 [chromium] › ..\..\tests\e2e\redesign.spec.ts:36:5 › Смена проекта не переносит статус и завершившийся запоздалый ответ (1.2s)
+  ok  9 [chromium] › ..\..\tests\e2e\redesign.spec.ts:44:5 › Демо: простой обзор, раскрытие кода, доказательство и безопасная проверка патча (9.0s)
+  ok 10 [chromium] › ..\..\tests\e2e\redesign.spec.ts:56:5 › Прогресс не приписывает пропущенные этапы и чужие доказательства текущему циклу (630ms)
+  ok 11 [chromium] › ..\..\tests\e2e\redesign.spec.ts:62:5 › Старый отказ не становится текущим статусом после завершившейся повторной проверки (559ms)
+  ok 12 [chromium] › ..\..\tests\e2e\redesign.spec.ts:67:5 › Без API-ключа импорт доступен, AI-запуск недоступен и это объяснено (632ms)
+  ok 13 [chromium] › ..\..\tests\e2e\uiux.spec.ts:11:5 › Навигация: адрес, Назад, перезагрузка, вкладки и клавиатура диалога (1.7s)
+  ok 14 [chromium] › ..\..\tests\e2e\uiux.spec.ts:24:5 › Ошибки реальной загрузки и частично загруженный набор видны пользователю (2.9s)
+  ok 15 [chromium] › ..\..\tests\e2e\uiux.spec.ts:33:5 › Сетевой сбой не превращается в пустой успешный экран; повторное подключение (691ms)
+  ok 16 [chromium] › ..\..\tests\e2e\uiux.spec.ts:38:5 › Явный UI-контракт: стадии задачи, infrastructure и manual review не становятся дефектом (4.9s)

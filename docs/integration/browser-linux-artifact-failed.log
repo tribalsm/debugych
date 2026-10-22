@@ -1,0 +1,111 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from integration-e2e.Dockerfile
+#1 transferring dockerfile: 647B 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/debugych-integration-playwright:local
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B 0.0s done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 DONE 0.0s
+
+#5 [1/6] FROM docker.io/library/debugych-integration-playwright:local@sha256:3526ff509e682d1151a06ea4792b9f8f5879b8345c4b81d3c136bb7fc255a76f
+#5 resolve docker.io/library/debugych-integration-playwright:local@sha256:3526ff509e682d1151a06ea4792b9f8f5879b8345c4b81d3c136bb7fc255a76f 0.0s done
+#5 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 9.72MB 5.0s
+#4 transferring context: 28.86MB 6.4s done
+#4 DONE 6.4s
+
+#6 [2/6] COPY axe-core /opt/runtime/node_modules/axe-core
+#6 CACHED
+
+#7 [3/6] COPY axe-playwright /opt/runtime/node_modules/@axe-core/playwright
+#7 CACHED
+
+#8 [4/6] COPY lucide-react /opt/runtime/node_modules/lucide-react
+#8 DONE 0.4s
+
+#9 [5/6] RUN mkdir -p /work/apps/web && ln -s /opt/runtime/node_modules /work/apps/web/node_modules
+#9 DONE 0.3s
+
+#10 [6/6] WORKDIR /work/apps/web
+#10 DONE 0.1s
+
+#11 exporting to image
+#11 exporting layers
+#11 exporting layers 0.6s done
+#11 exporting manifest sha256:fbc1db5a369d1a6fcc06e197ca3011af3de106ceefab47e120c41bcb69ebd7fb 0.0s done
+#11 exporting config sha256:c4ddebd93a6e846c284b31b2285e6958855c82af8629427c44840757ecfffb69 0.0s done
+#11 exporting attestation manifest sha256:90d578c15ac187dfeb692e30c65ef0d6c223784a0fe608f550a46b4c4fdbb0fe
+#11 exporting attestation manifest sha256:90d578c15ac187dfeb692e30c65ef0d6c223784a0fe608f550a46b4c4fdbb0fe 0.1s done
+#11 exporting manifest list sha256:aedbc131e2323cf32f1ba5fefe673232bcee4cda7999d265e5e9559e6b6c2159 0.0s done
+#11 naming to docker.io/library/debugych-integration-e2e:local 0.0s done
+#11 unpacking to docker.io/library/debugych-integration-e2e:local
+#11 unpacking to docker.io/library/debugych-integration-e2e:local 0.5s done
+#11 DONE 1.3s
+
+Running 28 tests using 1 worker
+
+  ✓   1 [chromium] › ../../tests/e2e/ai-novel-workflow.spec.ts:5:5 › Новый React/TS проект → согласие → AI Engine → Bug Proof → исправление и регрессия (1.2m)
+  ✓   2 [chromium] › ../../tests/e2e/autonomous-workflow.spec.ts:4:5 › Автономный QA: одно согласие → проверенный патч без ручного review и применения (10.9s)
+  ✓   3 [chromium] › ../../tests/e2e/redesign-wide.spec.ts:4:5 › Большие мониторы: шесть экранов на 1920 и 2560 без переполнения страницы (3.4s)
+  ✓   4 [chromium] › ../../tests/e2e/redesign.spec.ts:4:5 › Первый визит: понятный старт на пустом состоянии, без запроса к LLM (702ms)
+  ✓   5 [chromium] › ../../tests/e2e/redesign.spec.ts:11:5 › Вход в существующее демо работает без дублирования проекта и AI-запросов (780ms)
+  ✓   6 [chromium] › ../../tests/e2e/redesign.spec.ts:17:5 › Мастер: код, требования, настройки, отказ от отправки данных (2.0s)
+  ✓   7 [chromium] › ../../tests/e2e/redesign.spec.ts:29:5 › Старые URL, project ID, Назад и выбор проекта сохраняют контекст (1.8s)
+  ✓   8 [chromium] › ../../tests/e2e/redesign.spec.ts:36:5 › Смена проекта не переносит статус и завершившийся запоздалый ответ (1.5s)
+  ✓   9 [chromium] › ../../tests/e2e/redesign.spec.ts:44:5 › Демо: простой обзор, раскрытие кода, доказательство и безопасная проверка патча (6.3s)
+  ✓  10 [chromium] › ../../tests/e2e/redesign.spec.ts:56:5 › Прогресс не приписывает пропущенные этапы и чужие доказательства текущему циклу (978ms)
+  ✓  11 [chromium] › ../../tests/e2e/redesign.spec.ts:62:5 › Старый отказ не становится текущим статусом после завершившейся повторной проверки (845ms)
+  ✓  12 [chromium] › ../../tests/e2e/redesign.spec.ts:67:5 › Без API-ключа импорт доступен, AI-запуск недоступен и это объяснено (906ms)
+  ✓  13 [chromium] › ../../tests/e2e/uiux.spec.ts:11:5 › Навигация: адрес, Назад, перезагрузка, вкладки и клавиатура диалога (2.1s)
+  ✓  14 [chromium] › ../../tests/e2e/uiux.spec.ts:24:5 › Ошибки реальной загрузки и частично загруженный набор видны пользователю (2.8s)
+  ✓  15 [chromium] › ../../tests/e2e/uiux.spec.ts:33:5 › Сетевой сбой не превращается в пустой успешный экран; повторное подключение (797ms)
+  ✓  16 [chromium] › ../../tests/e2e/uiux.spec.ts:38:5 › Явный UI-контракт: стадии задачи, infrastructure и manual review не становятся дефектом (4.5s)
+  ✓  17 [chromium] › ../../tests/e2e/uiux.spec.ts:46:5 › Пять экранов: реальные демопрогоны, desktop/mobile, a11y, экспорт, скриншоты (14.6s)
+  ✓  18 [chromium] › ../../tests/e2e/uploaded-playwright.spec.ts:4:5 › Загруженный TypeScript → Playwright в gVisor → отчёт и скриншоты (15.9s)
+  ✓  19 [chromium] › ../../tests/e2e/uploaded-run.spec.ts:4:5 › Загрузка → Bug Proof → diff → gVisor regression → отдельное применение (15.6s)
+  ✓  20 [chromium] › ../../tests/e2e/validation-binding.spec.ts:5:5 › Редактирование кода или требований не сохраняет статус Validated по старому ID (2ms)
+  ✓  21 [chromium] › ../../tests/e2e/validation-binding.spec.ts:15:5 › Агент не объявляет успех по прошедшему тесту или неподтверждённому отклонению (1ms)
+  ✓  22 [chromium] › ../../tests/e2e/validation-binding.spec.ts:23:5 › Исторический Fix Verified не подтверждает неуспешную новую версию патча (0ms)
+  ✓  23 [chromium] › ../../tests/e2e/workflow.spec.ts:4:5 › Демо: требования → тест → доказательство → патч → проверка → применение (7.6s)
+  ✓  24 [chromium] › ../../tests/e2e/workflow.spec.ts:30:5 › Создание проекта, сохранение файла и честное ограничение исполнения (1.6s)
+  ✓  25 [chromium] › ../../tests/e2e/workflow.spec.ts:41:5 › Адаптивный Dashboard на мобильном экране (900ms)
+  ✓  26 [chromium] › ../../tests/e2e/workflow.spec.ts:52:5 › Устаревший выбранный проект восстанавливается после смены backend (841ms)
+  ✘  27 [chromium] › ../../tests/e2e/shop-browser.spec.ts:4:5 › Доверенный Shop: доказательство ошибки точного баланса (ожидаемое падение) (1.4s)
+  ✘  28 [chromium] › ../../tests/e2e/shop-browser.spec.ts:17:5 › Доверенный Shop: исправленная версия принимает точный баланс (478ms)
+
+
+  1) [chromium] › ../../tests/e2e/shop-browser.spec.ts:17:5 › Доверенный Shop: исправленная версия принимает точный баланс
+
+    Error: apiRequestContext._wrapApiCall: EPERM: operation not permitted, copyfile '/work/outputs/integration/browser-linux-artifacts/.playwright-artifacts-1/traces/4b5ada5c8a2b003a00a7-729a7e00757cea2fcc43-recording5.network' -> '/work/outputs/integration/browser-linux-artifacts/.playwright-artifacts-1/traces/4b5ada5c8a2b003a00a7-729a7e00757cea2fcc43-recording5-pwnetcopy-1.network'
+
+    Error: apiRequestContext._wrapApiCall: EPERM: operation not permitted, copyfile '/work/outputs/integration/browser-linux-artifacts/.playwright-artifacts-1/traces/4b5ada5c8a2b003a00a7-729a7e00757cea2fcc43-recording3.network' -> '/work/outputs/integration/browser-linux-artifacts/.playwright-artifacts-1/traces/4b5ada5c8a2b003a00a7-729a7e00757cea2fcc43-recording3-pwnetcopy-1.network'
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../outputs/integration/browser-linux-artifacts/shop-browser-Доверенный-Sh-cc65e-сия-принимает-точный-баланс-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../outputs/integration/browser-linux-artifacts/shop-browser-Доверенный-Sh-cc65e-сия-принимает-точный-баланс-chromium/test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../outputs/integration/browser-linux-artifacts/shop-browser-Доверенный-Sh-cc65e-сия-принимает-точный-баланс-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../outputs/integration/browser-linux-artifacts/shop-browser-Доверенный-Sh-cc65e-сия-принимает-точный-баланс-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › ../../tests/e2e/shop-browser.spec.ts:17:5 › Доверенный Shop: исправленная версия принимает точный баланс
+  27 passed (2.9m)
+Error: EPERM: operation not permitted, copyfile '/opt/runtime/node_modules/playwright-core/lib/vite/traceViewer/codeMirrorModule.-QdMvsKi.css' -> '/work/outputs/integration/browser-linux-report/trace/codeMirrorModule.-QdMvsKi.css'

@@ -1,0 +1,10 @@
+✔ job owns launch and shutdown, workers only disconnect, including after errors (10.1079ms)
+✔ missing or nonlocal endpoint fails closed without launching a replacement (2.6104ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 136.6276

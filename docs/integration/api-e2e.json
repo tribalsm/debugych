@@ -1,0 +1,1323 @@
+[
+  {
+    "marker": "CONTRACT_AUTONOMOUS",
+    "project_id": "02753049-b9dd-4f4f-a4bf-3a5d2d89fe2e",
+    "status": "completed",
+    "qa_report": {
+      "autonomous": true,
+      "manual_interventions": 0,
+      "generated_modules": 2,
+      "executed_cases": 3,
+      "passed": 2,
+      "assertion_failures": 1,
+      "errors": 0,
+      "findings": 1,
+      "verified_fix": true,
+      "applied": false,
+      "coverage": {
+        "totals": {
+          "percent_covered": 100.0,
+          "covered_lines": 1,
+          "num_statements": 1,
+          "covered_branches": 0,
+          "num_branches": 0
+        },
+        "files": {
+          "calc.py": {
+            "executed_lines": [
+              1
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "llm_calls": 4,
+      "reserved_cost_micro_usd": 458140,
+      "billed_cost_usd": null,
+      "limitations": [
+        "LLM semantic review is evidence-bound but fallible.",
+        "Runner observations are untrusted.",
+        "No correctness certificate or patch application."
+      ]
+    },
+    "validation": {
+      "version": 1,
+      "status": "validated",
+      "attempts": [
+        {
+          "plan_sha256": "8dbf611194d5e96ff5a1896b560d7eef0aacf4cd5772be7f575700b6f1ac04db",
+          "technical_kind": "valid",
+          "draft": {
+            "requirements": [
+              {
+                "key": "R1",
+                "text": "Функция add возвращает сумму двух чисел."
+              }
+            ],
+            "scenarios": [
+              {
+                "title": "Сложение двух положительных чисел",
+                "requirement": "R1",
+                "gherkin": "Feature: Addition\nScenario: Positive values\n Given two and three\n When add is called\n Then result is five",
+                "code": "from calc import add\n\ndef test_add():\n    assert add(2,3)==5\n",
+                "framework": "pytest",
+                "dimensions": [
+                  "positive"
+                ]
+              },
+              {
+                "title": "Границы сложения",
+                "requirement": "R1",
+                "gherkin": "Feature: Addition\nScenario: Zero\n Given a zero operand\n When add is called\n Then the value is unchanged",
+                "code": "from calc import add\n\ndef test_zero_right(): assert add(5,0)==5\ndef test_zero_both(): assert add(0,0)==0\n",
+                "framework": "pytest",
+                "dimensions": [
+                  "positive"
+                ]
+              }
+            ]
+          },
+          "review": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AUTONOMOUS",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AUTONOMOUS",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ]
+          }
+        }
+      ],
+      "repairs": 0,
+      "manual_interventions": 0,
+      "technical": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": null,
+        "duration": 0.0,
+        "passed": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [],
+        "logs": "test_7af1462bf1ea4fbbb033530c2095edbb.py::test_add\ntest_f97b41a8e64c4e44b3b60868b78a4a5c.py::test_zero_right\ntest_f97b41a8e64c4e44b3b60868b78a4a5c.py::test_zero_both\n\n3 tests collected in 0.01s\n",
+        "coverage": null,
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": {
+          "syntax": true,
+          "discovery": true,
+          "kind": "valid",
+          "collected": [
+            {
+              "test_id": "7af1462b-f1ea-4fbb-b033-530c2095edbb",
+              "name": "test_add"
+            },
+            {
+              "test_id": "f97b41a8-e64c-4e44-b3b6-0868b78a4a5c",
+              "name": "test_zero_right"
+            },
+            {
+              "test_id": "f97b41a8-e64c-4e44-b3b6-0868b78a4a5c",
+              "name": "test_zero_both"
+            }
+          ]
+        },
+        "snapshot_sha256": "f9dad837b968cb8c6c5c1b68ef51d3219461468dec2c70eac1638676555d7116",
+        "runtime": "runsc",
+        "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+        "supervisor_duration": 1.039,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "technical_test_ids": [
+        "7af1462b-f1ea-4fbb-b033-530c2095edbb",
+        "f97b41a8-e64c-4e44-b3b6-0868b78a4a5c"
+      ],
+      "semantic_responses": [
+        {
+          "operation": "validate_semantics",
+          "response": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AUTONOMOUS",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AUTONOMOUS",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ]
+          }
+        }
+      ],
+      "plan_sha256": "8dbf611194d5e96ff5a1896b560d7eef0aacf4cd5772be7f575700b6f1ac04db",
+      "classification": "supported"
+    },
+    "ai_statistics": {
+      "attempts": 4,
+      "succeeded": 4,
+      "failed": 0,
+      "reserved_tokens": 30214,
+      "reserved_cost_micro_usd": 458140,
+      "provider_usage_available": 0,
+      "calls": [
+        {
+          "id": "a4637ff3-9a51-430e-9b1e-f16174ce232c",
+          "project_id": "02753049-b9dd-4f4f-a4bf-3a5d2d89fe2e",
+          "created_at": "2026-10-22T12:37:31.230432+00:00",
+          "job_id": "b4d2566d-2e47-4a19-9f16-7535d952d915",
+          "operation": "extract_requirements",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 5158,
+          "reserved_cost_micro_usd": 87580,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.007,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "aebf4c4e-0ba3-40cf-b303-677ea999dd37",
+          "project_id": "02753049-b9dd-4f4f-a4bf-3a5d2d89fe2e",
+          "created_at": "2026-10-22T12:37:31.250224+00:00",
+          "job_id": "b4d2566d-2e47-4a19-9f16-7535d952d915",
+          "operation": "generate_tests",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 10730,
+          "reserved_cost_micro_usd": 167300,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.007,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "0e62373a-7cf5-47f6-838c-f524c45ba183",
+          "project_id": "02753049-b9dd-4f4f-a4bf-3a5d2d89fe2e",
+          "created_at": "2026-10-22T12:37:32.405507+00:00",
+          "job_id": "b4d2566d-2e47-4a19-9f16-7535d952d915",
+          "operation": "validate_semantics",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 7238,
+          "reserved_cost_micro_usd": 96380,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.007,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "4b258b9c-2f58-4347-bc3b-f2a01b1161df",
+          "project_id": "02753049-b9dd-4f4f-a4bf-3a5d2d89fe2e",
+          "created_at": "2026-10-22T12:37:34.741291+00:00",
+          "job_id": "b4d2566d-2e47-4a19-9f16-7535d952d915",
+          "operation": "generate_patch",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 7088,
+          "reserved_cost_micro_usd": 106880,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.007,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        }
+      ],
+      "notice": "Успех JSON-генерации не означает корректность тестов. Резервы — верхняя оценка по настроенным тарифам, не счёт провайдера."
+    }
+  },
+  {
+    "marker": "CONTRACT_FALSE_REVIEW",
+    "project_id": "80813da9-898d-4d78-bfc5-8d7b334e7b1d",
+    "status": "completed",
+    "qa_report": {
+      "autonomous": true,
+      "manual_interventions": 0,
+      "generated_modules": 2,
+      "executed_cases": 3,
+      "passed": 2,
+      "assertion_failures": 1,
+      "errors": 0,
+      "findings": 1,
+      "verified_fix": true,
+      "applied": false,
+      "coverage": {
+        "totals": {
+          "percent_covered": 100.0,
+          "covered_lines": 1,
+          "num_statements": 1,
+          "covered_branches": 0,
+          "num_branches": 0
+        },
+        "files": {
+          "calc.py": {
+            "executed_lines": [
+              1
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "llm_calls": 5,
+      "reserved_cost_micro_usd": 584400,
+      "billed_cost_usd": null,
+      "limitations": [
+        "LLM semantic review is evidence-bound but fallible.",
+        "Runner observations are untrusted.",
+        "No correctness certificate or patch application."
+      ]
+    },
+    "validation": {
+      "version": 1,
+      "status": "validated",
+      "attempts": [
+        {
+          "plan_sha256": "8dbf611194d5e96ff5a1896b560d7eef0aacf4cd5772be7f575700b6f1ac04db",
+          "technical_kind": "valid",
+          "draft": {
+            "requirements": [
+              {
+                "key": "R1",
+                "text": "Функция add возвращает сумму двух чисел."
+              }
+            ],
+            "scenarios": [
+              {
+                "title": "Сложение двух положительных чисел",
+                "requirement": "R1",
+                "gherkin": "Feature: Addition\nScenario: Positive values\n Given two and three\n When add is called\n Then result is five",
+                "code": "from calc import add\n\ndef test_add():\n    assert add(2,3)==5\n",
+                "framework": "pytest",
+                "dimensions": [
+                  "positive"
+                ]
+              },
+              {
+                "title": "Границы сложения",
+                "requirement": "R1",
+                "gherkin": "Feature: Addition\nScenario: Zero\n Given a zero operand\n When add is called\n Then the value is unchanged",
+                "code": "from calc import add\n\ndef test_zero_right(): assert add(5,0)==5\ndef test_zero_both(): assert add(0,0)==0\n",
+                "framework": "pytest",
+                "dimensions": [
+                  "positive"
+                ]
+              }
+            ]
+          },
+          "review": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "invalid_test",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "invalid_test",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ]
+          },
+          "adjudication": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ],
+            "counterarguments": [
+              {
+                "scenario": 0,
+                "disputed_claim": "Explicit contract fixture: documented synthetic assertion.",
+                "code_quote": "from calc import add\n\ndef test_add():\n    assert add(2,3)==5\n",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "rationale": "Contract independent check refutes the intentionally wrong rejection using the unchanged assertion and quoted addition requirement."
+              },
+              {
+                "scenario": 1,
+                "disputed_claim": "Explicit contract fixture: documented synthetic assertion.",
+                "code_quote": "from calc import add\n\ndef test_zero_right(): assert add(5,0)==5\ndef test_zero_both(): assert add(0,0)==0\n",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "rationale": "Contract independent check refutes the intentionally wrong rejection using the unchanged assertion and quoted addition requirement."
+              }
+            ]
+          }
+        }
+      ],
+      "repairs": 0,
+      "manual_interventions": 0,
+      "technical": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": null,
+        "duration": 0.0,
+        "passed": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [],
+        "logs": "test_26388d4a6ee7492cadb3aed9fffea4e4.py::test_zero_right\ntest_26388d4a6ee7492cadb3aed9fffea4e4.py::test_zero_both\ntest_d2006712e1f84ded8c41cb1ed2692763.py::test_add\n\n3 tests collected in 0.01s\n",
+        "coverage": null,
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": {
+          "syntax": true,
+          "discovery": true,
+          "kind": "valid",
+          "collected": [
+            {
+              "test_id": "26388d4a-6ee7-492c-adb3-aed9fffea4e4",
+              "name": "test_zero_right"
+            },
+            {
+              "test_id": "26388d4a-6ee7-492c-adb3-aed9fffea4e4",
+              "name": "test_zero_both"
+            },
+            {
+              "test_id": "d2006712-e1f8-4ded-8c41-cb1ed2692763",
+              "name": "test_add"
+            }
+          ]
+        },
+        "snapshot_sha256": "62656fd87bc1423ddf403d8790483529d941f0b595bf3ddd3709b177f5b35134",
+        "runtime": "runsc",
+        "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+        "supervisor_duration": 1.259,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "technical_test_ids": [
+        "d2006712-e1f8-4ded-8c41-cb1ed2692763",
+        "26388d4a-6ee7-492c-adb3-aed9fffea4e4"
+      ],
+      "semantic_responses": [
+        {
+          "operation": "validate_semantics",
+          "response": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "invalid_test",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "invalid_test",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ]
+          }
+        },
+        {
+          "operation": "adjudicate_semantics",
+          "response": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ],
+            "counterarguments": [
+              {
+                "scenario": 0,
+                "disputed_claim": "Explicit contract fixture: documented synthetic assertion.",
+                "code_quote": "from calc import add\n\ndef test_add():\n    assert add(2,3)==5\n",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "rationale": "Contract independent check refutes the intentionally wrong rejection using the unchanged assertion and quoted addition requirement."
+              },
+              {
+                "scenario": 1,
+                "disputed_claim": "Explicit contract fixture: documented synthetic assertion.",
+                "code_quote": "from calc import add\n\ndef test_zero_right(): assert add(5,0)==5\ndef test_zero_both(): assert add(0,0)==0\n",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_FALSE_REVIEW",
+                "rationale": "Contract independent check refutes the intentionally wrong rejection using the unchanged assertion and quoted addition requirement."
+              }
+            ]
+          }
+        }
+      ],
+      "plan_sha256": "8dbf611194d5e96ff5a1896b560d7eef0aacf4cd5772be7f575700b6f1ac04db",
+      "classification": "reviewer_false_rejection"
+    },
+    "ai_statistics": {
+      "attempts": 5,
+      "succeeded": 5,
+      "failed": 0,
+      "reserved_tokens": 40040,
+      "reserved_cost_micro_usd": 584400,
+      "provider_usage_available": 0,
+      "calls": [
+        {
+          "id": "33f7d373-ecf9-4d31-af31-b72d5325858f",
+          "project_id": "80813da9-898d-4d78-bfc5-8d7b334e7b1d",
+          "created_at": "2026-10-22T12:37:38.610323+00:00",
+          "job_id": "882f5da7-0641-4c35-9663-18e235875b87",
+          "operation": "extract_requirements",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 5160,
+          "reserved_cost_micro_usd": 87600,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.007,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "dc7111f0-4f31-4dfd-a1e7-3cdb576480fc",
+          "project_id": "80813da9-898d-4d78-bfc5-8d7b334e7b1d",
+          "created_at": "2026-10-22T12:37:38.637628+00:00",
+          "job_id": "882f5da7-0641-4c35-9663-18e235875b87",
+          "operation": "generate_tests",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 10732,
+          "reserved_cost_micro_usd": 167320,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.008,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "d7178fd4-87bb-493e-8f7d-785d034be070",
+          "project_id": "80813da9-898d-4d78-bfc5-8d7b334e7b1d",
+          "created_at": "2026-10-22T12:37:40.027735+00:00",
+          "job_id": "882f5da7-0641-4c35-9663-18e235875b87",
+          "operation": "validate_semantics",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 7242,
+          "reserved_cost_micro_usd": 96420,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.008,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "8ee68c4c-99b0-4cc8-9e0f-14eca817e810",
+          "project_id": "80813da9-898d-4d78-bfc5-8d7b334e7b1d",
+          "created_at": "2026-10-22T12:37:40.050413+00:00",
+          "job_id": "882f5da7-0641-4c35-9663-18e235875b87",
+          "operation": "adjudicate_semantics",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 9816,
+          "reserved_cost_micro_usd": 126160,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.008,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "62fce13b-25db-4d53-aeca-f9cbb9f96d06",
+          "project_id": "80813da9-898d-4d78-bfc5-8d7b334e7b1d",
+          "created_at": "2026-10-22T12:37:43.281294+00:00",
+          "job_id": "882f5da7-0641-4c35-9663-18e235875b87",
+          "operation": "generate_patch",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 7090,
+          "reserved_cost_micro_usd": 106900,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.007,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        }
+      ],
+      "notice": "Успех JSON-генерации не означает корректность тестов. Резервы — верхняя оценка по настроенным тарифам, не счёт провайдера."
+    }
+  },
+  {
+    "marker": "CONTRACT_AMBIGUOUS",
+    "project_id": "e72b5fb8-7696-42f9-b903-11823fcca16a",
+    "status": "manual_review_required",
+    "qa_report": {
+      "autonomous": false,
+      "manual_interventions": 0,
+      "stopped_stage": "generation",
+      "classification": "requirement_ambiguity",
+      "applied": false
+    },
+    "validation": {
+      "version": 1,
+      "status": "manual_review_required",
+      "attempts": [
+        {
+          "plan_sha256": "8dbf611194d5e96ff5a1896b560d7eef0aacf4cd5772be7f575700b6f1ac04db",
+          "technical_kind": "valid",
+          "draft": {
+            "requirements": [
+              {
+                "key": "R1",
+                "text": "Функция add возвращает сумму двух чисел."
+              }
+            ],
+            "scenarios": [
+              {
+                "title": "Сложение двух положительных чисел",
+                "requirement": "R1",
+                "gherkin": "Feature: Addition\nScenario: Positive values\n Given two and three\n When add is called\n Then result is five",
+                "code": "from calc import add\n\ndef test_add():\n    assert add(2,3)==5\n",
+                "framework": "pytest",
+                "dimensions": [
+                  "positive"
+                ]
+              },
+              {
+                "title": "Границы сложения",
+                "requirement": "R1",
+                "gherkin": "Feature: Addition\nScenario: Zero\n Given a zero operand\n When add is called\n Then the value is unchanged",
+                "code": "from calc import add\n\ndef test_zero_right(): assert add(5,0)==5\ndef test_zero_both(): assert add(0,0)==0\n",
+                "framework": "pytest",
+                "dimensions": [
+                  "positive"
+                ]
+              }
+            ]
+          },
+          "review": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "ambiguous",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AMBIGUOUS",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "ambiguous",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AMBIGUOUS",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ]
+          },
+          "adjudication": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "ambiguous",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AMBIGUOUS",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "ambiguous",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AMBIGUOUS",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ],
+            "counterarguments": []
+          }
+        }
+      ],
+      "repairs": 0,
+      "manual_interventions": 0,
+      "technical": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": null,
+        "duration": 0.0,
+        "passed": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [],
+        "logs": "test_700e6e783db444adae9d5b785460f56d.py::test_add\ntest_b3490b633bff4c838bc05982df287ed1.py::test_zero_right\ntest_b3490b633bff4c838bc05982df287ed1.py::test_zero_both\n\n3 tests collected in 0.01s\n",
+        "coverage": null,
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": {
+          "syntax": true,
+          "discovery": true,
+          "kind": "valid",
+          "collected": [
+            {
+              "test_id": "700e6e78-3db4-44ad-ae9d-5b785460f56d",
+              "name": "test_add"
+            },
+            {
+              "test_id": "b3490b63-3bff-4c83-8bc0-5982df287ed1",
+              "name": "test_zero_right"
+            },
+            {
+              "test_id": "b3490b63-3bff-4c83-8bc0-5982df287ed1",
+              "name": "test_zero_both"
+            }
+          ]
+        },
+        "snapshot_sha256": "d868538b0e727db396e8f8977e0b1ca2b84622d790e6ce51be36df3d017426d5",
+        "runtime": "runsc",
+        "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+        "supervisor_duration": 1.011,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "technical_test_ids": [
+        "700e6e78-3db4-44ad-ae9d-5b785460f56d",
+        "b3490b63-3bff-4c83-8bc0-5982df287ed1"
+      ],
+      "semantic_responses": [
+        {
+          "operation": "validate_semantics",
+          "response": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "ambiguous",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AMBIGUOUS",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "ambiguous",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AMBIGUOUS",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ]
+          }
+        },
+        {
+          "operation": "adjudicate_semantics",
+          "response": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "ambiguous",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AMBIGUOUS",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "ambiguous",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_AMBIGUOUS",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ],
+            "counterarguments": []
+          }
+        }
+      ],
+      "classification": "requirement_ambiguity"
+    },
+    "ai_statistics": {
+      "attempts": 4,
+      "succeeded": 4,
+      "failed": 0,
+      "reserved_tokens": 32920,
+      "reserved_cost_micro_usd": 477200,
+      "provider_usage_available": 0,
+      "calls": [
+        {
+          "id": "c2abd649-dc43-400b-a382-de821f37f030",
+          "project_id": "e72b5fb8-7696-42f9-b903-11823fcca16a",
+          "created_at": "2026-10-22T12:37:47.564428+00:00",
+          "job_id": "835fab99-2d69-4351-8f9c-832fb207dc9a",
+          "operation": "extract_requirements",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 5157,
+          "reserved_cost_micro_usd": 87570,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.008,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "8872ed99-ae95-48d8-a5aa-33e5345e3094",
+          "project_id": "e72b5fb8-7696-42f9-b903-11823fcca16a",
+          "created_at": "2026-10-22T12:37:47.587589+00:00",
+          "job_id": "835fab99-2d69-4351-8f9c-832fb207dc9a",
+          "operation": "generate_tests",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 10729,
+          "reserved_cost_micro_usd": 167290,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.008,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "561bbe3e-8c11-4304-aca6-7e2ebbc1be21",
+          "project_id": "e72b5fb8-7696-42f9-b903-11823fcca16a",
+          "created_at": "2026-10-22T12:37:48.711245+00:00",
+          "job_id": "835fab99-2d69-4351-8f9c-832fb207dc9a",
+          "operation": "validate_semantics",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 7236,
+          "reserved_cost_micro_usd": 96360,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.007,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "6b7f4b77-6ecc-4469-827e-60098c8c9525",
+          "project_id": "e72b5fb8-7696-42f9-b903-11823fcca16a",
+          "created_at": "2026-10-22T12:37:48.732428+00:00",
+          "job_id": "835fab99-2d69-4351-8f9c-832fb207dc9a",
+          "operation": "adjudicate_semantics",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 9798,
+          "reserved_cost_micro_usd": 125980,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.008,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        }
+      ],
+      "notice": "Успех JSON-генерации не означает корректность тестов. Резервы — верхняя оценка по настроенным тарифам, не счёт провайдера."
+    }
+  },
+  {
+    "marker": "CONTRACT_BROKEN_TEST",
+    "project_id": "01b97a51-ca4d-41fa-9a98-3909ba3769bc",
+    "status": "completed",
+    "qa_report": {
+      "autonomous": true,
+      "manual_interventions": 0,
+      "generated_modules": 2,
+      "executed_cases": 3,
+      "passed": 2,
+      "assertion_failures": 1,
+      "errors": 0,
+      "findings": 1,
+      "verified_fix": true,
+      "applied": false,
+      "coverage": {
+        "totals": {
+          "percent_covered": 100.0,
+          "covered_lines": 1,
+          "num_statements": 1,
+          "covered_branches": 0,
+          "num_branches": 0
+        },
+        "files": {
+          "calc.py": {
+            "executed_lines": [
+              1
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "llm_calls": 5,
+      "reserved_cost_micro_usd": 611220,
+      "billed_cost_usd": null,
+      "limitations": [
+        "LLM semantic review is evidence-bound but fallible.",
+        "Runner observations are untrusted.",
+        "No correctness certificate or patch application."
+      ]
+    },
+    "validation": {
+      "version": 1,
+      "status": "validated",
+      "attempts": [
+        {
+          "plan_sha256": "d131606d4830d3269f94bc27199d8e524a18754e2b243e90df57a9abb51ac65b",
+          "technical_kind": "syntax_error",
+          "draft": {
+            "requirements": [
+              {
+                "key": "R1",
+                "text": "Функция add возвращает сумму двух чисел."
+              }
+            ],
+            "scenarios": [
+              {
+                "title": "Сложение двух положительных чисел",
+                "requirement": "R1",
+                "gherkin": "Feature: Addition\nScenario: Positive values\n Given two and three\n When add is called\n Then result is five",
+                "code": "def broken(",
+                "framework": "pytest",
+                "dimensions": [
+                  "positive"
+                ]
+              },
+              {
+                "title": "Границы сложения",
+                "requirement": "R1",
+                "gherkin": "Feature: Addition\nScenario: Zero\n Given a zero operand\n When add is called\n Then the value is unchanged",
+                "code": "from calc import add\n\ndef test_zero_right(): assert add(5,0)==5\ndef test_zero_both(): assert add(0,0)==0\n",
+                "framework": "pytest",
+                "dimensions": [
+                  "positive"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "plan_sha256": "9c6783c5878522d2ee0cf8dc2326486294fb8503e580cace8556ec7a1a374c64",
+          "technical_kind": "valid",
+          "draft": {
+            "requirements": [
+              {
+                "key": "R1",
+                "text": "Функция add возвращает сумму двух чисел."
+              }
+            ],
+            "scenarios": [
+              {
+                "title": "Сложение двух положительных чисел",
+                "requirement": "R1",
+                "gherkin": "Feature: Addition\nScenario: Positive values\n Given two and three\n When add is called\n Then result is five",
+                "code": "from calc import add\ndef test_add(): assert add(2,3)==5",
+                "framework": "pytest",
+                "dimensions": [
+                  "positive"
+                ]
+              },
+              {
+                "title": "Границы сложения",
+                "requirement": "R1",
+                "gherkin": "Feature: Addition\nScenario: Zero\n Given a zero operand\n When add is called\n Then the value is unchanged",
+                "code": "from calc import add\n\ndef test_zero_right(): assert add(5,0)==5\ndef test_zero_both(): assert add(0,0)==0\n",
+                "framework": "pytest",
+                "dimensions": [
+                  "positive"
+                ]
+              }
+            ]
+          },
+          "review": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_BROKEN_TEST",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_BROKEN_TEST",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ]
+          }
+        }
+      ],
+      "repairs": 1,
+      "manual_interventions": 0,
+      "technical": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": null,
+        "duration": 0.0,
+        "passed": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [],
+        "logs": "test_d98997835f2449738764b2a09e7492dc.py::test_add\ntest_ff62f950c2074bd0b9f15493073c16be.py::test_zero_right\ntest_ff62f950c2074bd0b9f15493073c16be.py::test_zero_both\n\n3 tests collected in 0.01s\n",
+        "coverage": null,
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": {
+          "syntax": true,
+          "discovery": true,
+          "kind": "valid",
+          "collected": [
+            {
+              "test_id": "d9899783-5f24-4973-8764-b2a09e7492dc",
+              "name": "test_add"
+            },
+            {
+              "test_id": "ff62f950-c207-4bd0-b9f1-5493073c16be",
+              "name": "test_zero_right"
+            },
+            {
+              "test_id": "ff62f950-c207-4bd0-b9f1-5493073c16be",
+              "name": "test_zero_both"
+            }
+          ]
+        },
+        "snapshot_sha256": "fabec74733b1325349b4ac3531068dfc073be7106e8a0ca86aea2ec2e406cd58",
+        "runtime": "runsc",
+        "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+        "supervisor_duration": 0.996,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "technical_test_ids": [
+        "d9899783-5f24-4973-8764-b2a09e7492dc",
+        "ff62f950-c207-4bd0-b9f1-5493073c16be"
+      ],
+      "semantic_responses": [
+        {
+          "operation": "validate_semantics",
+          "response": {
+            "assessments": [
+              {
+                "scenario": 0,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_BROKEN_TEST",
+                "assertion_indexes": [
+                  0
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              },
+              {
+                "scenario": 1,
+                "verdict": "supported",
+                "requirement_quote": "R1. Функция add возвращает сумму a и b. CONTRACT_BROKEN_TEST",
+                "assertion_indexes": [
+                  0,
+                  1
+                ],
+                "rationale": "Explicit contract fixture: documented synthetic assertion."
+              }
+            ]
+          }
+        }
+      ],
+      "plan_sha256": "9c6783c5878522d2ee0cf8dc2326486294fb8503e580cace8556ec7a1a374c64",
+      "classification": "supported"
+    },
+    "ai_statistics": {
+      "attempts": 5,
+      "succeeded": 5,
+      "failed": 0,
+      "reserved_tokens": 39522,
+      "reserved_cost_micro_usd": 611220,
+      "provider_usage_available": 0,
+      "calls": [
+        {
+          "id": "71adf4cd-670d-49c9-a469-a88353bc5251",
+          "project_id": "01b97a51-ca4d-41fa-9a98-3909ba3769bc",
+          "created_at": "2026-10-22T12:37:49.279849+00:00",
+          "job_id": "78ee36cc-93fd-474e-9011-defbeaa1cec1",
+          "operation": "extract_requirements",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 5159,
+          "reserved_cost_micro_usd": 87590,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.007,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "1c06840f-e5e2-4694-95ac-026a122f71e3",
+          "project_id": "01b97a51-ca4d-41fa-9a98-3909ba3769bc",
+          "created_at": "2026-10-22T12:37:49.303603+00:00",
+          "job_id": "78ee36cc-93fd-474e-9011-defbeaa1cec1",
+          "operation": "generate_tests",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 10731,
+          "reserved_cost_micro_usd": 167310,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.008,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "1de4349f-eb2c-4ff2-9f8a-5ff9edfa00c1",
+          "project_id": "01b97a51-ca4d-41fa-9a98-3909ba3769bc",
+          "created_at": "2026-10-22T12:37:49.324316+00:00",
+          "job_id": "78ee36cc-93fd-474e-9011-defbeaa1cec1",
+          "operation": "repair_tests",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 9329,
+          "reserved_cost_micro_usd": 153290,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.007,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "a406dd0a-6335-47b9-a13e-6934c0072bf9",
+          "project_id": "01b97a51-ca4d-41fa-9a98-3909ba3769bc",
+          "created_at": "2026-10-22T12:37:50.445976+00:00",
+          "job_id": "78ee36cc-93fd-474e-9011-defbeaa1cec1",
+          "operation": "validate_semantics",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 7228,
+          "reserved_cost_micro_usd": 96280,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.008,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        },
+        {
+          "id": "600fc7fd-4782-48a5-a58d-804b290b292e",
+          "project_id": "01b97a51-ca4d-41fa-9a98-3909ba3769bc",
+          "created_at": "2026-10-22T12:37:52.987599+00:00",
+          "job_id": "78ee36cc-93fd-474e-9011-defbeaa1cec1",
+          "operation": "generate_patch",
+          "attempt": 1,
+          "mode": "contract-test",
+          "outcome": "succeeded",
+          "reserved_tokens": 7075,
+          "reserved_cost_micro_usd": 106750,
+          "usage": null,
+          "error_code": null,
+          "duration": 0.01,
+          "model": "gpt-4.1-mini",
+          "provider": "llm-stub:8101",
+          "price_rates": {
+            "input_usd_per_million": 10.0,
+            "output_usd_per_million": 30.0
+          },
+          "reasoning_effort": null,
+          "http_status": 200
+        }
+      ],
+      "notice": "Успех JSON-генерации не означает корректность тестов. Резервы — верхняя оценка по настроенным тарифам, не счёт провайдера."
+    }
+  }
+]
