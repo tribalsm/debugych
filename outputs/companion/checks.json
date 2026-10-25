@@ -1,0 +1,27 @@
+{
+  "typecheck": "passed",
+  "lint": "passed, zero warnings",
+  "build": "passed, lazy 3D chunk size warning",
+  "companionUnit": {
+    "passed": 7,
+    "realGLBs": true
+  },
+  "backendUnit": {
+    "passed": 150
+  },
+  "regressionBrowser": {
+    "passed": 4,
+    "liveAIAutonomousSkipped": 2
+  },
+  "paidLLMCalls": 0,
+  "merge": false,
+  "baseline": "b9ac4a26d709f0ccd5634efdf6cdb362fdbeb903",
+  "branch": "release/ai-companion-1",
+  "companionE2E": {
+    "expected": 4,
+    "unexpected": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "duration": 64854.922000000006
+  }
+}

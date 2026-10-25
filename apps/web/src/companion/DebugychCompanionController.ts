@@ -1,0 +1,23 @@
+import{AnimationMixer,LoopOnce,LoopRepeat,SkinnedMesh,Mesh,Vector3,type AnimationAction,type AnimationClip,type Object3D,type MeshStandardMaterial}from'three';import type{AgentState}from'../MascotSlot';import{createHeroRig}from'./heroRig';import{DebugychFacialController}from'./DebugychFacialController';
+export type CompanionAssetKind='interaction'|'workstation';
+/** One mixer per mounted hero. Animation completion never changes an Engine state. */
+export class DebugychCompanionController{
+ static activeInstances=0;
+ readonly mixer:AnimationMixer;readonly actions:Record<string,AnimationAction>;state:AgentState='idle';clip='';private action?:AnimationAction;private key='';private elapsed=0;private total=0;private rest='idle';private hero?:ReturnType<typeof createHeroRig>;private face:DebugychFacialController;private lift=0;private attention=0;private happy=0;private disposed=false;private leds:MeshStandardMaterial[]=[];
+ constructor(readonly root:Object3D,clips:AnimationClip[],readonly kind:CompanionAssetKind){DebugychCompanionController.activeInstances++;if(kind==='interaction'){this.hero=createHeroRig(root,clips);this.mixer=this.hero.mixer}else this.mixer=new AnimationMixer(root);this.actions=Object.fromEntries(clips.map(c=>[c.name,this.mixer.clipAction(c)]));this.face=new DebugychFacialController(root);root.traverse(o=>{if(o instanceof Mesh&&o.name==='LED_Ring')this.leds.push(o.material as MeshStandardMaterial)});this.mixer.addEventListener('finished',this.finished);this.transition('idle','initial')}
+ transition(state:AgentState,eventKey:string){if(this.disposed||this.key===eventKey)return;this.key=eventKey;const same=this.state===state;this.state=state;if(same&&['idle','fixing','testing','analyzing','generating'].includes(state)&&this.action)return;this.elapsed=0;let clip='idle',loop=true;
+  if(this.kind==='workstation'){this.rest='seated_idle';clip=state==='fixing'||state==='generating'?'typing_loop':state==='testing'?'testing_at_laptop':state==='success'?'sit_success':state==='error'?'error_at_laptop':state==='analyzing'?'thinking_at_laptop':'seated_idle';loop=['seated_idle','typing_loop','testing_at_laptop'].includes(clip)}
+  else{this.rest=['analyzing','bug_found'].includes(state)?'hold_magnifier':'idle';clip=state==='analyzing'?'inspect_with_magnifier':state==='bug_found'?'bug_found_magnifier':state==='generating'?'analyzing':state==='success'?'success':'idle';loop=clip==='idle'}
+  this.play(clip,loop)
+ }
+ private play(name:string,loop:boolean){const next=this.actions[name];if(!next)throw Error('Missing companion animation '+name);const old=this.action;const duration=next.getClip().duration;next.reset().setEffectiveWeight(1).setEffectiveTimeScale(loop?1:duration/Math.min(duration,2.8)).setLoop(loop?LoopRepeat:LoopOnce,loop?Infinity:1);next.clampWhenFinished=!loop;next.play();if(old&&old!==next)next.crossFadeFrom(old,.24,false);this.action=next;this.clip=name}
+ private finished=(e:{action:AnimationAction})=>{if(e.action===this.action)this.play(this.rest,true)};
+ update(delta:number){if(this.disposed)return;const dt=Math.min(delta,.1);this.elapsed+=dt;this.total+=dt;const show=['analyzing','bug_found','success'].includes(this.state);const mag=this.root.getObjectByName('MagnifierRoot');if(mag)mag.visible=show;
+  if(this.hero){const factor=1-Math.exp(-dt*6);this.lift+=((this.state==='analyzing'||this.state==='bug_found'?.83:this.state==='success'?.1:0)-this.lift)*factor;this.attention+=((this.state==='analyzing'||this.state==='bug_found'?.85:this.state==='generating'||this.state==='testing'?.3:0)-this.attention)*factor;this.happy+=((this.state==='success'?Math.max(.25,1-this.elapsed/4):0)-this.happy)*factor;this.hero.pose(dt,this.total,new Vector3(.25,.57,.38),this.attention,this.lift,this.happy,this.state==='success'?this.elapsed+.5:0);}
+  else this.mixer.update(dt);
+  if(this.state==='error'&&this.elapsed<1.5){const head=this.root.getObjectByName('mixamorigHead');if(head)head.rotation.y+=Math.sin(this.elapsed*Math.PI*4)*.035*Math.sin(this.elapsed/1.5*Math.PI)}
+  for(const m of this.leds)m.emissive.set(this.state==='bug_found'?'#ff4454':this.state==='success'?'#42d89b':'#368ddd');
+  this.face.update(dt,this.state,this.elapsed,this.kind==='interaction'&&show)
+ }
+ dispose(){if(this.disposed)return;this.disposed=true;DebugychCompanionController.activeInstances--;this.mixer.removeEventListener('finished',this.finished);if(this.hero)this.hero.dispose();else{this.mixer.stopAllAction();this.mixer.uncacheRoot(this.root);const skeletons=new Set<SkinnedMesh['skeleton']>();this.root.traverse(o=>{if(o instanceof SkinnedMesh)skeletons.add(o.skeleton)});skeletons.forEach(s=>s.dispose())}}
+}

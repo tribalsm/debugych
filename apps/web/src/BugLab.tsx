@@ -8,14 +8,15 @@ export type Assessment={original_fixed?:boolean;regressions_absent?:boolean;all_
 export type Fix={id:string;bug_id:string;diff:string;verified:boolean;applied:boolean;explanation:string;origin?:string;patch_sha256?:string;verification_id?:string;assessment?:Assessment|null;changes?:{path:string}[]};
 type Measurement={status:string;passed?:number;failed?:number;errors?:number;skipped?:number;duration?:number;runtime?:string;image_id?:string;error?:string;failure_kind?:string;cases?:{name:string;status:string;traceback?:string}[]};
 export type VerificationRecord=Measurement&{id:string;operation:string;fix_id?:string;baseline?:Measurement;focused?:Measurement;regression?:Measurement;replay?:Measurement;assessment?:Assessment;verified?:boolean};
-type Props={bugs:Finding[];fixes:Fix[];runs:VerificationRecord[];project?:{id:string;demo:boolean};disabled:boolean;ai:boolean;consent:(projectId:string)=>Promise<unknown>;request:(path:string,body?:unknown)=>Promise<unknown>;act:(fn:()=>Promise<unknown>,message?:string)=>Promise<void>};
+type Props={focusBug?:{id:string;revision:number};bugs:Finding[];fixes:Fix[];runs:VerificationRecord[];project?:{id:string;demo:boolean};disabled:boolean;ai:boolean;consent:(projectId:string)=>Promise<unknown>;request:(path:string,body?:unknown)=>Promise<unknown>;act:(fn:()=>Promise<unknown>,message?:string)=>Promise<void>};
 const labels:Record<string,string>={suspected:'Предположение',reproduced:'Воспроизведено, требует проверки',confirmed:'Подтверждено тестом',fix_verified:'Исправление проверено',queued:'В очереди',running:'Выполняется',completed:'Завершён',failed:'Ошибка'};
 function Badge({value}:{value:string}){return <span className={'badge '+value}>{labels[value]||value}</span>}
 function Measure({title,value}:{title:string;value?:Measurement}){return <section className="measurement"><h3>{title}</h3>{!value?<p>Прогон ещё не выполнен</p>:<><p><Badge value={value.status}/> {value.passed??0} passed · {value.failed??0} failed · {value.errors??0} errors · {value.duration??'—'} с</p>{value.runtime&&<small>Runtime: {value.runtime} · {value.image_id?.slice(0,26)}</small>}{value.error&&<div className="alert error">{value.error}</div>}<details><summary>Тесты и доказательства</summary>{value.cases?.map((c,i)=><details key={i}><summary><span className={c.status==='passed'?'green':'red'}>{c.status}</span> · {c.name}</summary>{c.traceback&&<pre>{c.traceback}</pre>}</details>)}</details></>}</section>}
 
-export function BugLab({bugs,fixes,runs,project,disabled,ai,request,consent,act}:Props){
+export function BugLab({bugs,fixes,runs,project,disabled,ai,request,consent,act,focusBug}:Props){
  const [selectedBug,setSelectedBug]=useState(()=>localStorage.getItem('debugych-bug-'+project?.id)||''),[selectedFix,setSelectedFix]=useState('');
  const [review,setReview]=useState(''),[checked,setChecked]=useState(false);
+ useEffect(()=>{if(focusBug){setSelectedBug(focusBug.id);setSelectedFix('');setChecked(false);setReview('')}},[focusBug]);
  const bug=bugs.find(b=>b.id===selectedBug)||bugs[0];
  useEffect(()=>{setChecked(false);setReview('');setSelectedFix('')},[bug?.id]);
  const versions=fixes.filter(f=>f.bug_id===bug?.id);

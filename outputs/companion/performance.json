@@ -1,0 +1,32 @@
+{
+  "first": "15 кадров/с · 50 геометрий · 41 текстур",
+  "last": "16 кадров/с · 50 геометрий · 41 текстур",
+  "resources": [
+    {
+      "name": "debugych_interaction.glb",
+      "milliseconds": 60.80000000074506,
+      "bytes": 13376032
+    },
+    {
+      "name": "debugych_bug_final.glb",
+      "milliseconds": 44.69999999925494,
+      "bytes": 10029084
+    },
+    {
+      "name": "debugych_seated.glb",
+      "milliseconds": 75.10000000149012,
+      "bytes": 10361368
+    },
+    {
+      "name": "debugych_chair.glb",
+      "milliseconds": 3.800000000745058,
+      "bytes": 135672
+    },
+    {
+      "name": "debugych_laptop_optimized.glb",
+      "milliseconds": 47.19999999925494,
+      "bytes": 4971040
+    }
+  ],
+  "note": "Localhost Chromium, 24Hz demand renderer; warm renderer resource counts, not total GPU bytes"
+}

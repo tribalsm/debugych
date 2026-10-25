@@ -1,0 +1,30 @@
+{
+  "modelsModified": false,
+  "assets": [
+    {
+      "name": "debugych_interaction.glb",
+      "matches": true,
+      "bytes": 13376032
+    },
+    {
+      "name": "debugych_bug_final.glb",
+      "matches": true,
+      "bytes": 10029084
+    },
+    {
+      "name": "debugych_seated.glb",
+      "matches": true,
+      "bytes": 10361368
+    },
+    {
+      "name": "debugych_chair.glb",
+      "matches": true,
+      "bytes": 135672
+    },
+    {
+      "name": "debugych_laptop_optimized.glb",
+      "matches": true,
+      "bytes": 4971040
+    }
+  ]
+}

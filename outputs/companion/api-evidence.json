@@ -1,0 +1,1050 @@
+{
+  "health": {
+    "status": "ok",
+    "ai_available": false,
+    "ai_status": "missing_LLM_API_KEY",
+    "ai_provider_mode": "live",
+    "execution": "trusted-demo-only",
+    "sandbox_configured": false,
+    "sandbox_available": false,
+    "playwright_available": false
+  },
+  "proof": {
+    "project": {
+      "id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+      "name": "Shop API · граничные значения",
+      "demo": true,
+      "created_at": "2026-10-25T14:27:55.337870"
+    },
+    "runs": [
+      {
+        "id": "dd99eedb-feba-4a24-b4cd-4a9e2e535beb",
+        "project_id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+        "created_at": "2026-10-25T14:27:55.818994",
+        "status": "completed",
+        "operation": "analyze",
+        "ai_consent": null,
+        "privacy_manifest": [
+          {
+            "name": "shop.py",
+            "excluded": false,
+            "redactions": 0,
+            "characters": 923
+          },
+          {
+            "name": "requirements.md",
+            "excluded": false,
+            "redactions": 0,
+            "characters": 403
+          }
+        ],
+        "analysis": [
+          {
+            "file": "shop.py",
+            "functions": [
+              {
+                "name": "pay",
+                "line": 7
+              },
+              {
+                "name": "discount",
+                "line": 12
+              },
+              {
+                "name": "order",
+                "line": 17
+              },
+              {
+                "name": "payment",
+                "line": 27
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "343c0d79-bd62-4fba-a6c9-d7c4128f4ce1",
+        "project_id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+        "created_at": "2026-10-25T14:27:57.141103",
+        "status": "completed",
+        "operation": "run",
+        "fixed": false,
+        "duration": 2.156,
+        "passed": 13,
+        "failed": 1,
+        "cases": [
+          {
+            "name": "test_exact_balance",
+            "status": "failed",
+            "traceback": "def test_exact_balance():\n>       assert pay(1000, 1000) is True, 'R1: exact balance must be accepted'\nE       AssertionError: R1: exact balance must be accepted\nE       assert False is True\nE        +  where False = pay(1000, 1000)\n\ntest_shop.py:5: AssertionError",
+            "duration": 0.002
+          },
+          {
+            "name": "test_available_balance",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_insufficient_balance",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_invalid_payment[100-0]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_invalid_payment[100--1]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_invalid_payment[-1-1]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_discount[999-999]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_discount[1000-900]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_discount[1001-900.9]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_negative_total",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_order[1]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_order[100]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_invalid_order[0]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_invalid_order[101]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "coverage": {
+          "meta": {
+            "format": 3,
+            "version": "7.8.0",
+            "timestamp": "2026-10-25T21:27:59.528095",
+            "branch_coverage": true,
+            "show_contexts": false
+          },
+          "files": {
+            "shop.py": {
+              "executed_lines": [
+                1,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9,
+                10,
+                12,
+                13,
+                14,
+                15,
+                17,
+                18,
+                19,
+                20,
+                22,
+                23,
+                24,
+                26,
+                27
+              ],
+              "summary": {
+                "covered_lines": 20,
+                "num_statements": 24,
+                "percent_covered": 86.66666666666667,
+                "percent_covered_display": "87",
+                "missing_lines": 4,
+                "excluded_lines": 0,
+                "num_branches": 6,
+                "num_partial_branches": 0,
+                "covered_branches": 6,
+                "missing_branches": 0
+              },
+              "missing_lines": [
+                28,
+                29,
+                30,
+                31
+              ],
+              "excluded_lines": [],
+              "executed_branches": [
+                [
+                  8,
+                  9
+                ],
+                [
+                  8,
+                  10
+                ],
+                [
+                  13,
+                  14
+                ],
+                [
+                  13,
+                  15
+                ],
+                [
+                  18,
+                  19
+                ],
+                [
+                  18,
+                  20
+                ]
+              ],
+              "missing_branches": [],
+              "functions": {
+                "pay": {
+                  "executed_lines": [
+                    8,
+                    9,
+                    10
+                  ],
+                  "summary": {
+                    "covered_lines": 3,
+                    "num_statements": 3,
+                    "percent_covered": 100.0,
+                    "percent_covered_display": "100",
+                    "missing_lines": 0,
+                    "excluded_lines": 0,
+                    "num_branches": 2,
+                    "num_partial_branches": 0,
+                    "covered_branches": 2,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [],
+                  "excluded_lines": [],
+                  "executed_branches": [
+                    [
+                      8,
+                      9
+                    ],
+                    [
+                      8,
+                      10
+                    ]
+                  ],
+                  "missing_branches": []
+                },
+                "discount": {
+                  "executed_lines": [
+                    13,
+                    14,
+                    15
+                  ],
+                  "summary": {
+                    "covered_lines": 3,
+                    "num_statements": 3,
+                    "percent_covered": 100.0,
+                    "percent_covered_display": "100",
+                    "missing_lines": 0,
+                    "excluded_lines": 0,
+                    "num_branches": 2,
+                    "num_partial_branches": 0,
+                    "covered_branches": 2,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [],
+                  "excluded_lines": [],
+                  "executed_branches": [
+                    [
+                      13,
+                      14
+                    ],
+                    [
+                      13,
+                      15
+                    ]
+                  ],
+                  "missing_branches": []
+                },
+                "order": {
+                  "executed_lines": [
+                    18,
+                    19,
+                    20
+                  ],
+                  "summary": {
+                    "covered_lines": 3,
+                    "num_statements": 3,
+                    "percent_covered": 100.0,
+                    "percent_covered_display": "100",
+                    "missing_lines": 0,
+                    "excluded_lines": 0,
+                    "num_branches": 2,
+                    "num_partial_branches": 0,
+                    "covered_branches": 2,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [],
+                  "excluded_lines": [],
+                  "executed_branches": [
+                    [
+                      18,
+                      19
+                    ],
+                    [
+                      18,
+                      20
+                    ]
+                  ],
+                  "missing_branches": []
+                },
+                "payment": {
+                  "executed_lines": [],
+                  "summary": {
+                    "covered_lines": 0,
+                    "num_statements": 4,
+                    "percent_covered": 0.0,
+                    "percent_covered_display": "0",
+                    "missing_lines": 4,
+                    "excluded_lines": 0,
+                    "num_branches": 0,
+                    "num_partial_branches": 0,
+                    "covered_branches": 0,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [
+                    28,
+                    29,
+                    30,
+                    31
+                  ],
+                  "excluded_lines": [],
+                  "executed_branches": [],
+                  "missing_branches": []
+                },
+                "": {
+                  "executed_lines": [
+                    1,
+                    2,
+                    3,
+                    5,
+                    7,
+                    12,
+                    17,
+                    22,
+                    23,
+                    24,
+                    26,
+                    27
+                  ],
+                  "summary": {
+                    "covered_lines": 11,
+                    "num_statements": 11,
+                    "percent_covered": 100.0,
+                    "percent_covered_display": "100",
+                    "missing_lines": 0,
+                    "excluded_lines": 0,
+                    "num_branches": 0,
+                    "num_partial_branches": 0,
+                    "covered_branches": 0,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [],
+                  "excluded_lines": [],
+                  "executed_branches": [],
+                  "missing_branches": []
+                }
+              },
+              "classes": {
+                "Payment": {
+                  "executed_lines": [],
+                  "summary": {
+                    "covered_lines": 0,
+                    "num_statements": 0,
+                    "percent_covered": 100.0,
+                    "percent_covered_display": "100",
+                    "missing_lines": 0,
+                    "excluded_lines": 0,
+                    "num_branches": 0,
+                    "num_partial_branches": 0,
+                    "covered_branches": 0,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [],
+                  "excluded_lines": [],
+                  "executed_branches": [],
+                  "missing_branches": []
+                },
+                "": {
+                  "executed_lines": [
+                    1,
+                    2,
+                    3,
+                    5,
+                    7,
+                    8,
+                    9,
+                    10,
+                    12,
+                    13,
+                    14,
+                    15,
+                    17,
+                    18,
+                    19,
+                    20,
+                    22,
+                    23,
+                    24,
+                    26,
+                    27
+                  ],
+                  "summary": {
+                    "covered_lines": 20,
+                    "num_statements": 24,
+                    "percent_covered": 86.66666666666667,
+                    "percent_covered_display": "87",
+                    "missing_lines": 4,
+                    "excluded_lines": 0,
+                    "num_branches": 6,
+                    "num_partial_branches": 0,
+                    "covered_branches": 6,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [
+                    28,
+                    29,
+                    30,
+                    31
+                  ],
+                  "excluded_lines": [],
+                  "executed_branches": [
+                    [
+                      8,
+                      9
+                    ],
+                    [
+                      8,
+                      10
+                    ],
+                    [
+                      13,
+                      14
+                    ],
+                    [
+                      13,
+                      15
+                    ],
+                    [
+                      18,
+                      19
+                    ],
+                    [
+                      18,
+                      20
+                    ]
+                  ],
+                  "missing_branches": []
+                }
+              }
+            }
+          },
+          "totals": {
+            "covered_lines": 20,
+            "num_statements": 24,
+            "percent_covered": 86.66666666666667,
+            "percent_covered_display": "87",
+            "missing_lines": 4,
+            "excluded_lines": 0,
+            "num_branches": 6,
+            "num_partial_branches": 0,
+            "covered_branches": 6,
+            "missing_branches": 0
+          }
+        },
+        "logs": "F.............                                                           [100%]\n================================== FAILURES ===================================\n_____________________________ test_exact_balance ______________________________\n\n    def test_exact_balance():\n>       assert pay(1000, 1000) is True, 'R1: exact balance must be accepted'\nE       AssertionError: R1: exact balance must be accepted\nE       assert False is True\nE        +  where False = pay(1000, 1000)\n\ntest_shop.py:5: AssertionError\n- generated xml file: C:\\Users\\tribal\\AppData\\Local\\Temp\\debugych-ibpkacx5\\result.xml -\n=========================== short test summary info ===========================\nFAILED test_shop.py::test_exact_balance - AssertionError: R1: exact balance m...\n1 failed, 13 passed in 1.11s\n",
+        "trusted_demo": true
+      },
+      {
+        "id": "0d70a329-0ca5-49a9-913f-efbd576be4d5",
+        "project_id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+        "created_at": "2026-10-25T14:28:02.993493",
+        "status": "completed",
+        "operation": "verify",
+        "bug_id": "ffb2406a-f10c-49ff-8b52-b80010289b1c",
+        "fix_id": "e55663c9-8128-42ae-b84e-0e06653ac567",
+        "duration": 2.343,
+        "passed": 14,
+        "failed": 0,
+        "cases": [
+          {
+            "name": "test_exact_balance",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_available_balance",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_insufficient_balance",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.0
+          },
+          {
+            "name": "test_invalid_payment[100-0]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_invalid_payment[100--1]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_invalid_payment[-1-1]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_discount[999-999]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_discount[1000-900]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_discount[1001-900.9]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_negative_total",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_order[1]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.0
+          },
+          {
+            "name": "test_order[100]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.0
+          },
+          {
+            "name": "test_invalid_order[0]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.0
+          },
+          {
+            "name": "test_invalid_order[101]",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "coverage": {
+          "meta": {
+            "format": 3,
+            "version": "7.8.0",
+            "timestamp": "2026-10-25T21:28:05.671271",
+            "branch_coverage": true,
+            "show_contexts": false
+          },
+          "files": {
+            "shop.py": {
+              "executed_lines": [
+                1,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9,
+                10,
+                12,
+                13,
+                14,
+                15,
+                17,
+                18,
+                19,
+                20,
+                22,
+                23,
+                24,
+                26,
+                27
+              ],
+              "summary": {
+                "covered_lines": 20,
+                "num_statements": 24,
+                "percent_covered": 86.66666666666667,
+                "percent_covered_display": "87",
+                "missing_lines": 4,
+                "excluded_lines": 0,
+                "num_branches": 6,
+                "num_partial_branches": 0,
+                "covered_branches": 6,
+                "missing_branches": 0
+              },
+              "missing_lines": [
+                28,
+                29,
+                30,
+                31
+              ],
+              "excluded_lines": [],
+              "executed_branches": [
+                [
+                  8,
+                  9
+                ],
+                [
+                  8,
+                  10
+                ],
+                [
+                  13,
+                  14
+                ],
+                [
+                  13,
+                  15
+                ],
+                [
+                  18,
+                  19
+                ],
+                [
+                  18,
+                  20
+                ]
+              ],
+              "missing_branches": [],
+              "functions": {
+                "pay": {
+                  "executed_lines": [
+                    8,
+                    9,
+                    10
+                  ],
+                  "summary": {
+                    "covered_lines": 3,
+                    "num_statements": 3,
+                    "percent_covered": 100.0,
+                    "percent_covered_display": "100",
+                    "missing_lines": 0,
+                    "excluded_lines": 0,
+                    "num_branches": 2,
+                    "num_partial_branches": 0,
+                    "covered_branches": 2,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [],
+                  "excluded_lines": [],
+                  "executed_branches": [
+                    [
+                      8,
+                      9
+                    ],
+                    [
+                      8,
+                      10
+                    ]
+                  ],
+                  "missing_branches": []
+                },
+                "discount": {
+                  "executed_lines": [
+                    13,
+                    14,
+                    15
+                  ],
+                  "summary": {
+                    "covered_lines": 3,
+                    "num_statements": 3,
+                    "percent_covered": 100.0,
+                    "percent_covered_display": "100",
+                    "missing_lines": 0,
+                    "excluded_lines": 0,
+                    "num_branches": 2,
+                    "num_partial_branches": 0,
+                    "covered_branches": 2,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [],
+                  "excluded_lines": [],
+                  "executed_branches": [
+                    [
+                      13,
+                      14
+                    ],
+                    [
+                      13,
+                      15
+                    ]
+                  ],
+                  "missing_branches": []
+                },
+                "order": {
+                  "executed_lines": [
+                    18,
+                    19,
+                    20
+                  ],
+                  "summary": {
+                    "covered_lines": 3,
+                    "num_statements": 3,
+                    "percent_covered": 100.0,
+                    "percent_covered_display": "100",
+                    "missing_lines": 0,
+                    "excluded_lines": 0,
+                    "num_branches": 2,
+                    "num_partial_branches": 0,
+                    "covered_branches": 2,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [],
+                  "excluded_lines": [],
+                  "executed_branches": [
+                    [
+                      18,
+                      19
+                    ],
+                    [
+                      18,
+                      20
+                    ]
+                  ],
+                  "missing_branches": []
+                },
+                "payment": {
+                  "executed_lines": [],
+                  "summary": {
+                    "covered_lines": 0,
+                    "num_statements": 4,
+                    "percent_covered": 0.0,
+                    "percent_covered_display": "0",
+                    "missing_lines": 4,
+                    "excluded_lines": 0,
+                    "num_branches": 0,
+                    "num_partial_branches": 0,
+                    "covered_branches": 0,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [
+                    28,
+                    29,
+                    30,
+                    31
+                  ],
+                  "excluded_lines": [],
+                  "executed_branches": [],
+                  "missing_branches": []
+                },
+                "": {
+                  "executed_lines": [
+                    1,
+                    2,
+                    3,
+                    5,
+                    7,
+                    12,
+                    17,
+                    22,
+                    23,
+                    24,
+                    26,
+                    27
+                  ],
+                  "summary": {
+                    "covered_lines": 11,
+                    "num_statements": 11,
+                    "percent_covered": 100.0,
+                    "percent_covered_display": "100",
+                    "missing_lines": 0,
+                    "excluded_lines": 0,
+                    "num_branches": 0,
+                    "num_partial_branches": 0,
+                    "covered_branches": 0,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [],
+                  "excluded_lines": [],
+                  "executed_branches": [],
+                  "missing_branches": []
+                }
+              },
+              "classes": {
+                "Payment": {
+                  "executed_lines": [],
+                  "summary": {
+                    "covered_lines": 0,
+                    "num_statements": 0,
+                    "percent_covered": 100.0,
+                    "percent_covered_display": "100",
+                    "missing_lines": 0,
+                    "excluded_lines": 0,
+                    "num_branches": 0,
+                    "num_partial_branches": 0,
+                    "covered_branches": 0,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [],
+                  "excluded_lines": [],
+                  "executed_branches": [],
+                  "missing_branches": []
+                },
+                "": {
+                  "executed_lines": [
+                    1,
+                    2,
+                    3,
+                    5,
+                    7,
+                    8,
+                    9,
+                    10,
+                    12,
+                    13,
+                    14,
+                    15,
+                    17,
+                    18,
+                    19,
+                    20,
+                    22,
+                    23,
+                    24,
+                    26,
+                    27
+                  ],
+                  "summary": {
+                    "covered_lines": 20,
+                    "num_statements": 24,
+                    "percent_covered": 86.66666666666667,
+                    "percent_covered_display": "87",
+                    "missing_lines": 4,
+                    "excluded_lines": 0,
+                    "num_branches": 6,
+                    "num_partial_branches": 0,
+                    "covered_branches": 6,
+                    "missing_branches": 0
+                  },
+                  "missing_lines": [
+                    28,
+                    29,
+                    30,
+                    31
+                  ],
+                  "excluded_lines": [],
+                  "executed_branches": [
+                    [
+                      8,
+                      9
+                    ],
+                    [
+                      8,
+                      10
+                    ],
+                    [
+                      13,
+                      14
+                    ],
+                    [
+                      13,
+                      15
+                    ],
+                    [
+                      18,
+                      19
+                    ],
+                    [
+                      18,
+                      20
+                    ]
+                  ],
+                  "missing_branches": []
+                }
+              }
+            }
+          },
+          "totals": {
+            "covered_lines": 20,
+            "num_statements": 24,
+            "percent_covered": 86.66666666666667,
+            "percent_covered_display": "87",
+            "missing_lines": 4,
+            "excluded_lines": 0,
+            "num_branches": 6,
+            "num_partial_branches": 0,
+            "covered_branches": 6,
+            "missing_branches": 0
+          }
+        },
+        "logs": "..............                                                           [100%]\n- generated xml file: C:\\Users\\tribal\\AppData\\Local\\Temp\\debugych-z75jb7b2\\result.xml -\n14 passed in 1.12s\n",
+        "fixed": true,
+        "trusted_demo": true,
+        "assessment": {
+          "original_fixed": true,
+          "regressions_absent": true,
+          "full_correctness_proven": false
+        }
+      }
+    ],
+    "bugs": [
+      {
+        "id": "ffb2406a-f10c-49ff-8b52-b80010289b1c",
+        "project_id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+        "created_at": "2026-10-25T14:27:59.567089",
+        "title": "Платёж отклонён при точном балансе",
+        "status": "fix_verified",
+        "description": "Контрольный тест воспроизвёл нарушение R1. Доверенный тест и окружение известны.",
+        "requirement": "R1",
+        "requirement_id": "b08b0019-b5c1-47d9-92ac-4e36b32260e8",
+        "run_id": "343c0d79-bd62-4fba-a6c9-d7c4128f4ce1",
+        "file": "shop.py",
+        "line": 10,
+        "expected": "True — платёж принят",
+        "actual": "False — платёж отклонён",
+        "traceback": "def test_exact_balance():\n>       assert pay(1000, 1000) is True, 'R1: exact balance must be accepted'\nE       AssertionError: R1: exact balance must be accepted\nE       assert False is True\nE        +  where False = pay(1000, 1000)\n\ntest_shop.py:5: AssertionError",
+        "code": "import pytest\nfrom shop import pay, discount, order\n\ndef test_exact_balance():\n    assert pay(1000, 1000) is True, 'R1: exact balance must be accepted'\n\ndef test_available_balance():\n    assert pay(1001, 1000) is True\n\ndef test_insufficient_balance():\n    assert pay(999, 1000) is False\n\n@pytest.mark.parametrize('balance,amount', [(100, 0), (100, -1), (-1, 1)])\ndef test_invalid_payment(balance, amount):\n    with pytest.raises(ValueError):\n        pay(balance, amount)\n\n@pytest.mark.parametrize('value,expected', [(999, 999), (1000, 900), (1001, 900.9)])\ndef test_discount(value, expected):\n    assert discount(value) == pytest.approx(expected)\n\ndef test_negative_total():\n    with pytest.raises(ValueError):\n        discount(-1)\n\n@pytest.mark.parametrize('quantity', [1, 100])\ndef test_order(quantity):\n    assert order(quantity) == quantity\n\n@pytest.mark.parametrize('quantity', [0, 101])\ndef test_invalid_order(quantity):\n    with pytest.raises(ValueError):\n        order(quantity)\n",
+        "steps": [
+          "Баланс 1000",
+          "Вызвать pay(1000, 1000)",
+          "Сравнить результат с True"
+        ],
+        "recommendation": "Проверьте включительную границу сравнения баланса."
+      }
+    ],
+    "fixes": [
+      {
+        "id": "e55663c9-8128-42ae-b84e-0e06653ac567",
+        "project_id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+        "created_at": "2026-10-25T14:28:02.161543",
+        "file": "shop.py",
+        "before": "\"\"\"Trusted demonstration fixture. Never import uploaded user code here.\"\"\"\nfrom fastapi import FastAPI, HTTPException\nfrom pydantic import BaseModel\n\napp = FastAPI(title='Demo shop')\n\ndef pay(balance: int, amount: int) -> bool:\n    if balance < 0 or amount <= 0:\n        raise ValueError('Invalid payment')\n    return balance > amount\n\ndef discount(total: int) -> float:\n    if total < 0:\n        raise ValueError('Invalid total')\n    return total * (0.9 if total >= 1000 else 1)\n\ndef order(quantity: int) -> int:\n    if quantity < 1 or quantity > 100:\n        raise ValueError('Quantity must be 1..100')\n    return quantity\n\nclass Payment(BaseModel):\n    balance: int\n    amount: int\n\n@app.post('/pay')\ndef payment(value: Payment):\n    try:\n        return {'accepted': pay(value.balance, value.amount)}\n    except ValueError as error:\n        raise HTTPException(422, str(error)) from error\n",
+        "after": "\"\"\"Trusted demonstration fixture. Never import uploaded user code here.\"\"\"\nfrom fastapi import FastAPI, HTTPException\nfrom pydantic import BaseModel\n\napp = FastAPI(title='Demo shop')\n\ndef pay(balance: int, amount: int) -> bool:\n    if balance < 0 or amount <= 0:\n        raise ValueError('Invalid payment')\n    return balance >= amount\n\ndef discount(total: int) -> float:\n    if total < 0:\n        raise ValueError('Invalid total')\n    return total * (0.9 if total >= 1000 else 1)\n\ndef order(quantity: int) -> int:\n    if quantity < 1 or quantity > 100:\n        raise ValueError('Quantity must be 1..100')\n    return quantity\n\nclass Payment(BaseModel):\n    balance: int\n    amount: int\n\n@app.post('/pay')\ndef payment(value: Payment):\n    try:\n        return {'accepted': pay(value.balance, value.amount)}\n    except ValueError as error:\n        raise HTTPException(422, str(error)) from error\n",
+        "diff": "--- a/shop.py\n+++ b/shop.py\n@@ -7,7 +7,7 @@\n def pay(balance: int, amount: int) -> bool:\n     if balance < 0 or amount <= 0:\n         raise ValueError('Invalid payment')\n-    return balance > amount\n+    return balance >= amount\n \n def discount(total: int) -> float:\n     if total < 0:\n",
+        "origin": "prepared-demo",
+        "explanation": "R1 допускает платёж при равенстве баланса и суммы. Исправляется оператор сравнения.",
+        "bug_id": "ffb2406a-f10c-49ff-8b52-b80010289b1c",
+        "verified": true,
+        "applied": true,
+        "verification_id": "0d70a329-0ca5-49a9-913f-efbd576be4d5",
+        "assessment": {
+          "original_fixed": true,
+          "regressions_absent": true,
+          "full_correctness_proven": false
+        },
+        "original_storage": "c7e3adb7-6ccd-4500-8ff2-b66adfe70cb0"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "b08b0019-b5c1-47d9-92ac-4e36b32260e8",
+        "project_id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+        "created_at": "2026-10-25T14:27:55.862992",
+        "key": "R1",
+        "text": "Платёж с положительной суммой разрешён, если баланс больше или равен сумме платежа."
+      },
+      {
+        "id": "08f9432a-36d6-49c3-94fb-3a6a0f641d7f",
+        "project_id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+        "created_at": "2026-10-25T14:27:55.863994",
+        "key": "R2",
+        "text": "Нулевые и отрицательные суммы, а также отрицательный баланс отклоняются ValueError."
+      },
+      {
+        "id": "4feff85d-67b6-45c2-81f1-9b6cc00ad4d0",
+        "project_id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+        "created_at": "2026-10-25T14:27:55.863994",
+        "key": "R3",
+        "text": "При сумме заказа от 1000 включительно скидка составляет 10%, ниже порога скидки нет."
+      },
+      {
+        "id": "0fc28b1d-951f-42a7-8561-4647aaec9d05",
+        "project_id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+        "created_at": "2026-10-25T14:27:55.864998",
+        "key": "R4",
+        "text": "Допустимое количество товаров — целое от 1 до 100 включительно; остальные значения отклоняются ValueError."
+      }
+    ],
+    "tests": [
+      {
+        "id": "856735d1-d739-4100-8495-aa67f9df17c9",
+        "project_id": "ee1f8d3a-30f2-4489-ac97-edf639e83def",
+        "created_at": "2026-10-25T14:27:55.864998",
+        "title": "Границы оплаты, скидки и количества",
+        "requirement": "R1",
+        "gherkin": "Feature: Payment validation\n\nScenario: Exact available balance\n  Given account balance is 1000\n  When user pays 1000\n  Then payment is accepted\n",
+        "code": "import pytest\nfrom shop import pay, discount, order\n\ndef test_exact_balance():\n    assert pay(1000, 1000) is True, 'R1: exact balance must be accepted'\n\ndef test_available_balance():\n    assert pay(1001, 1000) is True\n\ndef test_insufficient_balance():\n    assert pay(999, 1000) is False\n\n@pytest.mark.parametrize('balance,amount', [(100, 0), (100, -1), (-1, 1)])\ndef test_invalid_payment(balance, amount):\n    with pytest.raises(ValueError):\n        pay(balance, amount)\n\n@pytest.mark.parametrize('value,expected', [(999, 999), (1000, 900), (1001, 900.9)])\ndef test_discount(value, expected):\n    assert discount(value) == pytest.approx(expected)\n\ndef test_negative_total():\n    with pytest.raises(ValueError):\n        discount(-1)\n\n@pytest.mark.parametrize('quantity', [1, 100])\ndef test_order(quantity):\n    assert order(quantity) == quantity\n\n@pytest.mark.parametrize('quantity', [0, 101])\ndef test_invalid_order(quantity):\n    with pytest.raises(ValueError):\n        order(quantity)\n",
+        "framework": "pytest",
+        "dimensions": [
+          "positive"
+        ],
+        "requirement_id": "b08b0019-b5c1-47d9-92ac-4e36b32260e8",
+        "origin": "prepared-demo",
+        "result": "failed"
+      }
+    ]
+  },
+  "paidRequests": 0,
+  "scope": "Unmodified trusted fixture runner, real pytest; no live AI or gVisor claim"
+}

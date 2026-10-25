@@ -1,0 +1,6 @@
+import{Matrix4,SkinnedMesh,Vector3,type Object3D}from'three';
+/** Conservative local-floor protection while blending arbitrary phases of the supplied bug clips. */
+export function createFloorGuard(root:Object3D){
+ const entries:{mesh:SkinnedMesh;indices:number[]}[]=[];root.traverse(o=>{if(!(o instanceof SkinnedMesh))return;const positions=o.geometry.attributes.position,indices:number[]=[];for(let i=0;i<positions.count;i++)if(positions.getY(i)<.25)indices.push(i);if(indices.length)entries.push({mesh:o,indices})});const point=new Vector3(),relative=new Matrix4(),inverse=new Matrix4();let lift=0;
+ return{reset(){lift=0},update(dt:number,blending:boolean){let needed=0;if(blending){root.updateWorldMatrix(true,false);root.updateMatrixWorld(true);inverse.copy(root.matrixWorld).invert();let min=Infinity;for(const{mesh,indices}of entries){mesh.skeleton.update();relative.multiplyMatrices(inverse,mesh.matrixWorld);for(const i of indices){mesh.getVertexPosition(i,point).applyMatrix4(relative);min=Math.min(min,point.y)}}needed=Math.max(0,.003-min)}lift=Math.max(needed,lift+(needed-lift)*(1-Math.exp(-dt*14)));if(lift<.00001)lift=0;return lift},get candidateVertices(){return entries.reduce((n,e)=>n+e.indices.length,0)}}
+}

@@ -1,0 +1,233 @@
+
+Running 4 tests using 1 worker
+
+(node:15496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\e2e\companion.spec.ts:2:5 › Companion DEMO eight states, preferences, reduced motion and mobile (8.2s)
+  ok 2 [chromium] › tests\e2e\companion.spec.ts:4:5 › real trusted API: analysis, tests, Bug Proof, exact patch verification and project switch (16.3s)
+  ok 3 [chromium] › tests\e2e\companion.spec.ts:6:5 › 3D lifecycle: one hero mixer, hidden scene pauses, loss fallback and no duplicate canvas (10.1s)
+  ok 4 [chromium] › tests\e2e\companion.spec.ts:8:5 › performance: lazy resources, bounded warm memory across composition changes (17.6s)
+
+  4 passed (53.3s)
+{
+  "config": {
+    "configFile": "C:\\Users\\tribal\\Documents\\Workspace\\2026-10-21\\files-mentioned-by-the-user-meshy\\work\\debugych-ai-companion\\apps\\web\\playwright.config.ts",
+    "rootDir": "C:/Users/tribal/Documents/release/2026-10-21/files-mentioned-by-the-user-meshy/work/debugych-ai-companion/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/tribal/Documents/release/2026-10-21/files-mentioned-by-the-user-meshy/work/debugych-ai-companion/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/tribal/Documents/release/2026-10-21/files-mentioned-by-the-user-meshy/work/debugych-ai-companion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "companion.spec.ts",
+      "file": "companion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Companion DEMO eight states, preferences, reduced motion and mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8205,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T14:34:05.141Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d84b00394e37adc97eb7-2be1f992df47829795e9",
+          "file": "companion.spec.ts",
+          "line": 2,
+          "column": 5
+        },
+        {
+          "title": "real trusted API: analysis, tests, Bug Proof, exact patch verification and project switch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16348,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "Expect \"poll toBe\"",
+                      "duration": 149
+                    },
+                    {
+                      "title": "Expect \"poll toBe\"",
+                      "duration": 4027
+                    }
+                  ],
+                  "startTime": "2026-10-25T14:34:13.521Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d84b00394e37adc97eb7-7b1407357385eda5babd",
+          "file": "companion.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "3D lifecycle: one hero mixer, hidden scene pauses, loss fallback and no duplicate canvas",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10094,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T14:34:29.881Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d84b00394e37adc97eb7-8fdb08df539492b79d76",
+          "file": "companion.spec.ts",
+          "line": 6,
+          "column": 5
+        },
+        {
+          "title": "performance: lazy resources, bounded warm memory across composition changes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17594,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T14:34:39.993Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d84b00394e37adc97eb7-f657165d3ce3600f5216",
+          "file": "companion.spec.ts",
+          "line": 8,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-25T14:34:04.462Z",
+    "duration": 53339.225,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

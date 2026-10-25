@@ -1,0 +1,54 @@
+Blender 4.5.0 (hash 8cb6b388974a built 2025-07-15 01:36:24)
+Read blend: "C:\Users\tribal\Documents\Workspace\2026-10-21\files-mentioned-by-the-user-meshy\outputs\assets\debugych\typing_v2_1\debugych_fixing_typing.blend"
+Fra:0 Mem:79.77M (Peak 79.77M) | Time:00:00.02 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Debugych_Body
+Fra:0 Mem:79.77M (Peak 79.77M) | Time:00:00.02 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Softbox
+Fra:0 Mem:79.78M (Peak 79.78M) | Time:00:00.02 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Softbox.002
+Fra:0 Mem:79.78M (Peak 79.78M) | Time:00:00.02 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Softbox.001
+Fra:0 Mem:84.47M (Peak 84.48M) | Time:00:00.03 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Initializing
+Fra:0 Mem:82.93M (Peak 84.48M) | Time:00:00.03 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Images | Loading Image_2
+Fra:0 Mem:82.93M (Peak 84.48M) | Time:00:00.03 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Images | Loading Image_1
+Fra:0 Mem:128.50M (Peak 178.96M) | Time:00:00.10 | Mem:48.00M, Peak:48.00M | Scene, ViewLayer | Waiting for render to start
+Fra:0 Mem:128.50M (Peak 178.96M) | Time:00:00.10 | Mem:48.00M, Peak:48.00M | Scene, ViewLayer | Updating Scene
+Fra:0 Mem:128.50M (Peak 178.96M) | Time:00:00.10 | Mem:48.00M, Peak:48.00M | Scene, ViewLayer | Updating Shaders
+Fra:0 Mem:128.59M (Peak 178.96M) | Time:00:00.10 | Mem:48.00M, Peak:48.00M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:0 Mem:128.59M (Peak 178.96M) | Time:00:00.10 | Mem:48.00M, Peak:48.00M | Scene, ViewLayer | Updating Procedurals
+Fra:0 Mem:128.59M (Peak 178.96M) | Time:00:00.10 | Mem:48.00M, Peak:48.00M | Scene, ViewLayer | Updating Background
+Fra:0 Mem:128.59M (Peak 178.96M) | Time:00:00.10 | Mem:48.00M, Peak:48.00M | Scene, ViewLayer | Updating Camera
+Fra:0 Mem:128.59M (Peak 178.96M) | Time:00:00.10 | Mem:48.00M, Peak:48.00M | Scene, ViewLayer | Updating Meshes Flags
+Fra:0 Mem:128.59M (Peak 178.96M) | Time:00:00.10 | Mem:48.00M, Peak:48.00M | Scene, ViewLayer | Updating Objects
+Fra:0 Mem:128.59M (Peak 178.96M) | Time:00:00.10 | Mem:48.00M, Peak:48.00M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:0 Mem:128.59M (Peak 178.96M) | Time:00:00.10 | Mem:48.01M, Peak:48.01M | Scene, ViewLayer | Updating Particle Systems
+Fra:0 Mem:128.59M (Peak 178.96M) | Time:00:00.10 | Mem:48.01M, Peak:48.01M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:0 Mem:128.59M (Peak 178.96M) | Time:00:00.10 | Mem:48.01M, Peak:48.01M | Scene, ViewLayer | Updating Meshes
+Fra:0 Mem:129.55M (Peak 178.96M) | Time:00:00.11 | Mem:48.01M, Peak:48.01M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:0 Mem:129.55M (Peak 178.96M) | Time:00:00.11 | Mem:48.01M, Peak:48.01M | Scene, ViewLayer | Updating Mesh | Computing attributes
+Fra:0 Mem:130.85M (Peak 178.96M) | Time:00:00.12 | Mem:48.01M, Peak:48.01M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:0 Mem:130.85M (Peak 178.96M) | Time:00:00.12 | Mem:49.31M, Peak:49.31M | Scene, ViewLayer | Updating Scene BVH | Building
+Fra:0 Mem:130.85M (Peak 178.96M) | Time:00:00.12 | Mem:49.31M, Peak:49.31M | Scene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:0 Mem:130.85M (Peak 178.96M) | Time:00:00.12 | Mem:49.90M, Peak:49.90M | Scene, ViewLayer | Updating Scene BVH | Building BVH 0%
+Fra:0 Mem:130.85M (Peak 178.96M) | Time:00:00.13 | Mem:50.55M, Peak:51.14M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:0 Mem:130.85M (Peak 178.96M) | Time:00:00.13 | Mem:50.55M, Peak:51.14M | Scene, ViewLayer | Updating Mesh | Computing normals
+Fra:0 Mem:131.46M (Peak 178.96M) | Time:00:00.13 | Mem:50.55M, Peak:51.14M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
+Fra:0 Mem:131.46M (Peak 178.96M) | Time:00:00.13 | Mem:51.16M, Peak:51.16M | Scene, ViewLayer | Updating Objects Flags
+Fra:0 Mem:131.46M (Peak 178.96M) | Time:00:00.13 | Mem:51.16M, Peak:51.16M | Scene, ViewLayer | Updating Primitive Offsets
+Fra:0 Mem:131.46M (Peak 178.96M) | Time:00:00.13 | Mem:51.16M, Peak:51.16M | Scene, ViewLayer | Updating Images
+Fra:0 Mem:131.46M (Peak 178.96M) | Time:00:00.13 | Mem:51.16M, Peak:51.16M | Scene, ViewLayer | Updating Camera Volume
+Fra:0 Mem:131.46M (Peak 178.96M) | Time:00:00.13 | Mem:51.16M, Peak:51.16M | Scene, ViewLayer | Updating Lookup Tables
+Fra:0 Mem:131.46M (Peak 178.96M) | Time:00:00.13 | Mem:51.25M, Peak:51.25M | Scene, ViewLayer | Updating Lights
+Fra:0 Mem:131.46M (Peak 178.96M) | Time:00:00.13 | Mem:51.25M, Peak:51.25M | Scene, ViewLayer | Updating Lights | Computing tree
+Fra:0 Mem:131.47M (Peak 178.96M) | Time:00:00.13 | Mem:51.25M, Peak:51.25M | Scene, ViewLayer | Updating Integrator
+Fra:0 Mem:131.47M (Peak 178.96M) | Time:00:00.13 | Mem:51.25M, Peak:51.25M | Scene, ViewLayer | Updating Film
+Fra:0 Mem:131.47M (Peak 178.96M) | Time:00:00.13 | Mem:51.17M, Peak:51.25M | Scene, ViewLayer | Updating Lookup Tables
+Fra:0 Mem:131.47M (Peak 178.96M) | Time:00:00.13 | Mem:51.25M, Peak:51.25M | Scene, ViewLayer | Updating Baking
+Fra:0 Mem:131.47M (Peak 178.96M) | Time:00:00.13 | Mem:51.25M, Peak:51.25M | Scene, ViewLayer | Updating Device | Writing constant memory
+Fra:0 Mem:131.47M (Peak 178.96M) | Time:00:00.13 | Mem:51.25M, Peak:51.25M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
+Fra:0 Mem:131.47M (Peak 178.96M) | Time:00:00.13 | Mem:51.25M, Peak:51.25M | Scene, ViewLayer | Sample 0/12
+Fra:0 Mem:144.06M (Peak 178.96M) | Time:00:00.25 | Remaining:00:01.30 | Mem:63.79M, Peak:63.79M | Scene, ViewLayer | Sample 1/12
+Fra:0 Mem:149.33M (Peak 178.96M) | Time:00:03.23 | Mem:63.79M, Peak:63.79M | Scene, ViewLayer | Sample 12/12
+Fra:0 Mem:149.33M (Peak 178.96M) | Time:00:03.23 | Mem:63.79M, Peak:63.79M | Scene, ViewLayer | Finished
+Saved: 'C:\Users\tribal\Documents\Workspace\2026-10-21\files-mentioned-by-the-user-meshy\work\debugych-ai-companion\apps\web\public\companion\static.png'
+Time: 00:03.39 (Saving: 00:00.16)
+
+STATIC_READY
+
+Blender quit

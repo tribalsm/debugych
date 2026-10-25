@@ -1,0 +1,30 @@
+{
+  "sources": {
+    "debugych_interaction.glb": {
+      "source": "C:\\Users\\tribal\\Documents\\Workspace\\2026-10-21\\files-mentioned-by-the-user-meshy\\work\\cinematic-v4\\outputs\\preview\\models\\debugych_interaction.glb",
+      "sha256": "e1e708ff934d4e5cb7320a05e8cb9446d1241bd32c6f6ca4c3dc327668c9a6a3",
+      "bytes": 13376032
+    },
+    "debugych_bug_final.glb": {
+      "source": "C:\\Users\\tribal\\Documents\\Workspace\\2026-10-21\\files-mentioned-by-the-user-meshy\\work\\cinematic-v4\\outputs\\preview\\models\\debugych_bug_final.glb",
+      "sha256": "2643712db2bdcb9b425ba02c5642eccf286883498083e0ba0fd98c983dfe3eb8",
+      "bytes": 10029084
+    },
+    "debugych_seated.glb": {
+      "source": "C:\\Users\\tribal\\Documents\\Workspace\\2026-10-21\\files-mentioned-by-the-user-meshy\\outputs\\assets\\debugych\\typing_seated\\debugych_seated.glb",
+      "sha256": "a4d28da7faa651ca1eab93f362f170c9aef9a5f7c0cbae69cae2df414897dbfa",
+      "bytes": 10361368
+    },
+    "debugych_chair.glb": {
+      "source": "C:\\Users\\tribal\\Documents\\Workspace\\2026-10-21\\files-mentioned-by-the-user-meshy\\outputs\\assets\\debugych\\typing_seated\\debugych_chair.glb",
+      "sha256": "62c3ab60eea5586e14c98cdbd8e5d83f65c01ef70e7d79079c21568e8a4daf3e",
+      "bytes": 135672
+    },
+    "debugych_laptop_optimized.glb": {
+      "source": "C:\\Users\\tribal\\Documents\\Workspace\\2026-10-21\\files-mentioned-by-the-user-meshy\\outputs\\assets\\debugych\\typing_v2_1\\debugych_laptop_optimized.glb",
+      "sha256": "afa00d139c44a0c63ab92f3ab9229681cf0fb909bf68bd2de432b35e6e6ade08",
+      "bytes": 4971040
+    }
+  },
+  "modelsModified": false
+}
