@@ -12,7 +12,8 @@ files.update((root / 'apps/web/dist').rglob('*'))
 evidence = ['dashboard.png', 'import-workspace.png', 'test-studio.png', 'bug-proof.png', 'diff.png',
             'verified.png', 'demo.mp4', 'free-verify.json', 'ai-before.json', 'ai-after.json',
             'browser-final.log', 'source-links.log', 'baseline-backend.log', 'typecheck.log',
-            'lint.log', 'unit-final.log', 'build.log', 'server-smoke.log']
+            'lint.log', 'unit-final.log', 'build.log', 'server-smoke.log', 'platform-windows.log',
+            'platform-linux.log', 'platform-nginx.log', 'platform-gvisor.log', 'linux-build.log']
 files.update(out.parent / name for name in evidence)
 with zipfile.ZipFile(out, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
     for path in sorted(files):

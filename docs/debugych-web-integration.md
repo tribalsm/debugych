@@ -2,6 +2,8 @@
 
 Дата: 27.10.2026, Windows / WSL2. Ветка `release/web-product-release`, отдельный worktree `work/debugych-web-release`. Основа `0cda5e4`, без merge в main. Новые платные LLM-запросы не выполнялись.
 
+Дополнительная проверка Windows / Linux и границы поддержки macOS: [platform-validation.md](platform-validation.md).
+
 ## Аудит и выбранная основа
 
 | Источник | Состояние | Решение |
