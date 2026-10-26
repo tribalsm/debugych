@@ -26,6 +26,8 @@ async def lifespan(app):
     yield
 
 app = FastAPI(title='Дебагыч · AI QA Assistant', lifespan=lifespan)
+from apps.api.companion_chat import router as companion_chat_router
+app.include_router(companion_chat_router)
 
 from services.ai.adapter import AIError
 @app.exception_handler(AIError)
