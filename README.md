@@ -1,5 +1,18 @@
 # Дебагыч / DEBUGYCH
 
+## Локальный web release, 27.10.2026
+
+Готовый frontend и общий backend: [отчёт интеграции и ограничения проверки](docs/debugych-web-integration.md).
+
+```powershell
+# Windows, Node.js 22+, при уже работающем API на 8000:
+.\scripts\start-local.ps1 -ReuseBackend
+# Если нужно поднять существующий Compose-стек с настроенным Linux gVisor:
+.\scripts\start-local.ps1
+```
+
+Проверенный адрес сборки: http://127.0.0.1:8798/. Desktop Pet использует API http://127.0.0.1:8000 и этот web URL. Новый AI-анализ требует согласия; платные вызовы при интеграции не выполнялись. Ниже сохранена техническая документация предыдущих этапов, её live-результаты относятся к указанным историческим прогонам.
+
 **AI QA Assistant — «Находит. Доказывает. Исправляет. Проверяет».**
 
 React + TypeScript + Vite + Tailwind; FastAPI + SQLAlchemy + Alembic; PostgreSQL, Redis, Celery; одноразовые Python / pytest и JS/TS / Playwright Test Runner с обязательным gVisor. Русский интерфейс: Dashboard, Projects, Test Studio, Bug Lab, Reports.

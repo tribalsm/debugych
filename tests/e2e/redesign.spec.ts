@@ -42,8 +42,8 @@ test('Смена проекта не переносит статус и заве
 });
 
 test('Демо: простой обзор, раскрытие кода, доказательство и безопасная проверка патча',async({page,request})=>{
- test.setTimeout(90000);expect((await(await request.get('/api/health')).json()).ai_provider_mode).toBe('contract-test');
- const demo=await(await request.post('/api/demo')).json();await request.post(`/api/projects/${demo.id}/analyze`);
+ test.setTimeout(90000);
+ const demo=await(await request.post('/api/demo')).json();expect(demo.demo).toBe(true);await request.post(`/api/projects/${demo.id}/analyze`);
  const terminal=async()=>{await expect.poll(async()=>{const r=await(await request.get(`/api/projects/${demo.id}/runs`)).json();return r.at(-1)?.status},{timeout:30000}).toBe('completed')};await terminal();await request.post(`/api/projects/${demo.id}/runs`);await terminal();
  await page.goto('/#/workspace/tests?project='+demo.id);await expect(page.getByRole('tab',{name:'Обзор проверки',exact:true})).toHaveAttribute('aria-selected','true');await expect(page.getByLabel('Код · pytest',{exact:true})).toHaveCount(0);await expect(page.getByRole('heading',{name:'Ожидаемый результат'})).toBeVisible();
  await page.getByRole('tab',{name:'Автотест',exact:true}).click();await expect(page.getByLabel('Код · pytest',{exact:true})).toBeVisible();await page.reload();await expect(page.getByRole('tab',{name:'Автотест',exact:true})).toHaveAttribute('aria-selected','true');

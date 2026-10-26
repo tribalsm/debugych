@@ -20,3 +20,6 @@ outputs/integration/
 playwright-report-redesign/
 test-results-production/
 test-results-wide/
+outputs/web-integration/
+baseline-*.log
+outputs-web-install.log
