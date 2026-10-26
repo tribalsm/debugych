@@ -8,13 +8,13 @@ export type StudioRequirement={id:string;key:string;text:string;source?:string;q
 export type StudioTest={id:string;title:string;requirement?:string;requirement_id?:string;dimensions?:string[];origin?:string;validation_id?:string;validation_plan_sha256?:string;scenario_index?:number;gherkin:string;code:string;framework:string;result:string};
 export type StudioRun=ArtifactRun&{operation:string;stage?:string;classification?:string;generation_review?:unknown;error?:string;logs?:string;duration?:number;passed?:number;failed?:number;errors?:number;runtime?:string;snapshot_sha256?:string;coverage?:{totals:{percent_covered:number}};cases?:{name:string;status:string;traceback:string;duration:number}[];validation?:ValidationReport};
 const tabs=['Обзор проверки','Gherkin','Автотест','Результаты','Валидация'];
-export function TestStudio({projectId,demo,requirements,tests,runs,disabled,onRun,onBugs,confirmedCount,onEdit,onExport,onProjects}:{projectId:string;demo:boolean;requirements:StudioRequirement[];tests:StudioTest[];runs:StudioRun[];disabled:boolean;onRun:()=>void;onBugs:()=>void;confirmedCount:number;onEdit:(t:StudioTest)=>void;onExport:(f:string)=>void;onProjects:()=>void}){
+export function TestStudio({runId,projectId,demo,requirements,tests,runs,disabled,onRun,onBugs,confirmedCount,onEdit,onExport,onProjects }:{runId?:string;projectId:string;demo:boolean;requirements:StudioRequirement[];tests:StudioTest[];runs:StudioRun[];disabled:boolean;onRun:()=>void;onBugs:()=>void;confirmedCount:number;onEdit:(t:StudioTest)=>void;onExport:(f:string)=>void;onProjects:()=>void}){
  const [chosen,setChosen]=useState(''),[query,setQuery]=useState('');
- const [tab,setTab]=useState(()=>{const saved=localStorage.getItem('debugych-studio-v2-'+projectId);return tabs.includes(saved||'')?saved!:'Обзор проверки'});
+ const [tab,setTab]=useState(()=>{if(runId)return 'Результаты';const saved=localStorage.getItem('debugych-studio-v2-'+projectId);return tabs.includes(saved||'')?saved!:'Обзор проверки'});
  const test=tests.find(t=>t.id===chosen)||tests[0];
  const validated=!!test&&validationMatches(test,requirements,runs);
  const linked=requirements.find(r=>r.id===test?.requirement_id||r.key===test?.requirement);
- const latest=[...runs].reverse().find(r=>r.operation==='run'&&r.status==='completed');
+ const latest=runId?runs.find(r=>r.id===runId&&r.operation==='run'):[...runs].reverse().find(r=>r.operation==='run'&&r.status==='completed');
  const job=[...runs].reverse().find(r=>r.operation==='autonomous'||r.operation==='analyze');
  const active=runs.some(r=>['queued','running'].includes(r.status)&&(r.operation==='run'||r.operation==='autonomous'&&r.stage==='execution'));
  const rows=tests.filter(t=>(t.title+' '+t.requirement+' '+t.framework).toLowerCase().includes(query.toLowerCase()));
