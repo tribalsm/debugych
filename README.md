@@ -2,6 +2,8 @@
 
 ## Локальный web release, 27.10.2026
 
+**macOS:** [инструкция запуска](docs/macos.md). В Mac-пакете есть `Start Debugych.command`; требуется Node.js 22+ и готовый Linux backend с gVisor (локальная VM либо защищённый SSH-туннель). Launcher реализован, реальная проверка на Mac ещё необходима.
+
 Готовый frontend и общий backend: [отчёт интеграции и ограничения проверки](docs/debugych-web-integration.md).
 
 ```powershell

@@ -2,9 +2,11 @@
 from pathlib import Path
 import subprocess
 import zipfile
+import stat
+import sys
 
 root = Path(__file__).resolve().parents[1]
-out = root / 'outputs/web-integration/debugych-web-release.zip'
+out = root / ('outputs/web-integration/debugych-web-macos.zip' if '--macos' in sys.argv else 'outputs/web-integration/debugych-web-release.zip')
 out.parent.mkdir(parents=True, exist_ok=True)
 tracked = subprocess.check_output(['git', 'ls-files', '-z'], cwd=root).decode().split('\0')
 files = {root / name for name in tracked if name and not name.startswith(('outputs/', '.github/'))}
@@ -13,7 +15,9 @@ evidence = ['dashboard.png', 'import-workspace.png', 'test-studio.png', 'bug-pro
             'verified.png', 'demo.mp4', 'free-verify.json', 'ai-before.json', 'ai-after.json',
             'browser-final.log', 'source-links.log', 'baseline-backend.log', 'typecheck.log',
             'lint.log', 'unit-final.log', 'build.log', 'server-smoke.log', 'platform-windows.log',
-            'platform-linux.log', 'platform-nginx.log', 'platform-gvisor.log', 'linux-build.log']
+            'platform-linux.log', 'platform-nginx.log', 'platform-gvisor.log', 'linux-build.log',
+            'macos-launcher-linux.log', 'macos-launcher-windows.log', 'macos-doctor-live.log',
+            'macos-doctor-linux-live.log']
 files.update(out.parent / name for name in evidence)
 with zipfile.ZipFile(out, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
     for path in sorted(files):
@@ -21,7 +25,14 @@ with zipfile.ZipFile(out, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=6
             rel = path.relative_to(root)
             if path.name == '.env' or any(p in {'.git', 'node_modules', '__pycache__'} for p in rel.parts):
                 raise RuntimeError(f'Forbidden release file: {rel}')
-            archive.write(path, 'debugych-web-release/' + rel.as_posix())
+            info = zipfile.ZipInfo.from_file(path, 'debugych-web-release/' + rel.as_posix())
+            info.create_system = 3
+            mode = 0o755 if path.suffix in {'.sh', '.command'} else 0o644
+            info.external_attr = (stat.S_IFREG | mode) << 16
+            data = path.read_bytes()
+            if path.suffix in {'.sh', '.command'}:
+                data = data.replace(b'\r\n', b'\n')
+            archive.writestr(info, data, compress_type=zipfile.ZIP_DEFLATED, compresslevel=6)
 with zipfile.ZipFile(out) as archive:
     if archive.testzip():
         raise RuntimeError('Archive integrity check failed')
