@@ -3,7 +3,7 @@ from pathlib import Path
 import subprocess, zipfile, json
 
 root = Path(__file__).resolve().parents[1]
-out = root / 'outputs/debugych_desktop_1.1_sources.zip'
+out = root / 'outputs/debugych_desktop_1.2_sources.zip'
 names = subprocess.check_output(['git', 'ls-files', '-z'], cwd=root).decode().split('\0')
 excluded = {'outputs', 'node_modules', 'target', '.git', '__pycache__', 'dist'}
 private = {'.env', 'backend.env', 'connection.json', 'chat-history.json', 'companion.json'}

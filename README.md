@@ -1,6 +1,6 @@
 # Дебагыч / DEBUGYCH
 
-**Основное Windows-приложение:** [запуск Debugych.exe и автоматический backend](docs/windows-desktop.md). Portable-пакет использует собственное окно Tauri/WebView2 и включает runtime. Это отдельная сборка от Desktop Pet.
+**Debugych Desktop 1.2 для Windows:** [установка, обновление и удаление](docs/windows-desktop.md). Одно приложение Tauri/WebView2 включает основное окно, Desktop Pet и комплектный Node runtime. Доступны пользовательский NSIS-установщик и дополнительный portable ZIP. [Проверки и ограничения релиза](docs/desktop-1.2-validation.md), [подготовка Remote Mode](docs/server-migration-readiness.md). Чистая Windows VM и полный повтор интерактивного сценария двух окон пока не проверены.
 
 ## Локальный web release, 27.10.2026
 

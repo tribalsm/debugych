@@ -22,3 +22,13 @@ impl OwnedChild {
  pub fn try_wait(&mut self)->std::io::Result<Option<ExitStatus>>{self.child.try_wait()}
 }
 impl Drop for OwnedChild {fn drop(&mut self){let _=self.child.stdin.take();#[cfg(windows)]unsafe{windows_sys::Win32::System::JobObjects::TerminateJobObject(self.job.0,0);};let _=self.child.kill();let _=self.child.wait();}}
+#[cfg(all(test,windows))]mod tests{
+ use super::*;
+ #[test]fn dropping_owner_terminates_its_actual_child(){
+  use windows_sys::Win32::{Foundation::CloseHandle,System::Threading::*};
+  let mut command=crate::command("cmd.exe");command.args(["/C","ping -n 30 127.0.0.1 >nul"]).stdout(std::process::Stdio::null()).stderr(std::process::Stdio::null());
+  let child=OwnedChild::spawn(&mut command).unwrap();
+  let handle=unsafe{OpenProcess(PROCESS_SYNCHRONIZE,0,child.child.id())};assert!(!handle.is_null());
+  drop(child);assert_eq!(unsafe{WaitForSingleObject(handle,1000)},0);unsafe{CloseHandle(handle);}
+ }
+}

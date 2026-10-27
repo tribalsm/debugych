@@ -1,0 +1,9 @@
+{
+  "bundle": {
+    "active": true,
+    "resources": {
+      "../../outputs/windows-app/resources/": "resources/",
+      "../../outputs/windows-app/build.json": "build.json"
+    }
+  }
+}

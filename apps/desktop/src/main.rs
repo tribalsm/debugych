@@ -3,7 +3,7 @@ use std::{fs,path::PathBuf,process::{Command,Stdio},sync::Mutex,time::{Duration,
 use serde::{Deserialize,Serialize};
 use tauri::{Emitter,Manager,State,menu::{Menu,MenuItem}};
 use std::sync::atomic::{AtomicBool,Ordering};
-mod owned_process;mod backend;mod pet;use owned_process::OwnedChild;
+mod diagnostics;mod legacy;mod owned_process;mod backend;mod pet;use owned_process::OwnedChild;
 #[cfg(windows)]use std::os::windows::process::CommandExt;
 #[derive(Clone,Serialize,Deserialize)]
 #[serde(default)]
@@ -14,7 +14,8 @@ struct Runtime{config:Mutex<Config>,status:Mutex<String>,busy:Mutex<bool>,web:Mu
 fn command(exe:impl AsRef<std::ffi::OsStr>)->Command{let mut c=Command::new(exe);#[cfg(windows)]c.creation_flags(0x08000000);c}
 fn config_dir(app:&tauri::AppHandle)->Result<PathBuf,String>{
  if let Ok(p)=std::env::var("DEBUGYCH_DESKTOP_PROFILE"){let p=PathBuf::from(p);if p.is_absolute(){return Ok(p)}}
- app.path().app_config_dir().map_err(|_|"Каталог настроек недоступен".into())
+ // The new single-instance identifier must not move existing 1.1 user data.
+ app.path().app_config_dir().map(|p|p.with_file_name("local.debugych.desktop")).map_err(|_|"Каталог настроек недоступен".into())
 }
 fn config_path(app:&tauri::AppHandle)->Result<PathBuf,String>{Ok(config_dir(app)?.join("connection.json"))}
 fn persist(app:&tauri::AppHandle,c:&Config)->Result<(),String>{let p=config_path(app)?;fs::create_dir_all(p.parent().unwrap()).map_err(|_|"Не удалось создать каталог настроек")?;let temp=p.with_extension("json.tmp");fs::write(&temp,serde_json::to_vec(c).unwrap()).map_err(|_|"Не удалось сохранить настройки")?;fs::rename(temp,p).map_err(|_|"Не удалось сохранить настройки".into())}
@@ -50,6 +51,7 @@ fn restore_main(app:&tauri::AppHandle)->Result<(),String>{let w=app.get_webview_
 fn own_spawn(app:&tauri::AppHandle,slot:&Mutex<Option<OwnedChild>>,command:&mut Command)->Result<(),String>{let r=app.state::<Runtime>();let mut child=slot.lock().unwrap();if r.closing.load(Ordering::SeqCst){return Err("Приложение завершается".into())}*child=Some(OwnedChild::spawn(command).map_err(|_|"Не удалось запустить локальный процесс приложения")?);Ok(())}
 fn health(client:&reqwest::blocking::Client,url:&str)->bool{client.get(format!("{}/api/health",url.trim_end_matches('/'))).send().ok().filter(|r|r.status().is_success()).and_then(|r|r.json::<serde_json::Value>().ok()).map_or(false,|h|h["status"]=="ok"&&h["execution"]=="gvisor-python"&&h["sandbox_available"]==true)}
 fn boot(app:&tauri::AppHandle)->Result<String,String>{
+ let conflicts=legacy::conflicts();if !conflicts.is_empty(){return Err(format!("Работает старая portable-версия. Закройте её через меню Выход и нажмите Повторить. Данные и старые ярлыки сохранены.\n{}",conflicts.join("\n")))}
  let state=app.state::<Runtime>();let c=state.config.lock().unwrap().clone();if !valid(&c){return Err("Проверьте настройки подключения".into())}
  let root=std::env::current_exe().map_err(|_|"Каталог приложения недоступен")?.parent().unwrap().join("resources");
  let data=config_dir(app)?;fs::create_dir_all(&data).map_err(|_|"Не удалось создать каталог данных")?;
@@ -79,11 +81,12 @@ fn boot(app:&tauri::AppHandle)->Result<String,String>{
  let deadline=Instant::now()+Duration::from_secs(15);while !client.get(&address).send().map_or(false,|r|r.status().is_success()){if Instant::now()>deadline{return Err("Не удалось открыть встроенный frontend. Проверьте комплект ресурсов и frontend.log.".into())}std::thread::sleep(Duration::from_millis(200));}
  *state.frontend.lock().unwrap()=address.trim_end_matches('/').into();broadcast_context(app);Ok(address)
 }
+#[tauri::command]async fn environment_diagnostics(app:tauri::AppHandle)->Result<Vec<diagnostics::Check>,String>{let c=app.state::<Runtime>().config.lock().unwrap().clone();let folder=config_dir(&app)?;tauri::async_runtime::spawn_blocking(move||diagnostics::run(&c,&folder)).await.map_err(|_|"Ошибка диагностики".into())}
 #[tauri::command]async fn start_application(app:tauri::AppHandle)->Result<String,String>{let state=app.state::<Runtime>();{let mut b=state.busy.lock().unwrap();if *b{return Err("Запуск уже выполняется".into())}*b=true;}let copy=app.clone();let result=tauri::async_runtime::spawn_blocking(move||boot(&copy)).await.map_err(|_|"Ошибка запуска приложения".to_string()).and_then(|r|r);if let Err(ref error)=result{*app.state::<Runtime>().status.lock().unwrap()=error.clone();}*app.state::<Runtime>().busy.lock().unwrap()=false;result}
 fn main(){
  std::panic::set_hook(Box::new(|info|{use std::io::Write;if let Ok(exe)=std::env::current_exe(){let message=info.to_string().chars().take(1800).collect::<String>();if let Ok(mut log)=fs::OpenOptions::new().create(true).append(true).open(exe.parent().unwrap().join("native-startup-error.txt")){let _=writeln!(log,"{message}");}}}));
  let mut ctx=tauri::generate_context!();
- if std::env::var_os("DEBUGYCH_DESKTOP_PROFILE").is_some(){ctx.config_mut().identifier.push_str(".qa");}
+ if std::env::var_os("DEBUGYCH_DESKTOP_PROFILE").is_some(){use std::hash::{Hash,Hasher};let mut hash=std::collections::hash_map::DefaultHasher::new();std::env::var_os("DEBUGYCH_DESKTOP_PROFILE").hash(&mut hash);ctx.config_mut().identifier.push_str(&format!(".qa{:x}",hash.finish()));}
  let app=tauri::Builder::default().plugin(tauri_plugin_single_instance::init(|app,_,_|{let _=restore_main(app);}))
  .setup(|app|{
   let path=config_path(app.handle()).unwrap();let cfg=fs::read(path).ok().and_then(|b|serde_json::from_slice::<Config>(&b).ok()).filter(valid).unwrap_or_default();
@@ -100,11 +103,13 @@ fn main(){
   pet_window.navigate("http://tauri.localhost/pet/index.html".parse()?)?;
   let main_config=app.config().app.windows.iter().find(|w|w.label=="main").unwrap().clone();
   tauri::WebviewWindowBuilder::from_config(app,&main_config)?.build()?;
-  let connection=MenuItem::with_id(app,"connection","Подключение",true,None::<&str>)?;let pet=MenuItem::with_id(app,"pet","Показать / скрыть питомца",true,None::<&str>)?;let quit=MenuItem::with_id(app,"quit","Выход",true,None::<&str>)?;app.get_webview_window("main").unwrap().set_menu(Menu::with_items(app,&[&connection,&pet,&quit])?)?;Ok(())
+  let connection=MenuItem::with_id(app,"connection","Подключение",true,None::<&str>)?;let pet=MenuItem::with_id(app,"pet","Показать / скрыть питомца",true,None::<&str>)?;let quit=MenuItem::with_id(app,"quit","Выход",true,None::<&str>)?;app.get_webview_window("main").unwrap().set_menu(Menu::with_items(app,&[&connection,&pet,&quit])?)?;
+  let open=MenuItem::with_id(app,"open","Открыть Дебагыч",true,None::<&str>)?;let diagnostics=MenuItem::with_id(app,"diagnostics","Проверка окружения",true,None::<&str>)?;
+  let mut tray=tauri::tray::TrayIconBuilder::new().tooltip("Дебагыч Desktop 1.2").menu(&Menu::with_items(app,&[&open,&pet,&diagnostics,&connection,&quit])?).show_menu_on_left_click(true);if let Some(icon)=app.default_window_icon(){tray=tray.icon(icon.clone());}tray.build(app)?;Ok(())
  })
- .on_menu_event(|app,event|match event.id().as_ref(){"connection"=>{let _=show_connection_settings(app.clone());},"pet"=>{let _=set_pet_visible_inner(app,!context(app).pet_visible);},"quit"=>app.exit(0),_=>{}})
+ .on_menu_event(|app,event|match event.id().as_ref(){"open"=>{let _=restore_main(app);},"diagnostics"=>{let _=restore_main(app);let _=app.emit("desktop-diagnostics",true);},"connection"=>{let _=show_connection_settings(app.clone());},"pet"=>{let _=set_pet_visible_inner(app,!context(app).pet_visible);},"quit"=>app.exit(0),_=>{}})
  .on_window_event(|window,event|{if window.label()=="main"{if let tauri::WindowEvent::CloseRequested{api,..}=event{api.prevent_close();window.app_handle().exit(0);}}})
- .invoke_handler(tauri::generate_handler![get_config,startup_status,save_config,start_application,get_desktop_context,set_selected_project,set_pet_visible,open_main_window,show_connection_settings,pet::set_expanded,pet::pet_ready,pet::drag_pet,pet::get_preferences,pet::set_motion,pet::set_size,pet::set_panel_height,pet::hide_pet,backend::get_companion_settings,backend::save_companion_config,backend::save_companion_seen,backend::backend_get,backend::cancel_backend_read,backend::open_companion_page,backend::companion_post,backend::get_chat_history,backend::save_chat_history]).build(ctx).expect("Debugych startup");
+ .invoke_handler(tauri::generate_handler![environment_diagnostics,get_config,startup_status,save_config,start_application,get_desktop_context,set_selected_project,set_pet_visible,open_main_window,show_connection_settings,pet::set_expanded,pet::pet_ready,pet::drag_pet,pet::get_preferences,pet::set_motion,pet::set_size,pet::set_panel_height,pet::hide_pet,backend::get_companion_settings,backend::save_companion_config,backend::save_companion_seen,backend::backend_get,backend::cancel_backend_read,backend::open_companion_page,backend::companion_post,backend::get_chat_history,backend::save_chat_history]).build(ctx).expect("Debugych startup");
  app.run(|app,event|{if matches!(event,tauri::RunEvent::Exit){let state=app.state::<Runtime>();state.closing.store(true,Ordering::SeqCst);app.state::<backend::Backend>().cancel_all();for slot in [&state.bootstrap,&state.web,&state.wsl]{slot.lock().unwrap().take();}}});
 }
 fn migrate_pet(folder:&std::path::Path)->std::io::Result<()>{

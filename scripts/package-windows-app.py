@@ -30,19 +30,15 @@ if docs.exists():shutil.copy2(docs,out/'README.md')
 # Windows PowerShell 5.1 otherwise reads Cyrillic shortcut names as ANSI.
 (out/'Create-DesktopShortcut.ps1').write_text((root/'scripts/Create-DesktopShortcut.ps1').read_text(encoding='utf-8'),encoding='utf-8-sig')
 evidence=out/'evidence';evidence.mkdir(exist_ok=True)
-for name in ['windows-desktop-dashboard.png','windows-desktop-settings.png','windows-desktop-offline.png','desktop-validation.json','desktop-rust-tests.log','desktop-bootstrap-tests.log','desktop-proxy-regression.log','desktop-static-regression.log','desktop-browser-tests.log']:
- # Older packages used this same output folder; do not label old evidence as 1.1.
- old=evidence/name
- if old.is_file():old.unlink()
-for name in ['qa-tests-after.png','qa-test-code-after.png','qa-bug-proof-after.png','qa-fix-verify-after.png','qa-real-verification-after.png','qa-patch-approval-after.png','qa-report-after.png','qa-ui-logic-preservation.json','qa-browser-validation.json','qa-control-patch-after.json','project-overview-after.png','demo-toolbar-after.png','native-desktop11-final.png','native-verification-runsc.png','native-fix-verify-final.png','rust-tests.log','pet-tests.log','web-tests.log','proxy-tests.log','bootstrap-tests.log','desktop-bridge-tests.log','pet-browser-repro.log','sprite-preservation.json','upstream-sprite-check.json','ai-budget-before.json','ai-budget-after.json','backend-health.json','patch-not-applied.json','video-metadata.json','video-validation.json','native-lifecycle-validation.json']:
- source=root/'outputs/desktop11'/name
+# Explicit evidence allowlist: never bundle arbitrary local diagnostics or user profiles.
+for name in ['baseline-rust.log', 'baseline-pet.log', 'baseline-web.log', 'baseline-browser.log', 'baseline-bootstrap.log', 'rust-tests.log', 'bridge-tests.log', 'launcher-proxy-linux.log', 'typecheck.log', 'lint.log', 'web-build.log', 'pet-typecheck.log', 'pet-embed.log', 'release-final.log', 'shell-browser-tests.log', 'installed-modes-smoke.log', 'installed-modes-smoke.json', 'installed-modes-first-attempt.log', 'running-update-guard.json', 'installation-check.json', 'update-check.json', 'uninstall-check.json', 'reinstall-check.json', 'shortcut-launch-check.json', 'portable-owned-after.json', 'legacy-conflict-processes.json', 'legacy-blocked-children.json', 'installed-test-cleanup.json', 'native-diagnostics.png', 'native-legacy-conflict.png', 'installer-finished.png', 'saved-qa-api-smoke.json', 'provider-config.json', 'ai-before.json', 'ai-after.json', 'dependencies.json', 'shared-services-check.json', 'listeners.json', 'video-metadata.json', 'video-overview-control.png', 'debugych_desktop_1.2_overview.mp4']:
+ source=root/'outputs/desktop12'/name
  if source.is_file():shutil.copy2(source,evidence/name)
-shutil.copy2(root/'docs/desktop-1.1-validation.md',out/'VALIDATION.md')
-video=root/'outputs/desktop11/debugych_desktop_1.1_demo.mp4'
-if video.is_file():shutil.copy2(video,out/video.name)
-meta={'version':'1.1.0','pet':'embedded v3.2.1 transparent window; same process and connection','commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'exeSha256':hashlib.sha256((out/'Debugych.exe').read_bytes()).hexdigest(),'web':'existing production build','engine':'unchanged','runtime':'Tauri 2 + Windows WebView2 + bundled Node','requires':'configured Linux Docker/gVisor for local QA; remote HTTPS mode available','paidCallsDuringPackaging':0}
+validation=root/'docs/desktop-1.2-validation.md'
+if validation.is_file():shutil.copy2(validation,out/'VALIDATION.md')
+meta={'version':'1.2.0','pet':'embedded v3.2.1 transparent window; same process and connection','commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'exeSha256':hashlib.sha256((out/'Debugych.exe').read_bytes()).hexdigest(),'web':'existing production build','engine':'unchanged','runtime':'Tauri 2 + Windows WebView2 + bundled Node','requires':'configured Linux Docker/gVisor for local QA; remote HTTPS mode available','paidCallsDuringPackaging':0}
 (out/'build.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf8')
-archive=root/'outputs/debugych_desktop_1.1_windows.zip'
+archive=root/'outputs/debugych_desktop_1.2_windows.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
  for p in out.rglob('*'):
   if p.is_file() and p.name not in {"native-runtime.json","native-startup-error.txt"}:

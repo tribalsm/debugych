@@ -1,7 +1,7 @@
 {
   "productName": "Дебагыч",
-  "version": "1.1.0",
-  "identifier": "local.debugych.desktop",
+  "version": "1.2.0",
+  "identifier": "local.debugych.desktop.client",
   "build": {
     "frontendDist": "shell"
   },
@@ -46,6 +46,22 @@
     "active": false,
     "icon": [
       "icons/icon.ico"
-    ]
-  }
+    ],
+    "targets": [
+      "nsis"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": [
+          "Russian",
+          "English"
+        ],
+        "displayLanguageSelector": true,
+        "template": "installer/installer.nsi",
+        "installerHooks": "installer/hooks.nsh"
+      }
+    }
+  },
+  "mainBinaryName": "Debugych"
 }
