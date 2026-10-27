@@ -27,7 +27,8 @@ for name in ['requirements.txt','docker-compose.yml','alembic.ini','.env.example
  shutil.copy2(root/name,backend/name)
 docs=root/'docs/windows-desktop.md'
 if docs.exists():shutil.copy2(docs,out/'README.md')
-shutil.copy2(root/'scripts/Create-DesktopShortcut.ps1',out/'Create-DesktopShortcut.ps1')
+# Windows PowerShell 5.1 otherwise reads Cyrillic shortcut names as ANSI.
+(out/'Create-DesktopShortcut.ps1').write_text((root/'scripts/Create-DesktopShortcut.ps1').read_text(encoding='utf-8'),encoding='utf-8-sig')
 evidence=out/'evidence';evidence.mkdir(exist_ok=True)
 for name in ['windows-desktop-dashboard.png','windows-desktop-settings.png','windows-desktop-offline.png','desktop-validation.json','desktop-rust-tests.log','desktop-bootstrap-tests.log','desktop-proxy-regression.log','desktop-static-regression.log','desktop-browser-tests.log']:
  # Older packages used this same output folder; do not label old evidence as 1.1.
