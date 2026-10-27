@@ -1,7 +1,7 @@
 $ErrorActionPreference='Stop'
 $exe=Join-Path $PSScriptRoot 'Debugych.exe'
 if(!(Test-Path -LiteralPath $exe)){throw 'Распакуйте полный пакет: Debugych.exe должен находиться рядом со скриптом.'}
-$link=Join-Path ([Environment]::GetFolderPath('Desktop')) 'Дебагыч Desktop 1.1.lnk'
+$link=Join-Path ([Environment]::GetFolderPath('Desktop')) 'Дебагыч Desktop 1.2 Portable.lnk'
 $shell=New-Object -ComObject WScript.Shell
 if(Test-Path -LiteralPath $link){
  $existing=$shell.CreateShortcut($link)
