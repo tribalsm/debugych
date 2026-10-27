@@ -20,3 +20,14 @@
 @media(min-width:1500px){.content{max-width:1500px}}
 @media(max-width:950px){.welcome-hero{grid-template-columns:1fr}.welcome-hero .agent-slot{display:none}.wizard-steps{grid-template-columns:repeat(2,1fr)}.journey ol{grid-template-columns:1fr}.home-outcomes>.stats{grid-template-columns:1fr}.start-guide{gap:16px}.breadcrumbs strong{max-width:180px}}
 @media(max-width:680px){.page-title h1{font-size:27px}.project-tabs{gap:0;padding:4px}.project-tabs button{padding:11px 15px;font-size:12px}.wizard-steps{padding:8px 16px}.wizard-steps button{padding:10px;font-size:11px}.wizard-content,.onboarding,.report-intro,.result-brief{padding:20px}.start-guide{grid-template-columns:1fr}.breadcrumbs{font-size:11px}.breadcrumbs strong{max-width:130px}.welcome-hero{padding:24px}.hero-buttons{flex-wrap:wrap}.expected strong{font-size:15px}.comparison{padding:12px}.projectbar>div{min-width:0}.projectbar select{min-width:0}.check-overview .expectation-card,.check-overview .observed-card{padding:15px}}
+
+/* Project provenance has its own row, outside the selector controls. */
+.projectbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:center;gap:12px 16px}
+.projectbar>div{min-width:0}
+.projectbar>div>select{flex:1;width:100%;min-width:0;max-width:100%}
+.projectbar .run-choice-label{min-width:0;margin:0;width:auto}
+.projectbar .run-choice-label select{flex:1;width:100%;min-width:0;max-width:100%}
+.demo-context{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;margin:0;padding-bottom:10px;border-bottom:1px solid var(--color-border);font-size:11px;line-height:1.6;color:var(--color-text-muted,#a7b3c6)}
+.demo-context strong{display:inline-flex;align-items:center;gap:7px;color:#e4c884;font-size:11px;font-weight:600;white-space:nowrap}
+.demo-context strong::before{content:'';width:5px;height:5px;flex:none;border-radius:50%;background:currentColor}
+@media(max-width:720px){.projectbar{grid-template-columns:minmax(0,1fr) auto;gap:10px}.projectbar>div{grid-column:1/-1}.projectbar .run-choice-label{grid-column:1}.projectbar .textbutton{grid-column:2}}
