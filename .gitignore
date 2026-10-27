@@ -23,3 +23,6 @@ test-results-wide/
 outputs/web-integration/
 baseline-*.log
 outputs-web-install.log
+apps/desktop/target/
+apps/desktop/gen/
+outputs/windows-app/

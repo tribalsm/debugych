@@ -1,5 +1,7 @@
 # Дебагыч / DEBUGYCH
 
+**Основное Windows-приложение:** [запуск Debugych.exe и автоматический backend](docs/windows-desktop.md). Portable-пакет использует собственное окно Tauri/WebView2 и включает runtime. Это отдельная сборка от Desktop Pet.
+
 ## Локальный web release, 27.10.2026
 
 **macOS:** [инструкция запуска](docs/macos.md). В Mac-пакете есть `Start Debugych.command`; требуется Node.js 22+ и готовый Linux backend с gVisor (локальная VM либо защищённый SSH-туннель). Launcher реализован, реальная проверка на Mac ещё необходима.

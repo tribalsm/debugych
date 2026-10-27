@@ -1,19 +1,22 @@
 // Local production frontend and same-origin proxy, using only Node built-ins.
 import http from 'node:http';
+import https from 'node:https';
 import {createReadStream} from 'node:fs';
 import {stat} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(fileURLToPath(new URL('../apps/web/dist/',import.meta.url)));
 const port=Number(process.env.DEBUGYCH_WEB_PORT||8798),upstream=new URL(process.env.DEBUGYCH_API_URL||'http://127.0.0.1:8000');
-if(!Number.isInteger(port)||port<1024||port>65535||!['127.0.0.1','localhost','[::1]'].includes(upstream.hostname)||upstream.protocol!=='http:'||upstream.username||upstream.password||upstream.pathname!=='/'||upstream.search)throw Error('Use a loopback HTTP API origin and port 1024..65535');
+const localHTTP=upstream.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(upstream.hostname);
+const approvedHTTPS=upstream.protocol==='https:'&&process.env.DEBUGYCH_ALLOW_REMOTE_API==='1';
+if(!Number.isInteger(port)||port<1024||port>65535||!(localHTTP||approvedHTTPS)||upstream.username||upstream.password||upstream.pathname!=='/'||upstream.search||upstream.hash)throw Error('Use a loopback HTTP API origin or an explicitly configured HTTPS server and port 1024..65535');
 await stat(path.join(root,'index.html'));
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.glb':'model/gltf-binary','.woff2':'font/woff2','.mp4':'video/mp4'};
 const server=http.createServer(async(req,res)=>{
  res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');
  const raw=req.url||'/';
  if(/^\/api(?:\/|\?|$)/.test(raw)||/^\/(?:docs|openapi\.json)(?:\?|$)/.test(raw)){
-  const proxy=http.request(new URL(raw,upstream),{method:req.method,headers:{...req.headers,host:upstream.host,connection:'close'},timeout:90000},reply=>{res.writeHead(reply.statusCode||502,reply.headers);reply.pipe(res)});
+  const proxy=(upstream.protocol==='https:'?https:http).request(new URL(raw,upstream),{method:req.method,headers:{...req.headers,host:upstream.host,connection:'close'},timeout:90000},reply=>{res.writeHead(reply.statusCode||502,reply.headers);reply.pipe(res)});
   proxy.on('timeout',()=>proxy.destroy());proxy.on('error',()=>{if(!res.headersSent)res.writeHead(502,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify({detail:'Backend недоступен. Проверьте локальный запуск API.'}))});
   req.on('aborted',()=>proxy.destroy());res.on('close',()=>{if(!res.writableEnded)proxy.destroy()});req.pipe(proxy);return;
  }
