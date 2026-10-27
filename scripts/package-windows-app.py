@@ -34,7 +34,7 @@ for name in ['windows-desktop-dashboard.png','windows-desktop-settings.png','win
  # Older packages used this same output folder; do not label old evidence as 1.1.
  old=evidence/name
  if old.is_file():old.unlink()
-for name in ['native-desktop11-final.png','native-verification-runsc.png','native-fix-verify-final.png','rust-tests.log','pet-tests.log','web-tests.log','proxy-tests.log','bootstrap-tests.log','desktop-bridge-tests.log','pet-browser-repro.log','sprite-preservation.json','upstream-sprite-check.json','ai-budget-before.json','ai-budget-after.json','backend-health.json','patch-not-applied.json','video-metadata.json','video-validation.json','native-lifecycle-validation.json']:
+for name in ['project-overview-after.png','demo-toolbar-after.png','native-desktop11-final.png','native-verification-runsc.png','native-fix-verify-final.png','rust-tests.log','pet-tests.log','web-tests.log','proxy-tests.log','bootstrap-tests.log','desktop-bridge-tests.log','pet-browser-repro.log','sprite-preservation.json','upstream-sprite-check.json','ai-budget-before.json','ai-budget-after.json','backend-health.json','patch-not-applied.json','video-metadata.json','video-validation.json','native-lifecycle-validation.json']:
  source=root/'outputs/desktop11'/name
  if source.is_file():shutil.copy2(source,evidence/name)
 shutil.copy2(root/'docs/desktop-1.1-validation.md',out/'VALIDATION.md')
