@@ -1,6 +1,51 @@
 {
- "productName":"Дебагыч", "version":"1.0.0", "identifier":"local.debugych.desktop",
- "build":{"frontendDist":"shell"},
- "app":{"withGlobalTauri":true,"windows":[{"label":"main","title":"Дебагыч - AI QA Assistant","width":1360,"height":900,"minWidth":800,"minHeight":600,"center":true,"backgroundColor":"#0e131c"}],"security":{"csp":"default-src 'self'; script-src 'self'; style-src 'self'; connect-src ipc: http://ipc.localhost 'self'; img-src 'self' data:"}},
- "bundle":{"active":false,"icon":["icons/icon.ico"]}
+  "productName": "Дебагыч",
+  "version": "1.1.0",
+  "identifier": "local.debugych.desktop",
+  "build": {
+    "frontendDist": "shell"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "create": false,
+        "title": "Дебагыч - AI QA Assistant",
+        "width": 1360,
+        "height": 900,
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": true,
+        "backgroundColor": "#0e131c"
+      },
+      {
+        "label": "pet",
+        "create": false,
+        "title": "Дебагыч - Desktop Pet",
+        "width": 224,
+        "height": 270,
+        "transparent": true,
+        "decorations": false,
+        "shadow": false,
+        "alwaysOnTop": true,
+        "resizable": false,
+        "skipTaskbar": true,
+        "visible": false,
+        "backgroundColor": "#00000000",
+        "noRedirectionBitmap": true,
+        "focus": false,
+        "url": "pet/index.html"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src ipc: http://ipc.localhost 'self'; img-src 'self' data:; media-src 'self'; frame-src http://127.0.0.1:*"
+    }
+  },
+  "bundle": {
+    "active": false,
+    "icon": [
+      "icons/icon.ico"
+    ]
+  }
 }

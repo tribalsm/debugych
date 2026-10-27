@@ -1,0 +1,20 @@
+[
+  {
+    "id": "b3c84a45-2a2a-45e6-a606-347a30acbe33",
+    "project_id": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+    "created_at": "2026-10-26T17:25:59.288464+00:00",
+    "key": "R1",
+    "text": "pay(balance, amount) must return True when amount is positive and balance is greater than or equal to amount. It must return False when a nonnegative balance is less than the positive amount.",
+    "source": "requirements.md",
+    "quote": "R1. pay(balance, amount) returns True when amount is positive and balance is greater than or equal to amount. It returns False when a nonnegative balance is less than the positive amount."
+  },
+  {
+    "id": "d4f414ba-8cbe-4d7e-8a51-1bb0a6991957",
+    "project_id": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+    "created_at": "2026-10-26T17:25:59.291340+00:00",
+    "key": "R2",
+    "text": "pay must raise ValueError for a negative balance or a zero or negative amount.",
+    "source": "requirements.md",
+    "quote": "R2. pay raises ValueError for a negative balance or a zero or negative amount."
+  }
+]

@@ -1,0 +1,1283 @@
+{
+  "scope": "fixture:v31|4552f6ba-cd41-48d4-a947-39e3b58314ac|8a148635-63fd-42c8-8319-95f8d0255183",
+  "revision": "4552f6ba-cd41-48d4-a947-39e3b58314ac:8a148635-63fd-42c8-8319-95f8d0255183:55e90faa-d947-4001-ba83-a7ecaf63b540:completed::45a3e289-39c2-4bcd-b504-5e1ec62cb394:fix_verified:c41ceb12-55b9-4d85-87a3-332eba94717e:true:false:55e90faa-d947-4001-ba83-a7ecaf63b540",
+  "projectName": "Desktop Pet v3.1 - Payment live control",
+  "projectId": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+  "rootId": "8a148635-63fd-42c8-8319-95f8d0255183",
+  "snapshot": {
+    "state": "success",
+    "key": "4552f6ba-cd41-48d4-a947-39e3b58314ac:8a148635-63fd-42c8-8319-95f8d0255183:55e90faa-d947-4001-ba83-a7ecaf63b540:completed::45a3e289-39c2-4bcd-b504-5e1ec62cb394:fix_verified:c41ceb12-55b9-4d85-87a3-332eba94717e:true:false:55e90faa-d947-4001-ba83-a7ecaf63b540",
+    "project": {
+      "id": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "name": "Desktop Pet v3.1 - Payment live control",
+      "demo": false,
+      "created_at": "2026-10-26T17:23:17.471321+00:00"
+    },
+    "title": "Исправление прошло проверку",
+    "explanation": "Конкретный патч проверен. Патч ещё не применён. Полная корректность проекта не доказана.",
+    "phrase": "Исправление прошло проверку!",
+    "events": [
+      {
+        "kind": "bug_found",
+        "key": "45a3e289-39c2-4bcd-b504-5e1ec62cb394:proof:23632908-f9a9-4c20-8f4f-52f1bfe71e0b",
+        "title": "Подтверждён дефект: test_payment_succeeds_when_balance_covers_amount[1-1]"
+      },
+      {
+        "kind": "patch_ready",
+        "key": "c41ceb12-55b9-4d85-87a3-332eba94717e:patch:67f0bff38e0a95a44bdcee4d521b85909a763eb09aee5fd015bc600a1ee52b13",
+        "title": "Исправление подготовлено, применение отдельно"
+      },
+      {
+        "kind": "verification",
+        "key": "55e90faa-d947-4001-ba83-a7ecaf63b540:verified",
+        "title": "Исправление прошло проверку, патч ещё не применён"
+      }
+    ],
+    "actions": [
+      "project",
+      "tests",
+      "results",
+      "proof",
+      "diff",
+      "verification"
+    ],
+    "trustedDemo": false,
+    "rootId": "8a148635-63fd-42c8-8319-95f8d0255183",
+    "run": {
+      "id": "55e90faa-d947-4001-ba83-a7ecaf63b540",
+      "project_id": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "created_at": "2026-10-26T17:26:12.000210+00:00",
+      "operation": "verify",
+      "status": "completed",
+      "parent_workflow_id": "8a148635-63fd-42c8-8319-95f8d0255183",
+      "bug_id": "45a3e289-39c2-4bcd-b504-5e1ec62cb394",
+      "fix_id": "c41ceb12-55b9-4d85-87a3-332eba94717e",
+      "patch_sha256": "67f0bff38e0a95a44bdcee4d521b85909a763eb09aee5fd015bc600a1ee52b13",
+      "baseline": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.957,
+        "passed": 7,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_negative_balance_raises_value_error[-1]",
+            "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+            "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.004
+          },
+          {
+            "name": "test_negative_balance_raises_value_error[-2]",
+            "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+            "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "failed",
+            "traceback": "balance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError",
+            "duration": 0.002
+          },
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[2-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_nonpositive_amount_raises_value_error[0]",
+            "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+            "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_nonpositive_amount_raises_value_error[-1]",
+            "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+            "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_payment_returns_false_when_funds_are_insufficient[0-1]",
+            "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+            "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.003
+          },
+          {
+            "name": "test_payment_returns_false_when_funds_are_insufficient[1-2]",
+            "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+            "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.003
+          }
+        ],
+        "logs": "..F.....                                                                 [100%]\n=================================== FAILURES ===================================\n____________ test_payment_succeeds_when_balance_covers_amount[1-1] _____________\n\nbalance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_af9c4531d4bb406887a7fd436f14579f.py::test_payment_succeeds_when_balance_covers_amount[1-1]\n1 failed, 7 passed in 0.10s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100,
+            "covered_lines": 4,
+            "num_statements": 4,
+            "covered_branches": 2,
+            "num_branches": 2
+          },
+          "files": {
+            "pay.py": {
+              "executed_lines": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "a215b31498a3bc99d7f3083585f3366e60a85b06704a0611cc8b30c1d4d39534",
+        "runtime": "runsc",
+        "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+        "supervisor_duration": 1.479,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "focused": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.953,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.004
+          },
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[2-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.06s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 66.66666666666667,
+            "covered_lines": 3,
+            "num_statements": 4,
+            "covered_branches": 1,
+            "num_branches": 2
+          },
+          "files": {
+            "pay.py": {
+              "executed_lines": [
+                1,
+                2,
+                4
+              ],
+              "missing_lines": [
+                3
+              ]
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "cc6980b34000ffba7e31b18d2b2c8b0e93e0fc9fad3b0459086922360442de1c",
+        "runtime": "runsc",
+        "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+        "supervisor_duration": 1.455,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "regression": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.936,
+        "passed": 8,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_negative_balance_raises_value_error[-1]",
+            "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+            "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.003
+          },
+          {
+            "name": "test_negative_balance_raises_value_error[-2]",
+            "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+            "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[2-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_nonpositive_amount_raises_value_error[0]",
+            "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+            "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_nonpositive_amount_raises_value_error[-1]",
+            "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+            "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_payment_returns_false_when_funds_are_insufficient[0-1]",
+            "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+            "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_payment_returns_false_when_funds_are_insufficient[1-2]",
+            "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+            "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "........                                                                 [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n8 passed in 0.04s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100,
+            "covered_lines": 4,
+            "num_statements": 4,
+            "covered_branches": 2,
+            "num_branches": 2
+          },
+          "files": {
+            "pay.py": {
+              "executed_lines": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "aeb564293f901b23408169f64bba778fd1926c52746ea43e1c72039eb6ced2a8",
+        "runtime": "runsc",
+        "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+        "supervisor_duration": 1.429,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 0,
+      "duration": 0.936,
+      "passed": 8,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "test_negative_balance_raises_value_error[-1]",
+          "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+          "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.003
+        },
+        {
+          "name": "test_negative_balance_raises_value_error[-2]",
+          "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+          "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+          "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+          "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_payment_succeeds_when_balance_covers_amount[2-1]",
+          "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+          "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_nonpositive_amount_raises_value_error[0]",
+          "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+          "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_nonpositive_amount_raises_value_error[-1]",
+          "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+          "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_payment_returns_false_when_funds_are_insufficient[0-1]",
+          "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+          "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_payment_returns_false_when_funds_are_insufficient[1-2]",
+          "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+          "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "logs": "........                                                                 [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n8 passed in 0.04s\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 100,
+          "covered_lines": 4,
+          "num_statements": 4,
+          "covered_branches": 2,
+          "num_branches": 2
+        },
+        "files": {
+          "pay.py": {
+            "executed_lines": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "coverage_kind": null,
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "aeb564293f901b23408169f64bba778fd1926c52746ea43e1c72039eb6ced2a8",
+      "runtime": "runsc",
+      "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+      "supervisor_duration": 1.429,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "assessment": {
+        "original_reproduced": true,
+        "original_fixed": true,
+        "regressions_absent": true,
+        "same_test_cases": true,
+        "all_regression_passed": true,
+        "tests_unchanged": true,
+        "regression_cases_checked": 7,
+        "total_cases_checked": 8,
+        "full_correctness_proven": false
+      },
+      "verified": true
+    },
+    "bug": {
+      "id": "45a3e289-39c2-4bcd-b504-5e1ec62cb394",
+      "project_id": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "created_at": "2026-10-26T17:26:01.122477+00:00",
+      "title": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+      "status": "fix_verified",
+      "description": "Автоматически проверенное ожидание и точное повторное падение в gVisor; без ручного подтверждения.",
+      "requirement": "R1",
+      "requirement_id": "b3c84a45-2a2a-45e6-a606-347a30acbe33",
+      "run_id": "93bf09e7-c557-4575-82a4-9c92a30e2a6a",
+      "framework": "pytest",
+      "file": "tests/test_af9c4531d4bb406887a7fd436f14579f.py",
+      "line": null,
+      "expected": "pay(balance, amount) must return True when amount is positive and balance is greater than or equal to amount. It must return False when a nonnegative balance is less than the positive amount.",
+      "actual": "balance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError",
+      "traceback": "balance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError",
+      "code": "import pytest\nfrom pay import pay\n\n@pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\ndef test_payment_succeeds_when_balance_covers_amount(balance, amount):\n    assert pay(balance, amount) is True",
+      "steps": [
+        "Открыть снимок запуска 93bf09e7-c557-4575-82a4-9c92a30e2a6a",
+        "Повторить тест в том же образе gVisor"
+      ],
+      "recommendation": "Проверьте, что assertion соответствует исходному требованию и ошибка относится к продукту.",
+      "snapshot_sha256": "a71375b08a0bbf3ff0c1a483505917aba291d44c422945695583a1e132fe68a0",
+      "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+      "test_sha256": "a3f9dc2ebf9db1995c85767cc378ab731520cd2eb8c93060f7efde5e3576f39c",
+      "case_identity": [
+        "af9c4531-d4bb-4068-87a7-fd436f14579f",
+        "test_af9c4531d4bb406887a7fd436f14579f",
+        "test_payment_succeeds_when_balance_covers_amount[1-1]"
+      ],
+      "project_state_sha256": "10fba5051e51af199b457ae57d1f583ccae949fb0710bf71704bfd1cbc977eff",
+      "proof_id": "23632908-f9a9-4c20-8f4f-52f1bfe71e0b",
+      "review": {
+        "run_id": "93bf09e7-c557-4575-82a4-9c92a30e2a6a",
+        "test_sha256": "a3f9dc2ebf9db1995c85767cc378ab731520cd2eb8c93060f7efde5e3576f39c",
+        "validation_id": "8a148635-63fd-42c8-8319-95f8d0255183",
+        "review_kind": "automated_validation",
+        "reviewer_note": "Evidence-bound semantic validation and independent gVisor syntax/discovery. No human or developer override."
+      },
+      "confirmation_basis": "Evidence-bound automated requirement review and gVisor replay",
+      "current_fix_id": "c41ceb12-55b9-4d85-87a3-332eba94717e"
+    },
+    "fix": {
+      "id": "c41ceb12-55b9-4d85-87a3-332eba94717e",
+      "project_id": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "created_at": "2026-10-26T17:26:11.987474+00:00",
+      "changes": [
+        {
+          "path": "pay.py",
+          "before": "def pay(balance: int, amount: int) -> bool:\n    if balance < 0 or amount <= 0:\n        raise ValueError('Invalid payment')\n    return balance > amount\n",
+          "after": "def pay(balance: int, amount: int) -> bool:\n    if balance < 0 or amount <= 0:\n        raise ValueError('Invalid payment')\n    return balance >= amount\n",
+          "before_sha256": "7d980cd97ad4525426c2a69abfbeb276659ab57721402f998a4f91416fc6e877",
+          "after_sha256": "6bc93bc24319e15d439628b1d3e92fec74e14ddf369231f1139288f5146d42e4",
+          "diff": "--- a/pay.py\n+++ b/pay.py\n@@ -1,4 +1,4 @@\n def pay(balance: int, amount: int) -> bool:\n     if balance < 0 or amount <= 0:\n         raise ValueError('Invalid payment')\n-    return balance > amount\n+    return balance >= amount\n"
+        }
+      ],
+      "diff": "--- a/pay.py\n+++ b/pay.py\n@@ -1,4 +1,4 @@\n def pay(balance: int, amount: int) -> bool:\n     if balance < 0 or amount <= 0:\n         raise ValueError('Invalid payment')\n-    return balance > amount\n+    return balance >= amount\n",
+      "patch_sha256": "67f0bff38e0a95a44bdcee4d521b85909a763eb09aee5fd015bc600a1ee52b13",
+      "explanation": "Change the strict comparison to inclusive so a payment succeeds when the balance exactly covers the positive amount. Preserve the documented ValueError behavior for negative balances and nonpositive amounts.",
+      "bug_id": "45a3e289-39c2-4bcd-b504-5e1ec62cb394",
+      "proof_id": "23632908-f9a9-4c20-8f4f-52f1bfe71e0b",
+      "run_id": "93bf09e7-c557-4575-82a4-9c92a30e2a6a",
+      "project_state_sha256": "10fba5051e51af199b457ae57d1f583ccae949fb0710bf71704bfd1cbc977eff",
+      "origin": "llm",
+      "verified": true,
+      "applied": false,
+      "verification_ids": [
+        "55e90faa-d947-4001-ba83-a7ecaf63b540"
+      ],
+      "verification_id": "55e90faa-d947-4001-ba83-a7ecaf63b540",
+      "assessment": {
+        "original_reproduced": true,
+        "original_fixed": true,
+        "regressions_absent": true,
+        "same_test_cases": true,
+        "all_regression_passed": true,
+        "tests_unchanged": true,
+        "regression_cases_checked": 7,
+        "total_cases_checked": 8,
+        "full_correctness_proven": false
+      }
+    },
+    "verification": {
+      "id": "55e90faa-d947-4001-ba83-a7ecaf63b540",
+      "project_id": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "created_at": "2026-10-26T17:26:12.000210+00:00",
+      "operation": "verify",
+      "status": "completed",
+      "parent_workflow_id": "8a148635-63fd-42c8-8319-95f8d0255183",
+      "bug_id": "45a3e289-39c2-4bcd-b504-5e1ec62cb394",
+      "fix_id": "c41ceb12-55b9-4d85-87a3-332eba94717e",
+      "patch_sha256": "67f0bff38e0a95a44bdcee4d521b85909a763eb09aee5fd015bc600a1ee52b13",
+      "baseline": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.957,
+        "passed": 7,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_negative_balance_raises_value_error[-1]",
+            "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+            "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.004
+          },
+          {
+            "name": "test_negative_balance_raises_value_error[-2]",
+            "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+            "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "failed",
+            "traceback": "balance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError",
+            "duration": 0.002
+          },
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[2-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_nonpositive_amount_raises_value_error[0]",
+            "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+            "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_nonpositive_amount_raises_value_error[-1]",
+            "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+            "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_payment_returns_false_when_funds_are_insufficient[0-1]",
+            "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+            "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.003
+          },
+          {
+            "name": "test_payment_returns_false_when_funds_are_insufficient[1-2]",
+            "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+            "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.003
+          }
+        ],
+        "logs": "..F.....                                                                 [100%]\n=================================== FAILURES ===================================\n____________ test_payment_succeeds_when_balance_covers_amount[1-1] _____________\n\nbalance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_af9c4531d4bb406887a7fd436f14579f.py::test_payment_succeeds_when_balance_covers_amount[1-1]\n1 failed, 7 passed in 0.10s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100,
+            "covered_lines": 4,
+            "num_statements": 4,
+            "covered_branches": 2,
+            "num_branches": 2
+          },
+          "files": {
+            "pay.py": {
+              "executed_lines": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "a215b31498a3bc99d7f3083585f3366e60a85b06704a0611cc8b30c1d4d39534",
+        "runtime": "runsc",
+        "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+        "supervisor_duration": 1.479,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "focused": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.953,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.004
+          },
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[2-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.06s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 66.66666666666667,
+            "covered_lines": 3,
+            "num_statements": 4,
+            "covered_branches": 1,
+            "num_branches": 2
+          },
+          "files": {
+            "pay.py": {
+              "executed_lines": [
+                1,
+                2,
+                4
+              ],
+              "missing_lines": [
+                3
+              ]
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "cc6980b34000ffba7e31b18d2b2c8b0e93e0fc9fad3b0459086922360442de1c",
+        "runtime": "runsc",
+        "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+        "supervisor_duration": 1.455,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "regression": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.936,
+        "passed": 8,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_negative_balance_raises_value_error[-1]",
+            "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+            "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.003
+          },
+          {
+            "name": "test_negative_balance_raises_value_error[-2]",
+            "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+            "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_payment_succeeds_when_balance_covers_amount[2-1]",
+            "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+            "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_nonpositive_amount_raises_value_error[0]",
+            "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+            "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_nonpositive_amount_raises_value_error[-1]",
+            "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+            "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_payment_returns_false_when_funds_are_insufficient[0-1]",
+            "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+            "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_payment_returns_false_when_funds_are_insufficient[1-2]",
+            "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+            "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "........                                                                 [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n8 passed in 0.04s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100,
+            "covered_lines": 4,
+            "num_statements": 4,
+            "covered_branches": 2,
+            "num_branches": 2
+          },
+          "files": {
+            "pay.py": {
+              "executed_lines": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "aeb564293f901b23408169f64bba778fd1926c52746ea43e1c72039eb6ced2a8",
+        "runtime": "runsc",
+        "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+        "supervisor_duration": 1.429,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 0,
+      "duration": 0.936,
+      "passed": 8,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "test_negative_balance_raises_value_error[-1]",
+          "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+          "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.003
+        },
+        {
+          "name": "test_negative_balance_raises_value_error[-2]",
+          "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+          "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+          "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+          "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_payment_succeeds_when_balance_covers_amount[2-1]",
+          "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+          "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_nonpositive_amount_raises_value_error[0]",
+          "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+          "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_nonpositive_amount_raises_value_error[-1]",
+          "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+          "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_payment_returns_false_when_funds_are_insufficient[0-1]",
+          "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+          "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_payment_returns_false_when_funds_are_insufficient[1-2]",
+          "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+          "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "logs": "........                                                                 [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n8 passed in 0.04s\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 100,
+          "covered_lines": 4,
+          "num_statements": 4,
+          "covered_branches": 2,
+          "num_branches": 2
+        },
+        "files": {
+          "pay.py": {
+            "executed_lines": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "coverage_kind": null,
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "aeb564293f901b23408169f64bba778fd1926c52746ea43e1c72039eb6ced2a8",
+      "runtime": "runsc",
+      "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+      "supervisor_duration": 1.429,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "assessment": {
+        "original_reproduced": true,
+        "original_fixed": true,
+        "regressions_absent": true,
+        "same_test_cases": true,
+        "all_regression_passed": true,
+        "tests_unchanged": true,
+        "regression_cases_checked": 7,
+        "total_cases_checked": 8,
+        "full_correctness_proven": false
+      },
+      "verified": true
+    }
+  },
+  "connected": true,
+  "demo": false,
+  "historical": true,
+  "original": {
+    "id": "93bf09e7-c557-4575-82a4-9c92a30e2a6a",
+    "project_id": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+    "created_at": "2026-10-26T17:25:59.327409+00:00",
+    "operation": "run",
+    "status": "completed",
+    "parent_workflow_id": "8a148635-63fd-42c8-8319-95f8d0255183",
+    "project_state_sha256": "10fba5051e51af199b457ae57d1f583ccae949fb0710bf71704bfd1cbc977eff",
+    "quality_inputs": {
+      "requirement_ids": [
+        "b3c84a45-2a2a-45e6-a606-347a30acbe33",
+        "d4f414ba-8cbe-4d7e-8a51-1bb0a6991957"
+      ],
+      "tests": [
+        {
+          "id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+          "requirement_id": "b3c84a45-2a2a-45e6-a606-347a30acbe33",
+          "dimensions": [
+            "positive",
+            "boundary"
+          ]
+        },
+        {
+          "id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+          "requirement_id": "b3c84a45-2a2a-45e6-a606-347a30acbe33",
+          "dimensions": [
+            "positive",
+            "boundary"
+          ]
+        },
+        {
+          "id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+          "requirement_id": "d4f414ba-8cbe-4d7e-8a51-1bb0a6991957",
+          "dimensions": [
+            "invalid_input",
+            "exception",
+            "boundary"
+          ]
+        },
+        {
+          "id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+          "requirement_id": "d4f414ba-8cbe-4d7e-8a51-1bb0a6991957",
+          "dimensions": [
+            "invalid_input",
+            "exception",
+            "boundary"
+          ]
+        }
+      ]
+    },
+    "failure_kind": null,
+    "error": null,
+    "exit_code": 1,
+    "duration": 1.054,
+    "passed": 7,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      {
+        "name": "test_negative_balance_raises_value_error[-1]",
+        "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+        "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+        "status": "passed",
+        "traceback": "",
+        "duration": 0.003
+      },
+      {
+        "name": "test_negative_balance_raises_value_error[-2]",
+        "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763",
+        "classname": "test_9fc99c3aeb5344fe9f9f72664df06763",
+        "status": "passed",
+        "traceback": "",
+        "duration": 0.001
+      },
+      {
+        "name": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+        "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+        "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+        "status": "failed",
+        "traceback": "balance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError",
+        "duration": 0.001
+      },
+      {
+        "name": "test_payment_succeeds_when_balance_covers_amount[2-1]",
+        "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f",
+        "classname": "test_af9c4531d4bb406887a7fd436f14579f",
+        "status": "passed",
+        "traceback": "",
+        "duration": 0.001
+      },
+      {
+        "name": "test_nonpositive_amount_raises_value_error[0]",
+        "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+        "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+        "status": "passed",
+        "traceback": "",
+        "duration": 0.001
+      },
+      {
+        "name": "test_nonpositive_amount_raises_value_error[-1]",
+        "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a",
+        "classname": "test_ca3e69f995c6402c9edcd0dd9892c94a",
+        "status": "passed",
+        "traceback": "",
+        "duration": 0.001
+      },
+      {
+        "name": "test_payment_returns_false_when_funds_are_insufficient[0-1]",
+        "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+        "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+        "status": "passed",
+        "traceback": "",
+        "duration": 0.001
+      },
+      {
+        "name": "test_payment_returns_false_when_funds_are_insufficient[1-2]",
+        "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29",
+        "classname": "test_efa776f293e542ce996dc51b4c1c5f29",
+        "status": "passed",
+        "traceback": "",
+        "duration": 0.001
+      }
+    ],
+    "logs": "..F.....                                                                 [100%]\n=================================== FAILURES ===================================\n____________ test_payment_succeeds_when_balance_covers_amount[1-1] _____________\n\nbalance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_af9c4531d4bb406887a7fd436f14579f.py::test_payment_succeeds_when_balance_covers_amount[1-1]\n1 failed, 7 passed in 0.07s\n",
+    "coverage": {
+      "totals": {
+        "percent_covered": 100,
+        "covered_lines": 4,
+        "num_statements": 4,
+        "covered_branches": 2,
+        "num_branches": 2
+      },
+      "files": {
+        "pay.py": {
+          "executed_lines": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "missing_lines": []
+        }
+      }
+    },
+    "coverage_kind": null,
+    "artifacts": [],
+    "validation": null,
+    "snapshot_sha256": "a71375b08a0bbf3ff0c1a483505917aba291d44c422945695583a1e132fe68a0",
+    "runtime": "runsc",
+    "image_id": "sha256:500d8511d5ecca9ab8dc6ec02ef159cebf1cacf3a294a69221eb9e0a232e5595",
+    "supervisor_duration": 1.663,
+    "trusted_demo": false,
+    "report_trust": "untrusted-project-observation",
+    "quality": {
+      "observation_valid": true,
+      "requirements": {
+        "total": 2,
+        "exercised": [
+          "b3c84a45-2a2a-45e6-a606-347a30acbe33",
+          "d4f414ba-8cbe-4d7e-8a51-1bb0a6991957"
+        ],
+        "with_passing_assertions": [
+          "b3c84a45-2a2a-45e6-a606-347a30acbe33",
+          "d4f414ba-8cbe-4d7e-8a51-1bb0a6991957"
+        ],
+        "unexercised": [],
+        "exercise_ratio": 1
+      },
+      "executable_modules": 4,
+      "submitted_modules": 4,
+      "partially_executable_modules": 0,
+      "executable_module_ratio": 1,
+      "infrastructure_cases": 0,
+      "negative_requirements_claimed_and_executed": [
+        "d4f414ba-8cbe-4d7e-8a51-1bb0a6991957"
+      ],
+      "line_coverage": {
+        "covered": 4,
+        "total": 4,
+        "ratio": 1
+      },
+      "branch_coverage": {
+        "covered": 2,
+        "total": 2,
+        "ratio": 1
+      },
+      "coverage_kind": null,
+      "mutation": {
+        "status": "not_run",
+        "score": null
+      },
+      "limitations": [
+        "Runner observations are produced by untrusted project execution.",
+        "Requirement links and dimension tags are claims; exercise is not semantic completeness.",
+        "Coverage and assertion counts cannot certify correctness. No aggregate quality score."
+      ]
+    },
+    "profile": "python-pytest"
+  },
+  "cases": [
+    {
+      "name": "test_negative_balance_raises_value_error[-1]",
+      "status": "passed",
+      "traceback": "",
+      "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763"
+    },
+    {
+      "name": "test_negative_balance_raises_value_error[-2]",
+      "status": "passed",
+      "traceback": "",
+      "test_id": "9fc99c3a-eb53-44fe-9f9f-72664df06763"
+    },
+    {
+      "name": "test_payment_succeeds_when_balance_covers_amount[1-1]",
+      "status": "failed",
+      "traceback": "balance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError",
+      "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f"
+    },
+    {
+      "name": "test_payment_succeeds_when_balance_covers_amount[2-1]",
+      "status": "passed",
+      "traceback": "",
+      "test_id": "af9c4531-d4bb-4068-87a7-fd436f14579f"
+    },
+    {
+      "name": "test_nonpositive_amount_raises_value_error[0]",
+      "status": "passed",
+      "traceback": "",
+      "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a"
+    },
+    {
+      "name": "test_nonpositive_amount_raises_value_error[-1]",
+      "status": "passed",
+      "traceback": "",
+      "test_id": "ca3e69f9-95c6-402c-9edc-d0dd9892c94a"
+    },
+    {
+      "name": "test_payment_returns_false_when_funds_are_insufficient[0-1]",
+      "status": "passed",
+      "traceback": "",
+      "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29"
+    },
+    {
+      "name": "test_payment_returns_false_when_funds_are_insufficient[1-2]",
+      "status": "passed",
+      "traceback": "",
+      "test_id": "efa776f2-93e5-42ce-996d-c51b4c1c5f29"
+    }
+  ],
+  "expected": "pay(balance, amount) must return True when amount is positive and balance is greater than or equal to amount. It must return False when a nonnegative balance is less than the positive amount.",
+  "actual": "balance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError",
+  "traceback": "balance = 1, amount = 1\n\n    @pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\n    def test_payment_succeeds_when_balance_covers_amount(balance, amount):\n>       assert pay(balance, amount) is True\nE       assert False is True\nE        +  where False = pay(1, 1)\n\njob/tests/test_af9c4531d4bb406887a7fd436f14579f.py:6: AssertionError",
+  "description": "Автоматически проверенное ожидание и точное повторное падение в gVisor; без ручного подтверждения.",
+  "proposal": "Change the strict comparison to inclusive so a payment succeeds when the balance exactly covers the positive amount. Preserve the documented ValueError behavior for negative balances and nonpositive amounts.",
+  "changes": [
+    {
+      "path": "pay.py",
+      "before": "def pay(balance: int, amount: int) -> bool:\n    if balance < 0 or amount <= 0:\n        raise ValueError('Invalid payment')\n    return balance > amount\n",
+      "after": "def pay(balance: int, amount: int) -> bool:\n    if balance < 0 or amount <= 0:\n        raise ValueError('Invalid payment')\n    return balance >= amount\n"
+    }
+  ],
+  "plan": [
+    {
+      "title": "Payment succeeds when balance equals or exceeds positive amount",
+      "code": "import pytest\nfrom pay import pay\n\n@pytest.mark.parametrize(\"balance,amount\", [(1, 1), (2, 1)])\ndef test_payment_succeeds_when_balance_covers_amount(balance, amount):\n    assert pay(balance, amount) is True",
+      "gherkin": "Feature: Payment balance checks\nScenario Outline: Payment succeeds when the balance covers the amount\nGiven a nonnegative balance of <balance> and a positive amount of <amount>\nWhen I call pay with that balance and amount\nThen the result is True\nExamples:\n| balance | amount |\n| 1 | 1 |\n| 2 | 1 |"
+    },
+    {
+      "title": "Payment fails when nonnegative balance is less than positive amount",
+      "code": "import pytest\nfrom pay import pay\n\n@pytest.mark.parametrize(\"balance,amount\", [(0, 1), (1, 2)])\ndef test_payment_returns_false_when_funds_are_insufficient(balance, amount):\n    assert pay(balance, amount) is False",
+      "gherkin": "Feature: Payment balance checks\nScenario Outline: Payment returns false when funds are insufficient\nGiven a nonnegative balance of <balance> and a positive amount of <amount>\nWhen I call pay with that balance and amount\nThen the result is False\nExamples:\n| balance | amount |\n| 0 | 1 |\n| 1 | 2 |"
+    },
+    {
+      "title": "Payment raises ValueError for negative balances",
+      "code": "import pytest\nfrom pay import pay\n\n@pytest.mark.parametrize(\"balance\", [-1, -2])\ndef test_negative_balance_raises_value_error(balance):\n    with pytest.raises(ValueError):\n        pay(balance, 1)",
+      "gherkin": "Feature: Invalid payment inputs\nScenario Outline: Negative balance is rejected\nGiven a negative balance of <balance> and a positive amount of 1\nWhen I call pay with that balance and amount\nThen pay raises ValueError\nExamples:\n| balance |\n| -1 |\n| -2 |"
+    },
+    {
+      "title": "Payment raises ValueError for zero or negative amounts",
+      "code": "import pytest\nfrom pay import pay\n\n@pytest.mark.parametrize(\"amount\", [0, -1])\ndef test_nonpositive_amount_raises_value_error(amount):\n    with pytest.raises(ValueError):\n        pay(1, amount)",
+      "gherkin": "Feature: Invalid payment inputs\nScenario Outline: Nonpositive amount is rejected\nGiven a nonnegative balance of 1 and an amount of <amount>\nWhen I call pay with that balance and amount\nThen pay raises ValueError\nExamples:\n| amount |\n| 0 |\n| -1 |"
+    }
+  ],
+  "requirements": [
+    {
+      "key": "R1",
+      "text": "pay(balance, amount) must return True when amount is positive and balance is greater than or equal to amount. It must return False when a nonnegative balance is less than the positive amount.",
+      "quote": "R1. pay(balance, amount) returns True when amount is positive and balance is greater than or equal to amount. It returns False when a nonnegative balance is less than the positive amount."
+    },
+    {
+      "key": "R2",
+      "text": "pay must raise ValueError for a negative balance or a zero or negative amount.",
+      "quote": "R2. pay raises ValueError for a negative balance or a zero or negative amount."
+    }
+  ],
+  "sources": {
+    "project": {
+      "label": "Проект",
+      "page": "project",
+      "projectId": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "target": {}
+    },
+    "tests": {
+      "label": "Тесты",
+      "page": "tests",
+      "projectId": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "target": {
+        "runId": "93bf09e7-c557-4575-82a4-9c92a30e2a6a"
+      }
+    },
+    "results": {
+      "label": "Отчёт",
+      "page": "results",
+      "projectId": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "target": {
+        "runId": "55e90faa-d947-4001-ba83-a7ecaf63b540"
+      }
+    },
+    "proof": {
+      "label": "Bug Proof",
+      "page": "proof",
+      "projectId": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "target": {
+        "runId": "93bf09e7-c557-4575-82a4-9c92a30e2a6a",
+        "bugId": "45a3e289-39c2-4bcd-b504-5e1ec62cb394"
+      }
+    },
+    "diff": {
+      "label": "Diff",
+      "page": "diff",
+      "projectId": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "target": {
+        "runId": "93bf09e7-c557-4575-82a4-9c92a30e2a6a",
+        "bugId": "45a3e289-39c2-4bcd-b504-5e1ec62cb394",
+        "fixId": "c41ceb12-55b9-4d85-87a3-332eba94717e"
+      }
+    },
+    "verification": {
+      "label": "Fix & Verify",
+      "page": "verification",
+      "projectId": "4552f6ba-cd41-48d4-a947-39e3b58314ac",
+      "target": {
+        "runId": "55e90faa-d947-4001-ba83-a7ecaf63b540",
+        "bugId": "45a3e289-39c2-4bcd-b504-5e1ec62cb394",
+        "fixId": "c41ceb12-55b9-4d85-87a3-332eba94717e"
+      }
+    }
+  }
+}

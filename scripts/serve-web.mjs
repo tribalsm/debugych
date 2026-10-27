@@ -13,7 +13,7 @@ if(!Number.isInteger(port)||port<1024||port>65535||!(localHTTP||approvedHTTPS)||
 await stat(path.join(root,'index.html'));
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.glb':'model/gltf-binary','.woff2':'font/woff2','.mp4':'video/mp4'};
 const server=http.createServer(async(req,res)=>{
- res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');
+ res.setHeader('X-Content-Type-Options','nosniff');if(process.env.DEBUGYCH_DESKTOP_EMBED==='1')res.setHeader('Content-Security-Policy',"frame-ancestors http://tauri.localhost tauri://localhost");else res.setHeader('X-Frame-Options','DENY');
  const raw=req.url||'/';
  if(/^\/api(?:\/|\?|$)/.test(raw)||/^\/(?:docs|openapi\.json)(?:\?|$)/.test(raw)){
   const proxy=(upstream.protocol==='https:'?https:http).request(new URL(raw,upstream),{method:req.method,headers:{...req.headers,host:upstream.host,connection:'close'},timeout:90000},reply=>{res.writeHead(reply.statusCode||502,reply.headers);reply.pipe(res)});

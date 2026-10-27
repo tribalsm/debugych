@@ -1,0 +1,326 @@
+import { renderSafeMessage } from './SafeMessage.js';
+import { requestErrorMessage } from './RequestErrors.js';
+import { answerFromFacts, quickQuestions, intentFor } from './StructuredAnswers.js';
+import { redactChat } from './privacy.js';
+import { baseUrl, uuid } from '../contracts.js';
+/** Memory-only bounded conversations, cancelled on context revision or scope change. */
+export class CompanionChatController {
+    publish;
+    resolve;
+    resolveAI;
+    retry = null;
+    activeQuestion = null;
+    context = null;
+    histories = new Map();
+    seq = 0;
+    generation = 0;
+    pending = false;
+    error = '';
+    disposed = false;
+    activity = null;
+    constructor(publish, resolve = async (q, c) => answerFromFacts(q, c), resolveAI) {
+        this.publish = publish;
+        this.resolve = resolve;
+        this.resolveAI = resolveAI;
+    }
+    abort = null;
+    update(context) { if (this.disposed)
+        return; if (this.context?.scope !== context?.scope || this.context?.revision !== context?.revision || this.context?.connected !== context?.connected) {
+        this.generation++;
+        this.abort?.abort();
+        this.abort = null;
+        this.pending = false;
+        this.error = '';
+        this.retry = null;
+    } this.context = context; if (context && !this.histories.has(context.scope)) {
+        this.histories.set(context.scope, []);
+        while (this.histories.size > 5)
+            this.histories.delete(this.histories.keys().next().value);
+    } this.emit(); }
+    emit() { if (this.disposed)
+        return; this.publish({ context: this.context, messages: this.context ? [...(this.histories.get(this.context.scope) ?? [])] : [], pending: this.pending, error: this.error, questions: quickQuestions(this.context), activity: this.pending ? this.activity : null, retry: this.retry }); }
+    async send(question, ai = false) {
+        if (this.disposed || this.pending || !this.context)
+            return;
+        const q = redactChat(question.trim());
+        if (!q)
+            return;
+        if (q.length > 1600) {
+            this.error = 'Вопрос должен быть не длиннее 1600 символов.';
+            this.emit();
+            return;
+        }
+        const c = structuredClone(this.context), generation = this.generation, history = this.histories.get(c.scope);
+        if (!(history.at(-1)?.role === 'user' && history.at(-1)?.text === q) && (!ai || history.at(-2)?.text !== q || history.at(-1)?.role !== 'assistant'))
+            history.push({ id: ++this.seq, role: 'user', text: q, scope: c.scope, revision: c.revision });
+        this.pending = true;
+        this.activity = ai ? 'ai' : 'facts';
+        this.activeQuestion = { question: q, ai };
+        this.retry = null;
+        this.error = '';
+        this.abort = new AbortController();
+        this.emit();
+        try {
+            const resolver = ai ? this.resolveAI : this.resolve;
+            if (!resolver)
+                throw Error('AI unavailable');
+            const answer = await resolver(q, c, this.abort.signal);
+            if (this.disposed || generation !== this.generation || this.context?.scope !== c.scope)
+                return;
+            if (answer.scope !== c.scope || answer.revision !== c.revision)
+                throw Error('Несовпадение контекста');
+            answer.text = redactChat(answer.text);
+            history.push({ id: ++this.seq, role: 'assistant', text: answer.text, scope: c.scope, revision: c.revision, answer });
+            while (history.length > 24)
+                history.splice(0, 2);
+        }
+        catch (error) {
+            if (generation === this.generation && !this.disposed) {
+                this.error = requestErrorMessage(error);
+                this.retry = { question: q, ai };
+            }
+        }
+        finally {
+            if (generation === this.generation && !this.disposed) {
+                this.pending = false;
+                this.abort = null;
+                this.emit();
+            }
+        }
+    }
+    cancelPending() { if (!this.pending)
+        return; this.generation++; this.abort?.abort(); this.abort = null; this.pending = false; this.retry = this.activeQuestion; this.error = 'Запрос отменён при закрытии чата. Уже отправленный AI-вызов может расходовать резерв.'; this.emit(); }
+    clear() { this.retry = null; this.generation++; this.abort?.abort(); this.pending = false; this.error = ''; if (this.context)
+        this.histories.set(this.context.scope, []); this.emit(); }
+    exportHistory() { const rows = [...this.histories].map(([scope, messages]) => ({ scope, messages: structuredClone(messages).map(m => ({ ...m, text: redactChat(m.text), answer: m.answer ? { ...m.answer, text: redactChat(m.answer.text) } : undefined })) })); while (new TextEncoder().encode(JSON.stringify(rows)).length > 58000 && rows.length) {
+        if (rows[0].messages.length > 2)
+            rows[0].messages.splice(0, 2);
+        else
+            rows.shift();
+    } return rows; }
+    restoreHistory(value) { if (!Array.isArray(value))
+        return; for (const row of value.slice(-5)) {
+        if (!row || typeof row.scope !== 'string' || !Array.isArray(row.messages))
+            continue;
+        const parts = row.scope.split('|');
+        try {
+            if (parts.length !== 3 || baseUrl(parts[0]) !== parts[0] || !uuid(parts[1]) || parts[2] !== 'empty' && !uuid(parts[2]))
+                continue;
+        }
+        catch {
+            continue;
+        }
+        const messages = [];
+        for (const m of row.messages.slice(-24)) {
+            if (!m || !['user', 'assistant'].includes(m.role) || typeof m.text !== 'string' || m.text.length > 6000 || m.scope !== row.scope || typeof m.revision !== 'string' || m.revision.length > 1500)
+                continue;
+            const answer = m.answer;
+            if (answer && (!['facts', 'limitation', 'llm'].includes(answer.kind) || answer.scope !== row.scope || !Array.isArray(answer.sources) || answer.sources.length > 6 || answer.sources.some((s) => s.projectId !== parts[1] || !['project', 'proof', 'tests', 'diff', 'verification', 'results'].includes(s.page) || typeof s.label !== 'string' || s.label.length > 40 || !s.target || Object.values(s.target).some(id => id !== undefined && !uuid(id)))))
+                continue;
+            messages.push({ id: ++this.seq, role: m.role, text: redactChat(m.text), scope: row.scope, revision: m.revision, answer: answer ? { kind: answer.kind, text: redactChat(m.text), scope: row.scope, revision: m.revision, sources: answer.sources.map((s) => ({ page: s.page, projectId: s.projectId, label: s.label, target: { bugId: s.target.bugId, fixId: s.target.fixId, runId: s.target.runId } })) } : undefined });
+        }
+        this.histories.set(row.scope, messages);
+    } this.emit(); }
+    dispose() { this.disposed = true; this.generation++; this.abort?.abort(); this.histories.clear(); }
+}
+/** Fits the existing Canvas/Tauri shell, with no additional renderer or LLM client. */
+export class CompanionChat {
+    options;
+    element;
+    controller;
+    log;
+    input;
+    questions;
+    status;
+    title;
+    send;
+    empty;
+    state = null;
+    draftScope = '';
+    rendered = '';
+    settingsElement;
+    historyCheck;
+    retryButton;
+    aiEnabled = false;
+    aiAvailable = false;
+    aiMessage = 'AI-функция проверяется';
+    aiNote;
+    historySaving = false;
+    savedSignature = '';
+    storageReady = false;
+    constructor(options) {
+        this.options = options;
+        this.element = document.createElement('section');
+        this.element.className = 'companion-chat';
+        this.element.setAttribute('aria-label', 'Общение с Дебагычем');
+        this.element.innerHTML = '<div class="chat-heading"><strong>Спросите Дебагыча</strong><button class="chat-clear quiet" type="button">Очистить</button></div><p class="chat-context"></p><p class="chat-origin">Простые ответы - по данным. AI-ответы отмечены отдельно.</p><div class="chat-log" role="log" aria-label="История диалога" aria-live="polite" aria-relevant="additions"><p class="chat-empty">Выберите проект. Ответы появятся по его данным.</p></div><div class="chat-questions" aria-label="Быстрые вопросы"></div><form class="chat-form"><label class="chat-label" for="companion-chat-input">Ваш вопрос</label><textarea id="companion-chat-input" class="chat-input" rows="2" maxlength="1600" placeholder="Спросите об ошибке или патче…"></textarea><div class="chat-compose-footer"><small>Enter ↵ · Shift+Enter</small><button type="submit" class="chat-send">Спросить</button></div></form><p class="chat-request-status" role="status"></p>';
+        this.log = this.element.querySelector('.chat-log');
+        this.input = this.element.querySelector('textarea');
+        this.questions = this.element.querySelector('.chat-questions');
+        this.status = this.element.querySelector('.chat-request-status');
+        this.title = this.element.querySelector('.chat-context');
+        this.send = this.element.querySelector('.chat-send');
+        this.empty = this.element.querySelector('.chat-empty');
+        this.settingsElement = document.createElement('div');
+        this.settingsElement.className = 'chat-extra-settings';
+        this.settingsElement.setAttribute('aria-label', 'Настройки диалога');
+        this.settingsElement.append(this.element.querySelector('.chat-origin'), this.element.querySelector('.chat-clear'));
+        const extra = document.createElement('details');
+        extra.className = 'chat-tools';
+        const summary = document.createElement('summary');
+        summary.textContent = 'Настройки диалога';
+        extra.append(summary, this.settingsElement);
+        this.element.append(extra);
+        this.retryButton = document.createElement('button');
+        this.retryButton.type = 'button';
+        this.retryButton.className = 'chat-retry';
+        this.retryButton.textContent = 'Повторить вопрос';
+        this.retryButton.hidden = true;
+        this.retryButton.onclick = () => { const retry = this.state?.retry; if (retry)
+            void this.controller.send(retry.question, retry.ai); };
+        this.status.after(this.retryButton);
+        this.aiNote = document.createElement('p');
+        this.aiNote.className = 'chat-ai-note';
+        this.settingsElement.append(this.aiNote);
+        const historyLabel = document.createElement('label');
+        historyLabel.className = 'chat-history-option';
+        const check = this.historyCheck = document.createElement('input');
+        check.type = 'checkbox';
+        check.disabled = !options.saveHistory;
+        check.setAttribute('aria-label', 'Сохранять историю на компьютере');
+        historyLabel.append(check, document.createTextNode('Сохранять историю локально'));
+        historyLabel.title = 'Выключено по умолчанию. Хранятся только сообщения и ссылки, без полного контекста файлов. Фильтр секретов не является полной DLP-защитой.';
+        this.settingsElement.append(historyLabel);
+        check.onchange = () => { this.storageReady = true; this.historySaving = check.checked; this.savedSignature = ''; this.persist(); };
+        this.controller = new CompanionChatController(state => this.render(state), undefined, async (q, c, signal) => { if (!this.aiEnabled || !this.aiAvailable || !c.connected || !this.options.explain)
+            throw Error('AI unavailable'); return this.options.explain(q, c, signal, (p, s) => this.confirmAI(p, s)); });
+        this.element.querySelector('form').addEventListener('submit', e => { e.preventDefault(); this.submit(); });
+        this.input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+            e.preventDefault();
+            this.submit();
+        } });
+        this.settingsElement.querySelector('.chat-clear').addEventListener('click', () => this.controller.clear());
+        this.controller.update(null);
+    }
+    submit() { const question = this.input.value; if (!question.trim() || this.state?.pending)
+        return; this.input.value = ''; const complex = intentFor(question) === 'unknown' || /(?:объясни|разбери|поясни).{0,140}(?:почему|как|причин)/i.test(question); void this.controller.send(question, this.aiEnabled && this.aiAvailable && !!this.state?.context?.connected && complex); this.input.focus(); }
+    render(state) {
+        this.state = state;
+        const c = state.context;
+        if (this.draftScope !== c?.scope) {
+            this.draftScope = c?.scope ?? '';
+            this.input.value = '';
+            this.rendered = '__scope_changed__';
+        }
+        this.options.activity?.(state.pending ? 'processing' : state.error && !state.error.startsWith('Отправка отменена') ? 'error' : 'idle');
+        this.aiNote.textContent = this.aiEnabled ? this.aiMessage : 'AI-ответы выключены. Включаются в «Подключении», отправка подтверждается отдельно.';
+        this.title.textContent = c ? `${!c.connected ? 'Offline · сохранённые данные · ' : c.demo ? 'Демо · ' : ''}${c.historical ? 'История · ' : ''}${c.rootId ? 'Запуск ' + c.rootId.slice(0, 8) : 'Без запуска'}` : 'Выберите проект';
+        this.title.title = c ? c.projectName + ' · ' + (c.rootId ?? 'без запуска') : '';
+        const fingerprint = state.messages.map(m => m.id + ':' + (m.revision === c?.revision ? 'current' : 'earlier')).join('|');
+        const previousScroll = this.log.scrollTop;
+        if (fingerprint !== this.rendered) {
+            const nearBottom = this.log.scrollHeight - this.log.scrollTop - this.log.clientHeight < 60;
+            this.rendered = fingerprint;
+            this.log.replaceChildren();
+            if (!state.messages.length)
+                this.log.append(this.empty);
+            for (const m of state.messages) {
+                const article = document.createElement('article');
+                article.className = 'chat-message ' + m.role;
+                const label = document.createElement('small');
+                label.textContent = m.role === 'user' ? 'Вы' : 'Дебагыч · ' + (m.answer?.kind === 'facts' ? 'по данным проверки' : 'ограничение');
+                article.append(label);
+                article.append(renderSafeMessage(document, m.text));
+                if (m.revision !== c?.revision) {
+                    const old = document.createElement('small');
+                    old.className = 'chat-earlier';
+                    old.textContent = 'Ответ относится к предыдущему состоянию этого запуска. Откройте источник для актуальных данных.';
+                    article.append(old);
+                }
+                if (m.answer?.sources.length) {
+                    const links = document.createElement('div');
+                    links.className = 'chat-sources';
+                    for (const source of m.answer.sources) {
+                        const b = document.createElement('button');
+                        b.type = 'button';
+                        b.textContent = source.label;
+                        b.addEventListener('click', () => { this.options.openSource(source).catch(() => { this.status.textContent = 'Не удалось открыть источник. Проверьте адрес веб-приложения.'; }); });
+                        links.append(b);
+                    }
+                    article.append(links);
+                }
+                this.log.append(article);
+            }
+            if (nearBottom && state.messages.at(-1)?.role === 'user')
+                this.log.scrollTop = this.log.scrollHeight;
+            else if (nearBottom && this.log.lastElementChild)
+                this.log.scrollTop += this.log.lastElementChild.getBoundingClientRect().top - this.log.getBoundingClientRect().top;
+        }
+        this.empty.textContent = c ? 'Можно спросить об ошибке, её доказательстве, diff или результате Verify. Ответы используют полученные записи backend.' : 'Выберите проект. В Demo Mode Live-диалог недоступен.';
+        if (this.log.scrollTop === 0 && previousScroll > 0)
+            this.log.scrollTop = previousScroll;
+        const articles = [...this.log.querySelectorAll('.chat-message')];
+        for (const [index, m] of state.messages.entries()) {
+            const article = articles[index];
+            if (!article)
+                continue;
+            if (m.answer?.kind === 'llm')
+                article.querySelector('small').textContent = 'Дебагыч · AI-объяснение';
+            const oldButton = article.querySelector('.chat-ask-ai');
+            const eligible = (m.answer?.kind === 'limitation' || m.answer?.kind === 'facts') && !!c?.connected && !!c?.rootId && this.aiAvailable && this.aiEnabled;
+            if (!eligible) {
+                oldButton?.remove();
+                continue;
+            }
+            if (oldButton) {
+                oldButton.disabled = state.pending;
+                continue;
+            }
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'chat-ask-ai';
+            b.textContent = m.answer?.kind === 'limitation' ? 'Попросить AI объяснить' : 'Объяснить подробнее с AI';
+            b.disabled = state.pending;
+            b.onclick = () => { const question = state.messages.slice(0, index).reverse().find(v => v.role === 'user')?.text; if (question)
+                void this.controller.send(question, true); };
+            article.append(b);
+        }
+        const signature = JSON.stringify(state.questions);
+        if (this.questions.dataset.signature !== signature) {
+            this.questions.dataset.signature = signature;
+            this.questions.replaceChildren();
+            for (const question of state.questions) {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.textContent = question;
+                b.onclick = () => { void this.controller.send(question); };
+                this.questions.append(b);
+            }
+        }
+        this.input.disabled = !c;
+        this.send.disabled = !c || state.pending;
+        for (const b of this.questions.querySelectorAll('button'))
+            b.disabled = state.pending;
+        this.retryButton.hidden = !state.retry;
+        this.retryButton.disabled = state.pending || state.retry?.ai === true && !c?.connected;
+        if (state.retry && !state.pending && !this.input.value)
+            this.input.value = state.retry.question;
+        this.status.textContent = state.pending ? (state.activity === 'ai' ? 'Готовлю AI-объяснение. Это не новый QA-анализ.' : 'Смотрю полученные данные…') : state.error;
+        this.element.setAttribute('aria-busy', String(state.pending));
+        this.persist();
+    }
+    setAI(enabled, available, message) { this.aiEnabled = enabled; this.aiAvailable = available; this.aiMessage = message; if (this.state)
+        this.render(this.state); }
+    restoreStorage(saved) { this.storageReady = false; this.historySaving = saved.enabled === true; this.controller.restoreHistory(saved.history); this.historyCheck.checked = this.historySaving; this.storageReady = true; }
+    persist() { if (!this.storageReady || !this.options.saveHistory)
+        return; const history = this.historySaving ? this.controller.exportHistory() : []; const signature = JSON.stringify([this.historySaving, history]); if (signature === this.savedSignature)
+        return; this.savedSignature = signature; void this.options.saveHistory(this.historySaving, history).catch(() => { this.status.textContent = 'Локальную историю не удалось сохранить. Диалог остаётся в памяти.'; }); }
+    confirmAI(p, signal) { return new Promise(resolve => { if (signal.aborted) {
+        resolve(false);
+        return;
+    } const region = document.createElement('section'); region.className = 'chat-consent'; region.setAttribute('aria-label', 'Согласие на AI-ответ'); const title = document.createElement('strong'); title.textContent = 'Отправить вопрос AI?'; const info = document.createElement('p'); info.textContent = `Провайдер: ${p.provider}. Модель: ${p.model}. Один вызов, до $${p.max_reserved_usd.toFixed(2)} расчётного резерва. Фактический счёт может отличаться.`; const notice = document.createElement('p'); notice.textContent = p.notice; const details = document.createElement('details'), summary = document.createElement('summary'), pre = document.createElement('pre'); summary.textContent = 'Какие данные будут переданы'; pre.textContent = JSON.stringify(p.context, null, 2); details.append(summary, pre); const yes = document.createElement('button'), no = document.createElement('button'); yes.type = no.type = 'button'; yes.textContent = 'Отправить AI'; no.textContent = 'Отмена'; region.append(title, info, notice, details, yes, no); const hidden = [this.log, this.questions, this.element.querySelector('form')]; hidden.forEach(v => v.hidden = true); this.element.append(region); let settled = false; const finish = (ok) => { if (settled)
+        return; settled = true; signal.removeEventListener('abort', abort); region.remove(); hidden.forEach(v => v.hidden = false); resolve(ok); }; const abort = () => finish(false); signal.addEventListener('abort', abort, { once: true }); yes.onclick = () => finish(true); no.onclick = () => finish(false); no.focus(); }); }
+    cancelPending() { this.controller.cancelPending(); }
+    update(c) { this.controller.update(c); }
+    dispose() { this.controller.dispose(); this.element.remove(); }
+}

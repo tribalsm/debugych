@@ -730,14 +730,16 @@ dependencies = [
 
 [[package]]
 name = "debugych-desktop"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
+ "futures-util",
  "reqwest",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-single-instance",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]

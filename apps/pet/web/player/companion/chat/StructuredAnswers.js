@@ -1,0 +1,96 @@
+import { redactChat } from './privacy.js';
+const clean = (q) => q.toLocaleLowerCase('ru').replace(/ё/g, 'е').replace(/[?!.,:;]/g, ' ').replace(/\s+/g, ' ').trim();
+/** Explicit intents over evidence. Never represented as an LLM response. */
+export function intentFor(question) {
+    const q = clean(question);
+    if (/(?:напиши|создай|примени|удали|выполни|запусти|отправь|отключи)/.test(q))
+        return 'unknown';
+    if (/(?:план тест|тестовом плане|какие проверки|какие требования)/.test(q))
+        return 'plan';
+    if (/(?:не примен|примен[её]н|применил|уже примен|applied)/.test(q))
+        return 'applied';
+    if (/(?:diff|дифф|патч|исправил|изменил|изменилось|изменения|должно помочь)/.test(q))
+        return 'patch';
+    if (/(?:доказатель|bug proof|traceback|трейсбек)/.test(q))
+        return 'proof';
+    if (/(?:где (?:она|он|это|ошибка|баг|проблема|находится)|(?:каком|какой) (?:файл|строк)|строка ошибки)/.test(q))
+        return 'location';
+    if (/(?:почему (?:это|так|патч|ошибка|он|она|тест|падает|происходит)|причина (?:ошиб|баг|паден)|из за чего)/.test(q))
+        return 'why';
+    if (/(?:не прош|упал|упали|паден|failed)/.test(q))
+        return 'failed';
+    if (/(?:сейчас|что проверяется|статус|чем занят)/.test(q))
+        return 'status';
+    if (/(?:сколько|результат|тестов прошло|прошли тест|итог)/.test(q))
+        return 'results';
+    if (/(?:наш[её]л|нашли|найден|что за ошиб|обнаруж|что случилось)/.test(q))
+        return 'found';
+    return 'unknown';
+}
+export function quickQuestions(c) { if (!c)
+    return []; const s = c.snapshot; if (['analyzing', 'generating', 'testing', 'fixing', 'verifying'].includes(s.state))
+    return ['Что сейчас проверяется?', 'Какие результаты?']; if (s.fix)
+    return ['Что исправил патч?', 'Патч уже применён?']; if (s.bug)
+    return ['Что ты нашёл?', 'Покажи доказательство']; return ['Какие результаты?', 'Что сейчас проверяется?']; }
+function measurement(v) { const valid = (n) => Number.isInteger(n) && Number(n) >= 0; if (!v || ![v.passed, v.failed, v.errors].every(valid))
+    return 'Полной численной сводки backend не предоставил.'; const skipped = v.skipped; return (valid(skipped) ? `${v.passed} из ${v.passed + v.failed + v.errors + skipped} проверок прошли успешно. Пропущено: ${skipped}.` : `Успешно: ${v.passed}. Общее количество с учётом пропущенных не предоставлено.`) + ` Отклонений: ${v.failed}, ошибок выполнения: ${v.errors}. Это результат конкретного набора.`; }
+function comparison(c) { for (const change of c.changes) {
+    const before = change.before.match(/^\s*return ([A-Za-z_]\w*) > ([A-Za-z_]\w*)\s*$/m), after = change.after.match(/^\s*return ([A-Za-z_]\w*) >= ([A-Za-z_]\w*)\s*$/m);
+    if (before && after && before[1] === after[1] && before[2] === after[2])
+        return `В ${change.path} сравнение ${before[1]} > ${before[2]} не включает равенство. Патч заменяет его на ${after[1]} >= ${after[2]}, включая случай равенства.`;
+} return ''; }
+function observed(c) { const value = c.actual || c.traceback || ''; const lines = value.split('\n').map(s => s.trim()).filter(Boolean); const assertion = lines.find(s => /^E\s+assert /.test(s)); return [lines[0], assertion].filter(Boolean).join('\n').slice(0, 300) || 'не предоставлено'; }
+export function answerFromFacts(question, c) {
+    const intent = intentFor(question), s = c.snapshot, b = s.bug, f = s.fix;
+    let text = '', kind = 'facts';
+    let pages = [];
+    switch (intent) {
+        case 'found':
+            text = b ? `Нашёл подтверждённое отклонение от требования.\n${(c.description || b.title).slice(0, 220)}\n\nОжидалось: ${(c.expected || 'не предоставлено').slice(0, 300)}\nПолучено: ${observed(c)}\n\nПолное воспроизведение находится в Bug Proof.` : 'В выбранном запуске нет связанного подтверждённого Bug Proof. Это не доказывает отсутствия ошибок.';
+            pages = ['proof', 'tests'];
+            break;
+        case 'why':
+            text = b ? `${comparison(c)}\n\nСопоставление из доказательства:\nОжидалось: ${(c.expected || 'не предоставлено').slice(0, 300)}\nНаблюдалось: ${observed(c)}\n${!comparison(c) && c.proposal ? 'В предложении патча причина объяснена так: ' + c.proposal.slice(0, 600) : !comparison(c) ? 'Отдельное доказанное объяснение первопричины не предоставлено. По одному падению нельзя уверенно объяснить всю причину.' : ''}` : 'Без подтверждённого Bug Proof я не могу назвать наблюдение ошибкой или установить его причину.';
+            pages = ['proof', ...(f ? ['diff'] : [])];
+            break;
+        case 'location':
+            text = b ? `В доказательстве указан файл ${b.file || 'не предоставлен'}${b.line ? `, строка ${b.line}` : ''}.\n${c.changes.length ? 'Патч меняет: ' + c.changes.map(v => v.path).join(', ') + '. ' : ''}Файл в traceback может быть файлом теста, а не местом причины в исходнике.` : 'Место подтверждённой ошибки для этого запуска неизвестно.';
+            pages = ['proof', ...(f ? ['diff'] : [])];
+            break;
+        case 'proof':
+            text = b ? `Bug Proof ${b.proof_id || b.run_id}:\n${c.traceback || c.actual || 'Подробный traceback не предоставлен.'}\n${c.expected ? 'Связанное ожидание: ' + c.expected : ''}` : 'Подтверждённого доказательства для выбранного запуска нет.';
+            pages = ['proof'];
+            break;
+        case 'patch':
+            text = f ? `Предложение ${f.id.slice(0, 8)}:\n${comparison(c) || c.proposal?.slice(0, 600) || 'Текстовое объяснение не предоставлено.'}\n${/diff|дифф/.test(clean(question)) ? (f.diff ? f.diff.slice(0, 2800) : 'Diff не предоставлен.') : (c.changes.length ? 'Файлы: ' + c.changes.map(v => v.path).join(', ') : 'Список файлов не предоставлен.')}\n\n${s.verification ? 'Проверка этой версии: ' + measurement(s.verification) : 'Успешная связанная проверка этой версии не подтверждена.'}\n${f.applied ? 'Backend сообщает о применении.' : 'Патч ещё не применён.'}` : 'Связанного предложения патча для этого запуска нет. Я не создаю и не применяю исправление из чата.';
+            pages = ['diff', 'verification'];
+            break;
+        case 'applied':
+            text = f ? (f.applied ? 'Backend сообщает, что этот патч применён.' : 'Нет. Патч ещё не применён.') + (s.verification ? ' Его версия прошла Verify, но проверка и применение являются разными действиями.' : ' Успешная проверка этой версии не подтверждена.') : 'Патч для этого запуска не предоставлен. Применение не подтверждено.';
+            pages = ['diff', 'verification'];
+            break;
+        case 'failed': {
+            const failures = c.cases.filter(v => v.status === 'failed' || v.status === 'error');
+            text = failures.length ? `Исходный запуск ${c.original?.id.slice(0, 8)}:\n` + failures.map(v => `${v.status}: ${v.name}\n${v.traceback || 'Traceback не предоставлен.'}`).join('\n\n') : c.original ? 'В полученных кейсах этого исходного запуска нет падений. ' + measurement(c.original) : 'Результаты выполнения ещё не предоставлены.';
+            pages = ['tests', 'results'];
+            break;
+        }
+        case 'results':
+            text = `${c.original ? 'Исходный запуск ' + c.original.id.slice(0, 8) + ': ' + measurement(c.original) : 'Исполненный исходный набор для выбранного запуска не найден.'}\n${s.verification ? 'Verify ' + s.verification.id.slice(0, 8) + ': ' + measurement(s.verification) : 'Успешная связанная проверка патча не подтверждена.'}\n${f && !f.applied ? 'Патч не применён.' : ''}`;
+            pages = ['tests', 'results', ...(s.verification ? ['verification'] : [])];
+            break;
+        case 'status':
+            text = c.connected ? `${s.title}. ${s.explanation}\n${s.run ? 'Операция ' + s.run.operation + ', статус ' + s.run.status + (s.run.stage ? ', стадия ' + s.run.stage : '') + '.' : 'Backend не сообщает об активном запуске.'}` : 'Backend недоступен. Текущая работа неизвестна; сохранённый результат нельзя считать текущим статусом.';
+            pages = ['project', 'results'];
+            break;
+        case 'plan':
+            text = c.plan.length ? `Связанные сохранённые модули плана:\n${c.plan.map(t => t.title).join('\n')}\n${c.requirements.map(r => r.key + ': ' + r.text).join('\n')}\nЭто описание сохранённого плана. Историческая версия исходников тестов отдельно не предоставляется этим API, изменённые и несвязанные модули исключены.` : 'Связанный план тестов пока не получен или текущие модули изменены после запуска. Откройте Test Studio.';
+            pages = ['tests'];
+            break;
+        default:
+            kind = 'limitation';
+            text = 'Для этого вопроса нужен ответ LLM или уточнение. Сейчас платный вызов не выполнялся. Я могу объяснить полученные Bug Proof, diff и Verify. Для более сложного объяснения включите AI-ответы и отдельно подтвердите отправку вопроса и данных провайдеру.';
+    }
+    const prefix = [c.demo ? 'Источник: доверенный демопроект. Это не новый live-анализ.' : '', c.historical ? 'Выбран исторический запуск ' + c.rootId + '.' : '', !c.connected && intent !== 'status' ? 'Ответ по последним сохранённым данным. Связь с backend потеряна; актуальность неизвестна.' : ''].filter(Boolean).join('\n');
+    return { text: redactChat([prefix, text.trim()].filter(Boolean).join('\n\n')), kind, sources: pages.flatMap(page => c.sources[page] ? [structuredClone(c.sources[page])] : []), scope: c.scope, revision: c.revision };
+}

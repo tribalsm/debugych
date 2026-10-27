@@ -1,0 +1,1 @@
+{"identifier":"desktop-local-events","description":"Only the two bundled local windows may listen to native shared context and navigation events. No remote origin or process/shell permissions.","windows":["main","pet"],"permissions":["core:event:allow-listen","core:event:allow-unlisten"]}

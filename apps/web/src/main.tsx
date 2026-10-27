@@ -1,3 +1,4 @@
+import {connectDesktopProject,publishDesktopProject} from './desktopBridge';
 import {ProjectImportDialog} from './ProjectImportDialog';
 import {readResultTarget,targetError} from './resultTarget';
 import type {ValidationReport} from './validationBinding';
@@ -62,6 +63,7 @@ function App(){
  const closeModal=useCallback(()=>setModal(false),[]),closeEdit=useCallback(()=>setEdit(null),[]);
  const [projects,setProjects]=useState<Project[]>([]);
  const [selected,setSelected]=useState(routeProject()||localStorage.getItem('debugych-project')||'');
+ useEffect(()=>publishDesktopProject(selected),[selected]);
  const [sandbox,setSandbox]=useState(false);
  const [healthReady,setHealthReady]=useState(false);
  const [dataReady,setDataReady]=useState(false);
@@ -103,7 +105,8 @@ function App(){
  useEffect(()=>{const refresh=()=>Promise.all([reload(),refreshHealth()]).catch(e=>{if(selectedRef.current===selected){setError(e.message);setCompanionNetworkError(e.message)}});window.addEventListener('focus',refresh);return()=>window.removeEventListener('focus',refresh)},[reload,selected,refreshHealth]);
  useEffect(()=>{if(!busy)return;const timer=setInterval(()=>reload().catch(e=>{if(selectedRef.current===selected){setError(e.message);setCompanionNetworkError(e.message)}}),1500);return()=>clearInterval(timer)},[busy,reload,selected]);
  async function act(fn:()=>Promise<unknown>,message?:string){const startedFor=selectedRef.current;setAction(true);setError('');setCompanionNetworkError('');try{await fn();await reload();if(message&&selectedRef.current===startedFor)setNotice(message)}catch(e){if(selectedRef.current===startedFor){setError((e as Error).message);setCompanionNetworkError((e as Error).message)}}finally{setAction(false)}}
- function chooseProject(id:string){if(id===selectedRef.current)return;selectedRef.current=id;setLoading(true);setDataReady(false);setCompanionNetworkError('');setSelected(id);setRuns([]);setBugs([]);setFixes([]);setFiles([]);setTests([]);setRequirements([]);setError('');setNotice('');if(!['Dashboard','Projects'].includes(page))window.history.replaceState(null,'','#'+routes[page]+'?project='+encodeURIComponent(id));}
+ const chooseProject=useCallback((id:string)=>{if(id===selectedRef.current)return;selectedRef.current=id;setLoading(true);setDataReady(false);setCompanionNetworkError('');setSelected(id);setRuns([]);setBugs([]);setFixes([]);setFiles([]);setTests([]);setRequirements([]);setError('');setNotice('');if(!['Dashboard','Projects'].includes(page))window.history.replaceState(null,'','#'+routes[page]+'?project='+encodeURIComponent(id));},[page]);
+ useEffect(()=>connectDesktopProject(chooseProject,()=>selectedRef.current),[chooseProject]);
  async function demo(){const existing=projects.find(p=>p.demo);if(existing){chooseProject(existing.id);setPage('Overview');return}await act(async()=>{const p=await post<Project>('/demo');chooseProject(p.id);setPage('Overview')},'Демо создано. Загрузите подготовленный тестовый план.');}
  const analyze=()=>act(async()=>{const body=project?.demo?undefined:await aiConsent(selected);if(!project?.demo&&!body)return;await post(`/projects/${selected}/analyze`,body);setNotice('Задание анализа отправлено')});
  const autonomousQA=()=>act(async()=>{const body=await aiConsent(selected,true);if(!body)return;await post(`/projects/${selected}/autonomous`,body);setNotice('Автономный QA запущен; применение патча потребует отдельного подтверждения.');});
