@@ -6,17 +6,19 @@ import {stat,realpath} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {Transform} from 'node:stream';
+import {readFileSync} from 'node:fs';
 
 const cookieName='__Host-debugych';
 const page=(account=false,message='')=>`<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Дебагыч - ${account?'сеанс':'вход'}</title><style>
 *{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;padding:24px;background:#0b1018;color:#eef3ff;font:16px system-ui,sans-serif}main{width:min(460px,100%)}.brand{font-size:26px;font-weight:800}small,p{color:#b4c3d9;line-height:1.6}h1{font-size:32px;letter-spacing:-1px;margin:32px 0 14px}form{background:#141d2b;border:1px solid #2d3c52;border-radius:16px;padding:24px;margin-top:25px}label{display:block;margin-bottom:10px;font-weight:600}input,button{font:inherit;width:100%;padding:13px;border-radius:8px;border:1px solid #405578}input{background:#0b1320;color:#fff}button{margin-top:16px;background:#2860db;color:white;font-weight:600;cursor:pointer}a{color:#a9c8ff}:focus-visible{outline:3px solid #9dbbff;outline-offset:4px}.error{color:#ffb7bd}footer{margin-top:22px;font-size:13px;color:#8e9fb9}</style>
 <main><div class="brand">дебагыч<span style="color:#80a7ff">.</span></div><small>AI QA Assistant</small><h1>${account?'Сеанс сервера':'Войдите в рабочую область'}</h1><p>${account?'Вы подключены к защищённому серверу.':'Тесты, доказательства ошибок и проверка исправлений - в одном месте. Для входа нужен ключ владельца сервера.'}</p>${message?'<p class="error" role="alert">'+message+'</p>':''}${account?'<p><a href="/">Вернуться в приложение</a></p><form method="post" action="/auth/logout"><button>Выйти из сеанса</button></form>':'<form method="post" action="/auth/login"><label for="token">Ключ доступа</label><input id="token" name="token" type="password" autocomplete="off" required minlength="43" maxlength="256" spellcheck="false"><button>Войти в Дебагыч</button></form><footer>Ключ не сохраняется в браузерном хранилище. Доступ работает через защищённую HttpOnly-сессию. Это рабочий веб-сервис, установка Desktop не требуется.</footer>'}</main></html>`;
 
-export function createGateway({root,origin,upstream,now=Date.now,idleMs=30*60*1000,maxAgeMs=8*60*60*1000}){
+export function createGateway({root,origin,upstream,demo=null,now=Date.now,idleMs=30*60*1000,maxAgeMs=8*60*60*1000}){
  const publicURL=new URL(origin),api=new URL(upstream);
  if(publicURL.protocol!=='https:'||publicURL.pathname!=='/'||publicURL.username||publicURL.password||publicURL.search||publicURL.hash)throw Error('HTTPS public origin required');
  if(api.protocol!=='http:'||!['api','127.0.0.1','localhost'].includes(api.hostname)||api.pathname!=='/'||api.username||api.password||api.search||api.hash)throw Error('Fixed private API required');
  root=path.resolve(root);
+ if(demo&&(demo.version!==1||!demo.routes||!demo.projectId||!Array.isArray(demo.routes['/api/projects'])||demo.routes['/api/projects'].length!==1||demo.routes['/api/projects'][0].id!==demo.projectId))throw Error('Invalid public demo snapshot');
  const sessions=new Map(),attempts=new Map();
  const hash=value=>createHash('sha256').update(value).digest('hex');
  function sweep(){for(const [key,s]of sessions)if(s.until<=now()||s.active+idleMs<=now())sessions.delete(key);for(const [key,s]of attempts)if(s.until<=now())attempts.delete(key)}
@@ -65,7 +67,7 @@ export function createGateway({root,origin,upstream,now=Date.now,idleMs=30*60*10
    const raw=req.url||'/';if(!raw.startsWith('/')||raw.startsWith('//')||raw.includes('\\'))return json(res,400,'Недопустимый путь');
    const pathname=decodeURIComponent(raw.split('?')[0]);if(pathname.includes('\0')||pathname.includes('\\')||pathname.split('/').some(p=>p==='..'||p.startsWith('.')))return json(res,400,'Недопустимый путь');
    const s=session(req);
-   if(pathname==='/auth/login'){if(req.method==='GET')return html(res,200,page());if(req.method==='POST')return await login(req,res);return json(res,405,'Метод не разрешён')}
+   if(pathname==='/auth/login'){if(req.method==='GET'){if(demo&&!s&&!new URL(raw,publicURL).searchParams.has('owner'))return redirect(res,'/');return html(res,200,page())}if(req.method==='POST')return await login(req,res);return json(res,405,'Метод не разрешён')}
    if(pathname==='/auth/logout'){
     if(req.method!=='POST')return json(res,405,'Используйте выход из сеанса');
     if(!sameOrigin(req))return json(res,403,'Недопустимый источник запроса');if(s)sessions.delete(s.key);clearCookie(res);return redirect(res,'/auth/login');
@@ -76,11 +78,19 @@ export function createGateway({root,origin,upstream,now=Date.now,idleMs=30*60*10
     // are ambient credentials, so all their mutations require the exact Origin.
     const explicit=req.headers.authorization;
     if(explicit){if(!/^Bearer [-_A-Za-z0-9]{43,256}$/.test(explicit))return json(res,401,'Требуется действующий токен доступа');return proxy(req,res,explicit.slice(7),null)}
+    if(!s&&demo){
+     res.setHeader('X-Debugych-Public-Demo','1');
+     if(!['GET','HEAD'].includes(req.method))return json(res,403,'Публичное демо доступно только для просмотра. Запуск AI и изменение проектов закрыты.');
+     const u=new URL(raw,publicURL);u.searchParams.sort();const key=u.pathname+u.search;
+     if(!Object.hasOwn(demo.routes,key))return json(res,404,'Данные не входят в публичный демо-проект');
+     res.writeHead(200,{'Content-Type':'application/json; charset=utf-8'});return res.end(req.method==='HEAD'?undefined:JSON.stringify(demo.routes[key]));
+    }
     if(!s)return json(res,401,'Войдите в Дебагыч');
     if(req.headers['sec-fetch-site']==='cross-site'||(!['GET','HEAD','OPTIONS'].includes(req.method)&&!sameOrigin(req)))return json(res,403,'Недопустимый источник запроса');
     return proxy(req,res,s.token,s);
    }
-   if(!s){if(['GET','HEAD'].includes(req.method))return redirect(res,'/auth/login');return json(res,401,'Войдите в Дебагыч')}
+   if(!s&&!demo){if(['GET','HEAD'].includes(req.method))return redirect(res,'/auth/login');return json(res,401,'Войдите в Дебагыч')}
+   if(pathname==='/auth/account'&&!s)return redirect(res,'/auth/login?owner=1');
    if(pathname==='/auth/account'){if(req.method!=='GET')return json(res,405,'Метод не разрешён');return html(res,200,page(true))}
    if(!['GET','HEAD'].includes(req.method))return json(res,405,'Метод не разрешён');
    let file=path.resolve(root,'.'+pathname);if(file!==root&&!file.startsWith(root+path.sep))return json(res,400,'Недопустимый путь');
@@ -95,7 +105,8 @@ export function createGateway({root,origin,upstream,now=Date.now,idleMs=30*60*10
  server.on('close',()=>{sessions.clear();attempts.clear()});return server;
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
- const server=createGateway({root:process.env.WEB_ROOT||'/app/public',origin:process.env.PUBLIC_ORIGIN,upstream:process.env.API_UPSTREAM||'http://api:8000'});
+ const demo=process.env.PUBLIC_DEMO_FILE?JSON.parse(readFileSync(process.env.PUBLIC_DEMO_FILE,'utf8')):null;
+ const server=createGateway({root:process.env.WEB_ROOT||'/app/public',origin:process.env.PUBLIC_ORIGIN,upstream:process.env.API_UPSTREAM||'http://api:8000',demo});
  server.listen(Number(process.env.PORT||8080),'0.0.0.0',()=>console.log('Debugych web gateway ready'));
  for(const signal of ['SIGTERM','SIGINT'])process.on(signal,()=>{server.close();server.closeIdleConnections();setTimeout(()=>process.exit(0),5000).unref()});
 }

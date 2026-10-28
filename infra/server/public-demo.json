@@ -1,0 +1,2243 @@
+{
+  "version": 1,
+  "projectId": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+  "notice": "Публичное демо: сохранённые контрольные запуски gVisor. Тесты и патч подготовлены для проверки инфраструктуры, не сгенерированы LLM в этом показе. Только просмотр.",
+  "routes": {
+    "/api/projects": [
+      {
+        "id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "name": "Server 1.0 offline control",
+        "demo": false,
+        "created_at": "2026-10-28T08:20:23.624042+00:00"
+      }
+    ],
+    "/api/projects/78167145-424b-48a8-b3f9-6eefa284f3c3": {
+      "id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+      "name": "Server 1.0 offline control",
+      "demo": false,
+      "created_at": "2026-10-28T08:20:23.624042+00:00"
+    },
+    "/api/projects/78167145-424b-48a8-b3f9-6eefa284f3c3/files": [
+      {
+        "id": "a977c64e-df77-4d42-b3bb-cf03cda093cb",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T08:20:24.071915+00:00",
+        "name": "calc.py",
+        "size": 32
+      },
+      {
+        "id": "dc6f45ee-d94d-4783-9d12-b24f074fdcd7",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T08:20:24.075349+00:00",
+        "name": "requirements.md",
+        "size": 114
+      }
+    ],
+    "/api/projects/78167145-424b-48a8-b3f9-6eefa284f3c3/requirements": [
+      {
+        "id": "5395625d-4585-44c8-8498-670b85f2eab1",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T08:20:27.443170+00:00",
+        "key": "R1",
+        "text": "add(a,b) returns the arithmetic sum of its two inputs.",
+        "origin": "offline-control-fixture"
+      }
+    ],
+    "/api/projects/78167145-424b-48a8-b3f9-6eefa284f3c3/test-cases": [
+      {
+        "id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T08:20:27.444731+00:00",
+        "title": "Addition and zero",
+        "requirement_id": "5395625d-4585-44c8-8498-670b85f2eab1",
+        "framework": "pytest",
+        "code": "from calc import add\n\ndef test_addition():\n    assert add(2, 3) == 5\n\ndef test_zero():\n    assert add(0, 0) == 0\n",
+        "gherkin": "Feature: Addition\nScenario: Sum\n Given inputs 2 and 3\n When add is called\n Then the result is 5\n",
+        "origin": "offline-control-fixture",
+        "result": "failed",
+        "last_run_id": "72f37961-9165-4064-9b2e-02d318540f8e"
+      }
+    ],
+    "/api/projects/78167145-424b-48a8-b3f9-6eefa284f3c3/runs": [
+      {
+        "id": "72f37961-9165-4064-9b2e-02d318540f8e",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T08:20:28.137292+00:00",
+        "status": "completed",
+        "operation": "run",
+        "project_state_sha256": "191fc88756a4fcbff8727ce553251c9027315756a747b07af681fbee3e183c86",
+        "snapshot_sha256": "5c08fd62592676b9a019599e8fe0f5775ff109a1fe8de78f43932b58bf0572f2",
+        "quality_inputs": {
+          "requirement_ids": [
+            "5395625d-4585-44c8-8498-670b85f2eab1"
+          ],
+          "tests": [
+            {
+              "id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "requirement_id": "5395625d-4585-44c8-8498-670b85f2eab1",
+              "dimensions": []
+            }
+          ]
+        },
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.745,
+        "passed": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "failed",
+            "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+            "duration": 0.002
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.03s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 1.059,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "quality": {
+          "observation_valid": true,
+          "requirements": {
+            "total": 1,
+            "exercised": [
+              "5395625d-4585-44c8-8498-670b85f2eab1"
+            ],
+            "with_passing_assertions": [
+              "5395625d-4585-44c8-8498-670b85f2eab1"
+            ],
+            "unexercised": [],
+            "exercise_ratio": 1.0
+          },
+          "executable_modules": 1,
+          "submitted_modules": 1,
+          "partially_executable_modules": 0,
+          "executable_module_ratio": 1.0,
+          "infrastructure_cases": 0,
+          "negative_requirements_claimed_and_executed": [],
+          "line_coverage": {
+            "covered": 2,
+            "total": 2,
+            "ratio": 1.0
+          },
+          "branch_coverage": {
+            "covered": 0,
+            "total": 0,
+            "ratio": null
+          },
+          "coverage_kind": null,
+          "mutation": {
+            "status": "not_run",
+            "score": null
+          },
+          "limitations": [
+            "Runner observations are produced by untrusted project execution.",
+            "Requirement links and dimension tags are claims; exercise is not semantic completeness.",
+            "Coverage and assertion counts cannot certify correctness. No aggregate quality score."
+          ]
+        },
+        "profile": "python-pytest"
+      },
+      {
+        "id": "fce82638-c34a-4b45-b84a-698234c3bd92",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T08:20:30.592501+00:00",
+        "status": "completed",
+        "operation": "confirm_proof",
+        "bug_id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+        "review": {
+          "confirm_expectation": true,
+          "reviewer_note": "Offline control requirement explicitly requires addition: 2 + 3 = 5. No generated expectation inferred from implementation.",
+          "run_id": "72f37961-9165-4064-9b2e-02d318540f8e",
+          "test_sha256": "1db20e777c3d6f3f00424d6e5e113642ca68c29a85f280f2267be04d2628ccde"
+        },
+        "replay": {
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 1,
+          "duration": 0.795,
+          "passed": 1,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_addition",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "failed",
+              "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+              "duration": 0.004
+            },
+            {
+              "name": "test_zero",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.04s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 100.0,
+              "covered_lines": 2,
+              "num_statements": 2,
+              "covered_branches": 0,
+              "num_branches": 0
+            },
+            "files": {
+              "calc.py": {
+                "executed_lines": [
+                  1,
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "88da9e220faa3029f4296a32b65a33e69c1328a431de56e88f3cf02fb55a3b52",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 1.105,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation"
+        },
+        "assessment": {
+          "reproduced_again": true,
+          "requirement_reviewed": true,
+          "infrastructure_excluded": true,
+          "full_correctness_proven": false
+        }
+      },
+      {
+        "id": "3a169217-49be-40b9-8b27-3982cf75ea51",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T08:20:36.364895+00:00",
+        "status": "completed",
+        "operation": "verify",
+        "bug_id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+        "fix_id": "1015bca8-23c1-4e90-a074-3015812a7b76",
+        "patch_sha256": "6658bbb8ccbc53e9004ba5e48463947380f96c387e0a2c183a38f45cfd797826",
+        "baseline": {
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 1,
+          "duration": 0.695,
+          "passed": 1,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_addition",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "failed",
+              "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+              "duration": 0.002
+            },
+            {
+              "name": "test_zero",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.03s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 100.0,
+              "covered_lines": 2,
+              "num_statements": 2,
+              "covered_branches": 0,
+              "num_branches": 0
+            },
+            "files": {
+              "calc.py": {
+                "executed_lines": [
+                  1,
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "0c40257cdca81bbf2315de47a42415485ac39f9ff3cbaf3ec3d8fecc7d87cae8",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 0.995,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation"
+        },
+        "focused": {
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 0,
+          "duration": 0.699,
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_addition",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            },
+            {
+              "name": "test_zero",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.02s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 100.0,
+              "covered_lines": 2,
+              "num_statements": 2,
+              "covered_branches": 0,
+              "num_branches": 0
+            },
+            "files": {
+              "calc.py": {
+                "executed_lines": [
+                  1,
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "bbf70cc82f055f6c876bcb6f2695650bf1ece306ea658646f995d2c08997f760",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 0.996,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation"
+        },
+        "regression": {
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 0,
+          "duration": 0.679,
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_addition",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            },
+            {
+              "name": "test_zero",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.03s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 100.0,
+              "covered_lines": 2,
+              "num_statements": 2,
+              "covered_branches": 0,
+              "num_branches": 0
+            },
+            "files": {
+              "calc.py": {
+                "executed_lines": [
+                  1,
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "4900357d33871d68ef8c09cb51c79efba8ec7699d8bf0eba69188891a4f86e69",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 0.96,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation"
+        },
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.679,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.03s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "4900357d33871d68ef8c09cb51c79efba8ec7699d8bf0eba69188891a4f86e69",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.96,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "assessment": {
+          "original_reproduced": true,
+          "original_fixed": true,
+          "regressions_absent": true,
+          "same_test_cases": true,
+          "all_regression_passed": true,
+          "tests_unchanged": true,
+          "regression_cases_checked": 1,
+          "total_cases_checked": 2,
+          "full_correctness_proven": false
+        },
+        "verified": true
+      },
+      {
+        "id": "908ec27e-650d-429c-9a67-df6dd1cc51bd",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T11:12:58.944917+00:00",
+        "status": "completed",
+        "operation": "verify",
+        "bug_id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+        "fix_id": "1015bca8-23c1-4e90-a074-3015812a7b76",
+        "patch_sha256": "6658bbb8ccbc53e9004ba5e48463947380f96c387e0a2c183a38f45cfd797826",
+        "baseline": {
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 1,
+          "duration": 0.841,
+          "passed": 1,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_addition",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "failed",
+              "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+              "duration": 0.002
+            },
+            {
+              "name": "test_zero",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.003
+            }
+          ],
+          "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.04s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 100.0,
+              "covered_lines": 2,
+              "num_statements": 2,
+              "covered_branches": 0,
+              "num_branches": 0
+            },
+            "files": {
+              "calc.py": {
+                "executed_lines": [
+                  1,
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "37274a2890f81b7800fc0f2ce45bb7929efc1bab3da1898465336b9bd7f9b05a",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 1.183,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation"
+        },
+        "focused": {
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 0,
+          "duration": 0.694,
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_addition",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            },
+            {
+              "name": "test_zero",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.02s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 100.0,
+              "covered_lines": 2,
+              "num_statements": 2,
+              "covered_branches": 0,
+              "num_branches": 0
+            },
+            "files": {
+              "calc.py": {
+                "executed_lines": [
+                  1,
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "7fbcb272b1bb069a498942718fdee4687bb5d36f14f20dbff6b972d4cbce40e6",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 1.057,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation"
+        },
+        "regression": {
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 0,
+          "duration": 0.684,
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_addition",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            },
+            {
+              "name": "test_zero",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.04s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 100.0,
+              "covered_lines": 2,
+              "num_statements": 2,
+              "covered_branches": 0,
+              "num_branches": 0
+            },
+            "files": {
+              "calc.py": {
+                "executed_lines": [
+                  1,
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "bbf423baf9dde42b463650f61b4b3c1e72e3987e78a247f772feb7f10e4ccca7",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 0.995,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation"
+        },
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.684,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.04s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "bbf423baf9dde42b463650f61b4b3c1e72e3987e78a247f772feb7f10e4ccca7",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.995,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "assessment": {
+          "original_reproduced": true,
+          "original_fixed": true,
+          "regressions_absent": true,
+          "same_test_cases": true,
+          "all_regression_passed": true,
+          "tests_unchanged": true,
+          "regression_cases_checked": 1,
+          "total_cases_checked": 2,
+          "full_correctness_proven": false
+        },
+        "verified": true
+      },
+      {
+        "id": "8015a3a2-ce24-4473-b3af-0d507d155e54",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T11:22:23.348016+00:00",
+        "status": "completed",
+        "operation": "verify",
+        "bug_id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+        "fix_id": "1015bca8-23c1-4e90-a074-3015812a7b76",
+        "patch_sha256": "6658bbb8ccbc53e9004ba5e48463947380f96c387e0a2c183a38f45cfd797826",
+        "baseline": {
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 1,
+          "duration": 0.702,
+          "passed": 1,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_addition",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "failed",
+              "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+              "duration": 0.002
+            },
+            {
+              "name": "test_zero",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.03s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 100.0,
+              "covered_lines": 2,
+              "num_statements": 2,
+              "covered_branches": 0,
+              "num_branches": 0
+            },
+            "files": {
+              "calc.py": {
+                "executed_lines": [
+                  1,
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "c29558ec5a0005cd49d95053ef9400660b153403ffc316147c780bb539340dc4",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 1.089,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation"
+        },
+        "focused": {
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 0,
+          "duration": 0.703,
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_addition",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            },
+            {
+              "name": "test_zero",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.03s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 100.0,
+              "covered_lines": 2,
+              "num_statements": 2,
+              "covered_branches": 0,
+              "num_branches": 0
+            },
+            "files": {
+              "calc.py": {
+                "executed_lines": [
+                  1,
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "8aa4810dd05ec01ecfc8c2380602158c93310dc98e98871e734f9ae1f3e964a1",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 0.999,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation"
+        },
+        "regression": {
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 0,
+          "duration": 0.685,
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_addition",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            },
+            {
+              "name": "test_zero",
+              "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+              "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.02s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 100.0,
+              "covered_lines": 2,
+              "num_statements": 2,
+              "covered_branches": 0,
+              "num_branches": 0
+            },
+            "files": {
+              "calc.py": {
+                "executed_lines": [
+                  1,
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "8ce96ae81d2d68a4a87ce26e01c92fb978407cbb8e5d53a2106a7a3bebfa76f7",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 1.026,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation"
+        },
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.685,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.02s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "8ce96ae81d2d68a4a87ce26e01c92fb978407cbb8e5d53a2106a7a3bebfa76f7",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 1.026,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "assessment": {
+          "original_reproduced": true,
+          "original_fixed": true,
+          "regressions_absent": true,
+          "same_test_cases": true,
+          "all_regression_passed": true,
+          "tests_unchanged": true,
+          "regression_cases_checked": 1,
+          "total_cases_checked": 2,
+          "full_correctness_proven": false
+        },
+        "verified": true
+      }
+    ],
+    "/api/projects/78167145-424b-48a8-b3f9-6eefa284f3c3/fixes": [
+      {
+        "id": "1015bca8-23c1-4e90-a074-3015812a7b76",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T08:20:35.375611+00:00",
+        "changes": [
+          {
+            "path": "calc.py",
+            "before": "def add(a, b):\n    return a - b\n",
+            "after": "def add(a, b):\n    return a + b\n",
+            "before_sha256": "e1a894022d1a082987b87adecb623438c9e386d86b2b621cff4a5fe7fdf7edc8",
+            "after_sha256": "ba1a531f581d2e6094e978ed6f7aca7a8d92eeb62c6e7ad73ee692f7f18bc772",
+            "diff": "--- a/calc.py\n+++ b/calc.py\n@@ -1,2 +1,2 @@\n def add(a, b):\n-    return a - b\n+    return a + b\n"
+          }
+        ],
+        "diff": "--- a/calc.py\n+++ b/calc.py\n@@ -1,2 +1,2 @@\n def add(a, b):\n-    return a - b\n+    return a + b\n",
+        "patch_sha256": "6658bbb8ccbc53e9004ba5e48463947380f96c387e0a2c183a38f45cfd797826",
+        "explanation": "Known offline acceptance fixture patch. Not generated by LLM in this run.",
+        "bug_id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+        "proof_id": "fce82638-c34a-4b45-b84a-698234c3bd92",
+        "run_id": "72f37961-9165-4064-9b2e-02d318540f8e",
+        "project_state_sha256": "191fc88756a4fcbff8727ce553251c9027315756a747b07af681fbee3e183c86",
+        "origin": "offline-control-fixture",
+        "verified": true,
+        "applied": false,
+        "verification_ids": [
+          "3a169217-49be-40b9-8b27-3982cf75ea51",
+          "908ec27e-650d-429c-9a67-df6dd1cc51bd",
+          "8015a3a2-ce24-4473-b3af-0d507d155e54"
+        ],
+        "verification_id": "8015a3a2-ce24-4473-b3af-0d507d155e54",
+        "assessment": {
+          "original_reproduced": true,
+          "original_fixed": true,
+          "regressions_absent": true,
+          "same_test_cases": true,
+          "all_regression_passed": true,
+          "tests_unchanged": true,
+          "regression_cases_checked": 1,
+          "total_cases_checked": 2,
+          "full_correctness_proven": false
+        }
+      }
+    ],
+    "/api/projects/78167145-424b-48a8-b3f9-6eefa284f3c3/ai-statistics": {
+      "attempts": 0,
+      "succeeded": 0,
+      "failed": 0,
+      "reserved_tokens": 0,
+      "reserved_cost_micro_usd": 0,
+      "provider_usage_available": 0,
+      "calls": [],
+      "notice": "Успех JSON-генерации не означает корректность тестов. Резервы — верхняя оценка по настроенным тарифам, не счёт провайдера."
+    },
+    "/api/bugs?project_id=78167145-424b-48a8-b3f9-6eefa284f3c3": [
+      {
+        "id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+        "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+        "created_at": "2026-10-28T08:20:29.437753+00:00",
+        "title": "test_addition",
+        "status": "fix_verified",
+        "description": "Ожидание подтверждено пользователем по требованию. Точное падение повторено в gVisor на неизменном снимке, без ошибок окружения.",
+        "requirement": "R1",
+        "requirement_id": "5395625d-4585-44c8-8498-670b85f2eab1",
+        "run_id": "72f37961-9165-4064-9b2e-02d318540f8e",
+        "framework": "pytest",
+        "file": "tests/test_4573aa76793b4ae289c81d2a41d6dde7.py",
+        "line": null,
+        "expected": "add(a,b) returns the arithmetic sum of its two inputs.",
+        "actual": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+        "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+        "code": "from calc import add\n\ndef test_addition():\n    assert add(2, 3) == 5\n\ndef test_zero():\n    assert add(0, 0) == 0\n",
+        "steps": [
+          "Открыть снимок запуска 72f37961-9165-4064-9b2e-02d318540f8e",
+          "Повторить тест в том же образе gVisor"
+        ],
+        "recommendation": "Проверьте, что assertion соответствует исходному требованию и ошибка относится к продукту.",
+        "snapshot_sha256": "5c08fd62592676b9a019599e8fe0f5775ff109a1fe8de78f43932b58bf0572f2",
+        "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+        "test_sha256": "1db20e777c3d6f3f00424d6e5e113642ca68c29a85f280f2267be04d2628ccde",
+        "case_identity": [
+          "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "test_addition"
+        ],
+        "project_state_sha256": "191fc88756a4fcbff8727ce553251c9027315756a747b07af681fbee3e183c86",
+        "proof_id": "fce82638-c34a-4b45-b84a-698234c3bd92",
+        "review": {
+          "confirm_expectation": true,
+          "reviewer_note": "Offline control requirement explicitly requires addition: 2 + 3 = 5. No generated expectation inferred from implementation.",
+          "run_id": "72f37961-9165-4064-9b2e-02d318540f8e",
+          "test_sha256": "1db20e777c3d6f3f00424d6e5e113642ca68c29a85f280f2267be04d2628ccde"
+        },
+        "confirmation_basis": "Проверка ожидания пользователем по требованию и повторное assertion-падение в чистом gVisor",
+        "current_fix_id": "1015bca8-23c1-4e90-a074-3015812a7b76"
+      }
+    ],
+    "/api/bugs/85971ed1-2568-412c-9f52-81bd92fb9b00": {
+      "id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+      "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+      "created_at": "2026-10-28T08:20:29.437753+00:00",
+      "title": "test_addition",
+      "status": "fix_verified",
+      "description": "Ожидание подтверждено пользователем по требованию. Точное падение повторено в gVisor на неизменном снимке, без ошибок окружения.",
+      "requirement": "R1",
+      "requirement_id": "5395625d-4585-44c8-8498-670b85f2eab1",
+      "run_id": "72f37961-9165-4064-9b2e-02d318540f8e",
+      "framework": "pytest",
+      "file": "tests/test_4573aa76793b4ae289c81d2a41d6dde7.py",
+      "line": null,
+      "expected": "add(a,b) returns the arithmetic sum of its two inputs.",
+      "actual": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+      "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+      "code": "from calc import add\n\ndef test_addition():\n    assert add(2, 3) == 5\n\ndef test_zero():\n    assert add(0, 0) == 0\n",
+      "steps": [
+        "Открыть снимок запуска 72f37961-9165-4064-9b2e-02d318540f8e",
+        "Повторить тест в том же образе gVisor"
+      ],
+      "recommendation": "Проверьте, что assertion соответствует исходному требованию и ошибка относится к продукту.",
+      "snapshot_sha256": "5c08fd62592676b9a019599e8fe0f5775ff109a1fe8de78f43932b58bf0572f2",
+      "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+      "test_sha256": "1db20e777c3d6f3f00424d6e5e113642ca68c29a85f280f2267be04d2628ccde",
+      "case_identity": [
+        "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+        "test_4573aa76793b4ae289c81d2a41d6dde7",
+        "test_addition"
+      ],
+      "project_state_sha256": "191fc88756a4fcbff8727ce553251c9027315756a747b07af681fbee3e183c86",
+      "proof_id": "fce82638-c34a-4b45-b84a-698234c3bd92",
+      "review": {
+        "confirm_expectation": true,
+        "reviewer_note": "Offline control requirement explicitly requires addition: 2 + 3 = 5. No generated expectation inferred from implementation.",
+        "run_id": "72f37961-9165-4064-9b2e-02d318540f8e",
+        "test_sha256": "1db20e777c3d6f3f00424d6e5e113642ca68c29a85f280f2267be04d2628ccde"
+      },
+      "confirmation_basis": "Проверка ожидания пользователем по требованию и повторное assertion-падение в чистом gVisor",
+      "current_fix_id": "1015bca8-23c1-4e90-a074-3015812a7b76"
+    },
+    "/api/runs/72f37961-9165-4064-9b2e-02d318540f8e": {
+      "id": "72f37961-9165-4064-9b2e-02d318540f8e",
+      "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+      "created_at": "2026-10-28T08:20:28.137292+00:00",
+      "status": "completed",
+      "operation": "run",
+      "project_state_sha256": "191fc88756a4fcbff8727ce553251c9027315756a747b07af681fbee3e183c86",
+      "snapshot_sha256": "5c08fd62592676b9a019599e8fe0f5775ff109a1fe8de78f43932b58bf0572f2",
+      "quality_inputs": {
+        "requirement_ids": [
+          "5395625d-4585-44c8-8498-670b85f2eab1"
+        ],
+        "tests": [
+          {
+            "id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "requirement_id": "5395625d-4585-44c8-8498-670b85f2eab1",
+            "dimensions": []
+          }
+        ]
+      },
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 1,
+      "duration": 0.745,
+      "passed": 1,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "test_addition",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "failed",
+          "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+          "duration": 0.002
+        },
+        {
+          "name": "test_zero",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.03s\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 100.0,
+          "covered_lines": 2,
+          "num_statements": 2,
+          "covered_branches": 0,
+          "num_branches": 0
+        },
+        "files": {
+          "calc.py": {
+            "executed_lines": [
+              1,
+              2
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "coverage_kind": null,
+      "artifacts": [],
+      "validation": null,
+      "runtime": "runsc",
+      "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+      "supervisor_duration": 1.059,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "quality": {
+        "observation_valid": true,
+        "requirements": {
+          "total": 1,
+          "exercised": [
+            "5395625d-4585-44c8-8498-670b85f2eab1"
+          ],
+          "with_passing_assertions": [
+            "5395625d-4585-44c8-8498-670b85f2eab1"
+          ],
+          "unexercised": [],
+          "exercise_ratio": 1.0
+        },
+        "executable_modules": 1,
+        "submitted_modules": 1,
+        "partially_executable_modules": 0,
+        "executable_module_ratio": 1.0,
+        "infrastructure_cases": 0,
+        "negative_requirements_claimed_and_executed": [],
+        "line_coverage": {
+          "covered": 2,
+          "total": 2,
+          "ratio": 1.0
+        },
+        "branch_coverage": {
+          "covered": 0,
+          "total": 0,
+          "ratio": null
+        },
+        "coverage_kind": null,
+        "mutation": {
+          "status": "not_run",
+          "score": null
+        },
+        "limitations": [
+          "Runner observations are produced by untrusted project execution.",
+          "Requirement links and dimension tags are claims; exercise is not semantic completeness.",
+          "Coverage and assertion counts cannot certify correctness. No aggregate quality score."
+        ]
+      },
+      "profile": "python-pytest"
+    },
+    "/api/runs/72f37961-9165-4064-9b2e-02d318540f8e/coverage": {
+      "totals": {
+        "percent_covered": 100.0,
+        "covered_lines": 2,
+        "num_statements": 2,
+        "covered_branches": 0,
+        "num_branches": 0
+      },
+      "files": {
+        "calc.py": {
+          "executed_lines": [
+            1,
+            2
+          ],
+          "missing_lines": []
+        }
+      }
+    },
+    "/api/runs/72f37961-9165-4064-9b2e-02d318540f8e/artifacts": {
+      "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.03s\n",
+      "cases": [
+        {
+          "name": "test_addition",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "failed",
+          "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+          "duration": 0.002
+        },
+        {
+          "name": "test_zero",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "artifacts": []
+    },
+    "/api/runs/fce82638-c34a-4b45-b84a-698234c3bd92": {
+      "id": "fce82638-c34a-4b45-b84a-698234c3bd92",
+      "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+      "created_at": "2026-10-28T08:20:30.592501+00:00",
+      "status": "completed",
+      "operation": "confirm_proof",
+      "bug_id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+      "review": {
+        "confirm_expectation": true,
+        "reviewer_note": "Offline control requirement explicitly requires addition: 2 + 3 = 5. No generated expectation inferred from implementation.",
+        "run_id": "72f37961-9165-4064-9b2e-02d318540f8e",
+        "test_sha256": "1db20e777c3d6f3f00424d6e5e113642ca68c29a85f280f2267be04d2628ccde"
+      },
+      "replay": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.795,
+        "passed": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "failed",
+            "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+            "duration": 0.004
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.04s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "88da9e220faa3029f4296a32b65a33e69c1328a431de56e88f3cf02fb55a3b52",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 1.105,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "assessment": {
+        "reproduced_again": true,
+        "requirement_reviewed": true,
+        "infrastructure_excluded": true,
+        "full_correctness_proven": false
+      }
+    },
+    "/api/runs/fce82638-c34a-4b45-b84a-698234c3bd92/artifacts": {
+      "logs": "",
+      "cases": [],
+      "artifacts": []
+    },
+    "/api/runs/3a169217-49be-40b9-8b27-3982cf75ea51": {
+      "id": "3a169217-49be-40b9-8b27-3982cf75ea51",
+      "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+      "created_at": "2026-10-28T08:20:36.364895+00:00",
+      "status": "completed",
+      "operation": "verify",
+      "bug_id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+      "fix_id": "1015bca8-23c1-4e90-a074-3015812a7b76",
+      "patch_sha256": "6658bbb8ccbc53e9004ba5e48463947380f96c387e0a2c183a38f45cfd797826",
+      "baseline": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.695,
+        "passed": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "failed",
+            "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+            "duration": 0.002
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.03s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "0c40257cdca81bbf2315de47a42415485ac39f9ff3cbaf3ec3d8fecc7d87cae8",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.995,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "focused": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.699,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.02s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "bbf70cc82f055f6c876bcb6f2695650bf1ece306ea658646f995d2c08997f760",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.996,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "regression": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.679,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.03s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "4900357d33871d68ef8c09cb51c79efba8ec7699d8bf0eba69188891a4f86e69",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.96,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 0,
+      "duration": 0.679,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "test_addition",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_zero",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.03s\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 100.0,
+          "covered_lines": 2,
+          "num_statements": 2,
+          "covered_branches": 0,
+          "num_branches": 0
+        },
+        "files": {
+          "calc.py": {
+            "executed_lines": [
+              1,
+              2
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "coverage_kind": null,
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "4900357d33871d68ef8c09cb51c79efba8ec7699d8bf0eba69188891a4f86e69",
+      "runtime": "runsc",
+      "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+      "supervisor_duration": 0.96,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "assessment": {
+        "original_reproduced": true,
+        "original_fixed": true,
+        "regressions_absent": true,
+        "same_test_cases": true,
+        "all_regression_passed": true,
+        "tests_unchanged": true,
+        "regression_cases_checked": 1,
+        "total_cases_checked": 2,
+        "full_correctness_proven": false
+      },
+      "verified": true
+    },
+    "/api/runs/3a169217-49be-40b9-8b27-3982cf75ea51/coverage": {
+      "totals": {
+        "percent_covered": 100.0,
+        "covered_lines": 2,
+        "num_statements": 2,
+        "covered_branches": 0,
+        "num_branches": 0
+      },
+      "files": {
+        "calc.py": {
+          "executed_lines": [
+            1,
+            2
+          ],
+          "missing_lines": []
+        }
+      }
+    },
+    "/api/runs/3a169217-49be-40b9-8b27-3982cf75ea51/artifacts": {
+      "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.03s\n",
+      "cases": [
+        {
+          "name": "test_addition",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_zero",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "artifacts": []
+    },
+    "/api/runs/908ec27e-650d-429c-9a67-df6dd1cc51bd": {
+      "id": "908ec27e-650d-429c-9a67-df6dd1cc51bd",
+      "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+      "created_at": "2026-10-28T11:12:58.944917+00:00",
+      "status": "completed",
+      "operation": "verify",
+      "bug_id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+      "fix_id": "1015bca8-23c1-4e90-a074-3015812a7b76",
+      "patch_sha256": "6658bbb8ccbc53e9004ba5e48463947380f96c387e0a2c183a38f45cfd797826",
+      "baseline": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.841,
+        "passed": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "failed",
+            "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+            "duration": 0.002
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.003
+          }
+        ],
+        "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.04s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "37274a2890f81b7800fc0f2ce45bb7929efc1bab3da1898465336b9bd7f9b05a",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 1.183,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "focused": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.694,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.02s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "7fbcb272b1bb069a498942718fdee4687bb5d36f14f20dbff6b972d4cbce40e6",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 1.057,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "regression": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.684,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.04s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "bbf423baf9dde42b463650f61b4b3c1e72e3987e78a247f772feb7f10e4ccca7",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.995,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 0,
+      "duration": 0.684,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "test_addition",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_zero",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.04s\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 100.0,
+          "covered_lines": 2,
+          "num_statements": 2,
+          "covered_branches": 0,
+          "num_branches": 0
+        },
+        "files": {
+          "calc.py": {
+            "executed_lines": [
+              1,
+              2
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "coverage_kind": null,
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "bbf423baf9dde42b463650f61b4b3c1e72e3987e78a247f772feb7f10e4ccca7",
+      "runtime": "runsc",
+      "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+      "supervisor_duration": 0.995,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "assessment": {
+        "original_reproduced": true,
+        "original_fixed": true,
+        "regressions_absent": true,
+        "same_test_cases": true,
+        "all_regression_passed": true,
+        "tests_unchanged": true,
+        "regression_cases_checked": 1,
+        "total_cases_checked": 2,
+        "full_correctness_proven": false
+      },
+      "verified": true
+    },
+    "/api/runs/908ec27e-650d-429c-9a67-df6dd1cc51bd/coverage": {
+      "totals": {
+        "percent_covered": 100.0,
+        "covered_lines": 2,
+        "num_statements": 2,
+        "covered_branches": 0,
+        "num_branches": 0
+      },
+      "files": {
+        "calc.py": {
+          "executed_lines": [
+            1,
+            2
+          ],
+          "missing_lines": []
+        }
+      }
+    },
+    "/api/runs/908ec27e-650d-429c-9a67-df6dd1cc51bd/artifacts": {
+      "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.04s\n",
+      "cases": [
+        {
+          "name": "test_addition",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_zero",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "artifacts": []
+    },
+    "/api/runs/8015a3a2-ce24-4473-b3af-0d507d155e54": {
+      "id": "8015a3a2-ce24-4473-b3af-0d507d155e54",
+      "project_id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
+      "created_at": "2026-10-28T11:22:23.348016+00:00",
+      "status": "completed",
+      "operation": "verify",
+      "bug_id": "85971ed1-2568-412c-9f52-81bd92fb9b00",
+      "fix_id": "1015bca8-23c1-4e90-a074-3015812a7b76",
+      "patch_sha256": "6658bbb8ccbc53e9004ba5e48463947380f96c387e0a2c183a38f45cfd797826",
+      "baseline": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.702,
+        "passed": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "failed",
+            "traceback": "def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError",
+            "duration": 0.002
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n________________________________ test_addition _________________________________\n\n    def test_addition():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\njob/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py:4: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_4573aa76793b4ae289c81d2a41d6dde7.py::test_addition - as...\n1 failed, 1 passed in 0.03s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "c29558ec5a0005cd49d95053ef9400660b153403ffc316147c780bb539340dc4",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 1.089,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "focused": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.703,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.03s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "8aa4810dd05ec01ecfc8c2380602158c93310dc98e98871e734f9ae1f3e964a1",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.999,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "regression": {
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.685,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_addition",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_zero",
+            "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+            "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.02s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 100.0,
+            "covered_lines": 2,
+            "num_statements": 2,
+            "covered_branches": 0,
+            "num_branches": 0
+          },
+          "files": {
+            "calc.py": {
+              "executed_lines": [
+                1,
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "8ce96ae81d2d68a4a87ce26e01c92fb978407cbb8e5d53a2106a7a3bebfa76f7",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 1.026,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation"
+      },
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 0,
+      "duration": 0.685,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "test_addition",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_zero",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.02s\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 100.0,
+          "covered_lines": 2,
+          "num_statements": 2,
+          "covered_branches": 0,
+          "num_branches": 0
+        },
+        "files": {
+          "calc.py": {
+            "executed_lines": [
+              1,
+              2
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "coverage_kind": null,
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "8ce96ae81d2d68a4a87ce26e01c92fb978407cbb8e5d53a2106a7a3bebfa76f7",
+      "runtime": "runsc",
+      "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+      "supervisor_duration": 1.026,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "assessment": {
+        "original_reproduced": true,
+        "original_fixed": true,
+        "regressions_absent": true,
+        "same_test_cases": true,
+        "all_regression_passed": true,
+        "tests_unchanged": true,
+        "regression_cases_checked": 1,
+        "total_cases_checked": 2,
+        "full_correctness_proven": false
+      },
+      "verified": true
+    },
+    "/api/runs/8015a3a2-ce24-4473-b3af-0d507d155e54/coverage": {
+      "totals": {
+        "percent_covered": 100.0,
+        "covered_lines": 2,
+        "num_statements": 2,
+        "covered_branches": 0,
+        "num_branches": 0
+      },
+      "files": {
+        "calc.py": {
+          "executed_lines": [
+            1,
+            2
+          ],
+          "missing_lines": []
+        }
+      }
+    },
+    "/api/runs/8015a3a2-ce24-4473-b3af-0d507d155e54/artifacts": {
+      "logs": "..                                                                       [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n2 passed in 0.02s\n",
+      "cases": [
+        {
+          "name": "test_addition",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_zero",
+          "test_id": "4573aa76-793b-4ae2-89c8-1d2a41d6dde7",
+          "classname": "test_4573aa76793b4ae289c81d2a41d6dde7",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "artifacts": []
+    },
+    "/api/health": {
+      "status": "ok",
+      "ai_available": false,
+      "ai_status": "public_demo",
+      "ai_provider_mode": "public-demo",
+      "execution": "gvisor-python",
+      "sandbox_configured": true,
+      "sandbox_available": false,
+      "playwright_available": false
+    }
+  }
+}

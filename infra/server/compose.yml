@@ -10,6 +10,7 @@ services:
     environment:
       PUBLIC_ORIGIN: ${DEBUGYCH_PUBLIC_ORIGIN:-https://debugych.89-22-232-119.nip.io:9443}
       API_UPSTREAM: http://api:8000
+      PUBLIC_DEMO_FILE: /app/demo.json
     networks: [backend]
     read_only: true
     cap_drop: [ALL]

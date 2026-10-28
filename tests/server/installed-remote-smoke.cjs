@@ -28,8 +28,8 @@ const archiveManifest=buffer=>JSON.parse(require('node:child_process').execFileS
  try{
   if(publicWeb){
    let raw='';for await(const chunk of process.stdin)raw+=chunk;sensitive=JSON.parse(raw).token;raw='';assert.match(sensitive,/^[-_A-Za-z0-9]{43,256}$/);
-   const anonymous=await context.request.get(base+'/api/projects');assert.equal(anonymous.status(),401);
-   await page.goto(base);await expect(page.getByLabel('Ключ доступа')).toBeVisible();await page.screenshot({path:out+'/login.png'});
+   const anonymous=await context.request.get(base+'/api/projects');if(anonymous.status()===200){const visible=await anonymous.json();assert.equal(visible.length,1);assert.equal(visible[0].id,pid)}else assert.equal(anonymous.status(),401);
+   await page.goto(base+'/auth/login?owner=1');await expect(page.getByLabel('Ключ доступа')).toBeVisible();await page.screenshot({path:out+'/login.png'});
    const rejected=await context.request.post(base+'/auth/login',{headers:{Origin:base},form:{token:'invalid'},maxRedirects:0});assert.equal(rejected.status(),401);
    await page.getByLabel('Ключ доступа').fill(sensitive);await page.getByRole('button',{name:'Войти в Дебагыч'}).click();await expect(page).toHaveURL(base+'/');
    const cookies=await context.cookies(base),session=cookies.find(c=>c.name==='__Host-debugych');assert.ok(session?.secure&&session.httpOnly&&session.sameSite==='Strict');assert.notEqual(session.value,sensitive);
@@ -68,7 +68,7 @@ const archiveManifest=buffer=>JSON.parse(require('node:child_process').execFileS
   assert.equal((await get(`/api/projects/${pid}/fixes`)).find(f=>f.id===fix.id).applied,false);
   const archiveAfter=await context.request.get(base+`/api/projects/${pid}/source-archive`);assert.equal(archiveAfter.status(),200);assert.deepEqual(archiveManifest(await archiveAfter.body()),sourceBefore);
   assert.deepEqual(failures,[]);assert.deepEqual(blockedWrites,[]);
-  if(publicWeb){await page.goto(base+'/auth/account');await expect(page.getByRole('button',{name:'Выйти из сеанса'})).toBeVisible();const logout=await context.request.post(base+'/auth/logout',{headers:{Origin:base},maxRedirects:0});assert.equal(logout.status(),303);assert.equal((await context.request.get(base+'/api/projects')).status(),401);checked.push('login-HttpOnly-session-and-logout')}
+  if(publicWeb){await page.goto(base+'/auth/account');await expect(page.getByRole('button',{name:'Выйти из сеанса'})).toBeVisible();const logout=await context.request.post(base+'/auth/logout',{headers:{Origin:base},maxRedirects:0});assert.equal(logout.status(),303);assert.equal((await context.request.get(base+'/auth/account',{maxRedirects:0})).status(),303);checked.push('login-HttpOnly-session-and-logout')}
   const report={classification:publicWeb?'PUBLIC_HTTPS_WEB_UI_PASS':'INSTALLED_PROXY_HEADLESS_UI_PASS',nativeWindowInteraction:'NOT TESTED',checked,uiVerification,newLLMCalls:after.calls.length-before.calls.length,patchApplied:false,sourceUnchanged:true,browserErrors:failures,blockedWrites};
   await fs.writeFile(out+'/result.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
  }finally{await browser.close()}

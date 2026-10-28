@@ -59,3 +59,22 @@ test('browser sessions fail closed, preserve native Bearer, bound lifetime and n
   assert.equal((await request('/auth/login','POST',{...form,'X-Real-IP':'test-rate-limit'},'token=bad')).status,429);
  }finally{gateway.closeAllConnections();backend.closeAllConnections();await Promise.all([new Promise(r=>gateway.close(r)),new Promise(r=>backend.close(r))]);await rm(root,{recursive:true,force:true})}
 });
+
+test('public demo serves only its frozen allowlist and never forwards anonymous requests',async()=>{
+ const root=await mkdtemp(path.join(tmpdir(),'debugych-public-demo-'));await writeFile(path.join(root,'index.html'),'<h1>Existing workspace fixture</h1>');
+ let calls=0;const backend=http.createServer((_req,res)=>{calls++;res.writeHead(200,{'Content-Type':'application/json'});res.end('{"owner":true}')});await new Promise(r=>backend.listen(0,'127.0.0.1',r));
+ const projectId='78167145-424b-48a8-b3f9-6eefa284f3c3';
+ const demo={version:1,projectId,routes:{'/api/projects':[{id:projectId,name:'Public control'}],['/api/projects/'+projectId+'/runs']:[{id:'saved-run',status:'completed'}]}};
+ const gateway=createGateway({root,origin:'https://debugych.test',upstream:`http://127.0.0.1:${backend.address().port}`,demo});await new Promise(r=>gateway.listen(0,'127.0.0.1',r));
+ const request=(url,method='GET',headers={})=>new Promise((resolve,reject)=>{const req=http.request({host:'127.0.0.1',port:gateway.address().port,path:url,method,headers:{Host:'debugych.test',Connection:'close',...headers}},res=>{let body='';res.on('data',c=>body+=c);res.on('end',()=>resolve({status:res.statusCode,body,headers:res.headers}))});req.on('error',reject);req.end()});
+ try{
+  assert.equal((await request('/')).status,200);assert.equal((await request('/auth/login')).headers.location,'/');assert.equal((await request('/auth/login?owner=1')).status,200);
+  const projects=await request('/api/projects');assert.deepEqual(JSON.parse(projects.body),demo.routes['/api/projects']);assert.equal(projects.headers['x-debugych-public-demo'],'1');assert.equal(projects.headers['set-cookie'],undefined);
+  assert.equal((await request('/api/projects/'+projectId+'/runs')).status,200);
+  for(const url of ['/api/projects/private','/api/bugs/private','/api/projects?include=private','/api/ai/status','/api/projects/'+projectId+'/source-archive','/docs','/openapi.json'])assert.equal((await request(url)).status,404,url);
+  for(const method of ['POST','PATCH','PUT','DELETE'])for(const url of ['/api/projects','/api/projects/'+projectId+'/autonomous','/api/bugs/any/verify-fix','/api/bugs/any/apply-fix','/api/companion/ask'])assert.equal((await request(url,method)).status,403,method+' '+url);
+  assert.equal(calls,0);
+  assert.equal((await request('/api/projects','GET',{Authorization:'Bearer '+'a'.repeat(64)})).status,200);assert.equal(calls,1);
+  assert.equal((await request('/api/projects','GET',{Authorization:'Bearer invalid'})).status,401);assert.equal(calls,1);
+ }finally{gateway.closeAllConnections();backend.closeAllConnections();await Promise.all([new Promise(r=>gateway.close(r)),new Promise(r=>backend.close(r))]);await rm(root,{recursive:true,force:true})}
+});
