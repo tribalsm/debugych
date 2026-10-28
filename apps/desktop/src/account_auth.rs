@@ -1,0 +1,72 @@
+//! Website accounts shared by the native host and its two windows.
+//! Passwords are used only for login. Only the opaque session enters the vault.
+use serde::{Deserialize,Serialize};
+use tauri::Manager;
+
+#[derive(Clone,Serialize,Deserialize)]
+pub(crate) struct Session {pub sid:String,pub username:String,pub role:String}
+#[derive(Serialize)]
+pub struct Info {saved:bool,username:String,role:String}
+fn origin(value:&str)->Result<String,String>{let u=reqwest::Url::parse(value).map_err(|_|"Некорректный адрес сервера")?;if u.scheme()!="https"||u.host_str().is_none()||!u.username().is_empty()||u.password().is_some()||u.path()!="/"||u.query().is_some()||u.fragment().is_some(){return Err("Для аккаунта нужен HTTPS-адрес без пути и параметров".into())}Ok(u.origin().ascii_serialization())}
+fn target(value:&str)->Result<Vec<u16>,String>{Ok(format!("Debugych.Account.{}\0",origin(value)?).encode_utf16().collect())}
+fn valid_name(name:&str)->bool{(3..=40).contains(&name.len())&&name.bytes().all(|b|b.is_ascii_alphanumeric()||b"_.-".contains(&b))&&name.as_bytes()[0].is_ascii_alphanumeric()}
+fn valid_session(s:&Session)->bool{s.sid.len()==64&&s.sid.bytes().all(|b|b.is_ascii_digit()||(b'a'..=b'f').contains(&b))&&valid_name(&s.username)&&["viewer","jury","team","admin"].contains(&s.role.as_str())}
+fn decode(bytes:&[u8])->Result<Session,String>{let s:Session=serde_json::from_slice(bytes).map_err(|_|"Сохранённый сеанс повреждён. Войдите снова.")?;if !valid_session(&s){return Err("Сохранённый сеанс недействителен. Войдите снова.".into())}Ok(s)}
+#[cfg(windows)]pub(crate) fn load(value:&str)->Result<Option<Session>,String>{
+ if reqwest::Url::parse(value).map_or(true,|u|u.scheme()!="https"){return Ok(None)}
+ use windows_sys::Win32::{Security::Credentials::*,Foundation::GetLastError};let name=target(value)?;
+ unsafe{let mut ptr=std::ptr::null_mut();if CredReadW(name.as_ptr(),CRED_TYPE_GENERIC,0,&mut ptr)==0{return if GetLastError()==1168{Ok(None)}else{Err("Windows Credential Manager недоступен".into())}}
+ let size=(*ptr).CredentialBlobSize as usize;let result=if size<=1024&&!(*ptr).CredentialBlob.is_null(){decode(std::slice::from_raw_parts((*ptr).CredentialBlob,size))}else{Err("Сохранённый сеанс недействителен".into())};CredFree(ptr as _);result.map(Some)}
+}
+#[cfg(windows)]pub(crate) fn store(value:&str,s:&Session)->Result<(),String>{
+ if !valid_session(s){return Err("Некорректный сеанс".into())}use windows_sys::Win32::Security::Credentials::*;let mut name=target(value)?;let mut username:Vec<u16>=format!("{}\0",s.username).encode_utf16().collect();let mut bytes=serde_json::to_vec(s).map_err(|_|"Не удалось сохранить сеанс")?;let mut c=CREDENTIALW::default();c.Type=CRED_TYPE_GENERIC;c.TargetName=name.as_mut_ptr();c.UserName=username.as_mut_ptr();c.CredentialBlob=bytes.as_mut_ptr();c.CredentialBlobSize=bytes.len()as u32;c.Persist=CRED_PERSIST_LOCAL_MACHINE;let ok=unsafe{CredWriteW(&c,0)}!=0;bytes.fill(0);if ok{Ok(())}else{Err("Не удалось сохранить сеанс в Windows Credential Manager".into())}
+}
+#[cfg(windows)]pub(crate) fn remove(value:&str)->Result<(),String>{use windows_sys::Win32::{Security::Credentials::*,Foundation::GetLastError};let name=target(value)?;if unsafe{CredDeleteW(name.as_ptr(),CRED_TYPE_GENERIC,0)}!=0||unsafe{GetLastError()}==1168{Ok(())}else{Err("Не удалось удалить сохранённый сеанс".into())}}
+#[cfg(not(windows))]pub(crate) fn load(_value:&str)->Result<Option<Session>,String>{Ok(None)}
+#[cfg(not(windows))]pub(crate) fn store(_value:&str,_s:&Session)->Result<(),String>{Err("Требуется Windows Credential Manager".into())}
+#[cfg(not(windows))]pub(crate) fn remove(_value:&str)->Result<(),String>{Ok(())}
+pub(crate) fn blocking(request:reqwest::blocking::RequestBuilder,s:&Session,url:&str)->Result<reqwest::blocking::RequestBuilder,String>{Ok(request.header("Cookie",format!("__Host-debugych={}",s.sid)).header("Origin",origin(url)?).header("X-Debugych-Require-Session","1"))}
+pub(crate) fn asynchronous(request:reqwest::RequestBuilder,s:&Session,url:&str)->Result<reqwest::RequestBuilder,String>{Ok(request.header("Cookie",format!("__Host-debugych={}",s.sid)).header("Origin",origin(url)?).header("X-Debugych-Require-Session","1"))}
+fn percent(bytes:&[u8])->String{let mut out=String::new();for b in bytes{if b.is_ascii_alphanumeric()||b"-_.~".contains(b){out.push(*b as char)}else{out.push_str(&format!("%{b:02X}"))}}out}
+fn cookie(headers:&reqwest::header::HeaderMap)->Result<String,String>{
+ let values:Vec<_>=headers.get_all(reqwest::header::SET_COOKIE).iter().filter_map(|v|v.to_str().ok()).filter(|v|v.starts_with("__Host-debugych=")).collect();if values.len()!=1{return Err("Сервер не выдал защищённый сеанс".into())}
+ let parts:Vec<_>=values[0].split(';').map(str::trim).collect();let attributes:Vec<_>=parts[1..].iter().map(|s|s.to_ascii_lowercase()).collect();for required in ["secure","httponly","samesite=strict","path=/"]{if !attributes.iter().any(|x|x==required){return Err("Небезопасный ответ авторизации".into())}}if attributes.iter().any(|x|x.starts_with("domain=")){return Err("Небезопасная область сеанса".into())}
+ let sid=parts[0].trim_start_matches("__Host-debugych=");if sid.len()!=64||!sid.bytes().all(|b|b.is_ascii_digit()||(b'a'..=b'f').contains(&b)){return Err("Некорректный сеанс сервера".into())}Ok(sid.into())
+}
+pub(crate) fn login(url:&str,route:&str,username:String,password:String)->Result<Session,String>{
+ let base=origin(url)?;if !valid_name(&username)||password.is_empty()||password.len()>512{return Err("Укажите логин и пароль аккаунта сайта".into())}
+ let client=crate::server_auth::blocking_client(url,route,12)?;let mut password=password.into_bytes();let body=format!("username={}&password={}",percent(username.as_bytes()),percent(&password));password.fill(0);
+ let response=client.post(format!("{base}/auth/sign-in")).header("Origin",&base).header("Content-Type","application/x-www-form-urlencoded").body(body).send().map_err(|_|"Не удалось войти. Проверьте сеть и HTTPS.")?;
+ match response.status().as_u16(){303=>{},401=>return Err("Неверный логин или пароль".into()),429=>return Err("Слишком много попыток входа. Повторите через минуту.".into()),_=>return Err("Сервер временно не принимает вход. Попробуйте позднее.".into())}
+ let sid=cookie(response.headers())?;let mut s=Session{sid,username,role:"viewer".into()};let info=status(&client,&base,&s)?;
+ s.username=info["username"].as_str().unwrap_or_default().into();s.role=info["role"].as_str().unwrap_or_default().into();if !valid_session(&s){return Err("Сервер вернул некорректный профиль".into())}
+ if info["mustChange"]==true{logout_remote(&base,route,&s);return Err("Смените временный пароль на сайте в разделе Аккаунт, затем войдите в Desktop.".into())}Ok(s)
+}
+pub(crate) fn status(client:&reqwest::blocking::Client,url:&str,s:&Session)->Result<serde_json::Value,String>{
+ use std::io::Read;let response=blocking(client.get(format!("{}/auth/session",origin(url)?)),s,url)?.send().map_err(|_|"Не удалось проверить сеанс сервера")?;if !response.status().is_success(){return Err("Проверка аккаунта недоступна".into())}let mut body=Vec::new();response.take(8193).read_to_end(&mut body).map_err(|_|"Ответ авторизации прерван")?;if body.len()>8192{return Err("Ответ авторизации слишком велик".into())}let value:serde_json::Value=serde_json::from_slice(&body).map_err(|_|"Некорректный ответ авторизации")?;if value["authenticated"]!=true{return Err("Сеанс завершён. Войдите снова в настройках подключения.".into())}if value["mustChange"]==true{return Err("Требуется смена временного пароля на сайте".into())}Ok(value)
+}
+fn logout_remote(url:&str,route:&str,s:&Session){if let Ok(client)=crate::server_auth::blocking_client(url,route,5){if let Ok(base)=origin(url){if let Ok(request)=blocking(client.post(format!("{base}/auth/logout")),s,url){let _=request.header("Content-Type","application/x-www-form-urlencoded").body("").send();}}}}
+fn reset_transport(app:&tauri::AppHandle)->Result<(),String>{
+ let r=app.state::<crate::Runtime>();let _gate=r.context_gate.lock().unwrap();r.web.lock().unwrap().take();r.frontend.lock().unwrap().clear();app.state::<crate::backend::Backend>().cancel_all();let mut c=r.config.lock().unwrap();let mut next=c.clone();next.project_id.clear();next.revision+=1;crate::persist(app,&next)?;*c=next;drop(c);drop(_gate);crate::broadcast_context(app);Ok(())
+}
+#[tauri::command]pub fn account_info(window:tauri::Window,api_url:String)->Result<Info,String>{if window.label()!="main"{return Err("Откройте главное окно".into())}let session=load(&api_url)?;Ok(Info{saved:session.is_some(),username:session.as_ref().map(|s|s.username.clone()).unwrap_or_default(),role:session.map(|s|s.role).unwrap_or_default()})}
+#[tauri::command]pub async fn account_sign_in(window:tauri::Window,app:tauri::AppHandle,api_url:String,route_ip:String,username:String,password:String)->Result<Info,String>{
+ if window.label()!="main"{return Err("Вход доступен только в главном окне".into())}origin(&api_url)?;{let r=app.state::<crate::Runtime>();let mut busy=r.busy.lock().unwrap();if *busy{return Err("Дождитесь завершения подключения".into())}let c=r.config.lock().unwrap();if c.mode!="remote"||c.api_url.trim_end_matches('/')!=api_url.trim_end_matches('/')||c.route_ip!=route_ip{return Err("Сначала сохраните адрес сервера".into())}*busy=true;}
+ let copy=app.clone();let result=tauri::async_runtime::spawn_blocking(move||{reset_transport(&copy)?;let previous=load(&api_url)?;remove(&api_url)?;crate::server_auth::remove(&api_url)?;if let Some(previous)=previous{logout_remote(&api_url,&route_ip,&previous)}let s=login(&api_url,&route_ip,username,password)?;store(&api_url,&s)?;reset_transport(&copy)?;Ok(Info{saved:true,username:s.username,role:s.role})}).await.map_err(|_|"Ошибка входа в аккаунт".to_string()).and_then(|r|r);*app.state::<crate::Runtime>().busy.lock().unwrap()=false;result
+}
+#[tauri::command]pub async fn account_sign_out(window:tauri::Window,app:tauri::AppHandle,api_url:String)->Result<(),String>{
+ if window.label()!="main"{return Err("Выход доступен только в главном окне".into())}origin(&api_url)?;{let r=app.state::<crate::Runtime>();let mut busy=r.busy.lock().unwrap();if *busy{return Err("Дождитесь завершения подключения".into())}*busy=true;}
+ let copy=app.clone();let result=tauri::async_runtime::spawn_blocking(move||{let previous=load(&api_url)?;reset_transport(&copy)?;remove(&api_url)?;crate::server_auth::remove(&api_url)?;if let Some(s)=previous{let route=copy.state::<crate::Runtime>().config.lock().unwrap().route_ip.clone();logout_remote(&api_url,&route,&s)}Ok(())}).await.map_err(|_|"Ошибка выхода из аккаунта".to_string()).and_then(|r|r);*app.state::<crate::Runtime>().busy.lock().unwrap()=false;result
+}
+#[cfg(test)]mod tests{
+ use super::*;
+ #[test]fn account_secrets_are_separate_and_origin_bound(){assert!(target("http://example.com").is_err());assert_ne!(target("https://one.example").unwrap(),target("https://two.example").unwrap());assert!(String::from_utf16(&target("https://one.example").unwrap()).unwrap().starts_with("Debugych.Account."));}
+ #[test]fn cookies_and_forms_are_strict(){assert_eq!(percent(b"a&b=+\r\n"),"a%26b%3D%2B%0D%0A");let mut h=reqwest::header::HeaderMap::new();h.insert(reqwest::header::SET_COOKIE,format!("__Host-debugych={}; Path=/; Secure; HttpOnly; SameSite=Strict","a".repeat(64)).parse().unwrap());assert!(cookie(&h).is_ok());h.insert(reqwest::header::SET_COOKIE,format!("__Host-debugych={}; Path=/","a".repeat(64)).parse().unwrap());assert!(cookie(&h).is_err());assert!(!valid_name("a\r\nb"));assert!(!valid_name(""));}
+ #[cfg(windows)]#[test]fn session_vault_never_stores_a_password(){let url=format!("https://account-test-{}.invalid",std::process::id());let s=Session{sid:"a".repeat(64),username:"jury-test".into(),role:"jury".into()};store(&url,&s).unwrap();let info=load(&url).unwrap().unwrap();assert!(info.sid==s.sid&&info.role=="jury");remove(&url).unwrap();assert!(load(&url).unwrap().is_none());}
+ #[test]fn malformed_session_and_role_are_rejected(){assert!(decode(br#"{"sid":"invalid","username":"jury","role":"admin"}"#).is_err());let s=Session{sid:"a".repeat(64),username:"jury".into(),role:"owner".into()};assert!(!valid_session(&s));}
+ #[cfg(windows)]#[test]fn account_session_wins_over_a_legacy_owner_key(){let url=format!("https://account-priority-{}.invalid",std::process::id());let s=Session{sid:"b".repeat(64),username:"jury-test".into(),role:"jury".into()};crate::server_auth::store(&url,&"A".repeat(64)).unwrap();store(&url,&s).unwrap();let envelope=crate::server_auth::envelope(&url).unwrap().unwrap();assert!(envelope.get("session").is_some()&&envelope.get("token").is_none());let c=crate::server_auth::blocking_client(&url,"",3).unwrap();let r=crate::server_auth::blocking(&c,&format!("{url}/api/projects"),&url).unwrap().build().unwrap();assert!(!r.headers().contains_key(reqwest::header::AUTHORIZATION));assert!(r.headers().contains_key(reqwest::header::COOKIE));remove(&url).unwrap();crate::server_auth::remove(&url).unwrap();}
+ #[test]#[ignore="Explicit real HTTPS read-only account check; credentials are read from a private local file"]fn live_account_transport(){
+  let path=std::env::var("DEBUGYCH_LIVE_CREDENTIAL_FILE").expect("Set the private credential file path");let data:serde_json::Value=serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();let url="https://debugych.89-22-232-119.nip.io:9443";
+  for user in data["accounts"].as_array().unwrap(){let s=login(url,"",user["username"].as_str().unwrap().into(),user["password"].as_str().unwrap().into()).unwrap_or_else(|_|panic!("Live account login failed; credentials omitted"));let c=crate::server_auth::blocking_client(url,"",8).unwrap();let state=status(&c,url,&s).unwrap();assert!(state["authenticated"]==true);let response=blocking(c.get(format!("{url}/api/health")),&s,url).unwrap().send().unwrap();assert!(response.status().is_success());let public=response.headers().get("X-Debugych-Public-Demo").is_some();assert!(public==(s.role=="jury"||s.role=="viewer"));if public{let response=blocking(c.post(format!("{url}/api/bugs/85971ed1-2568-412c-9f52-81bd92fb9b00/apply-fix")),&s,url).unwrap().json(&serde_json::json!({"confirm":false})).send().unwrap();assert!(response.status().as_u16()==403);}logout_remote(url,"",&s);assert!(status(&c,url,&s).is_err());let expired=blocking(c.get(format!("{url}/api/projects")),&s,url).unwrap().send().unwrap();assert!(expired.status().as_u16()==401);}
+ }
+}

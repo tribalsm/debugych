@@ -15,10 +15,11 @@ const octets=routeIP.split('.').map(Number);
 if(routeIP&&(!approvedHTTPS||net.isIP(routeIP)!==4||!(octets[0]===10||(octets[0]===172&&octets[1]>=16&&octets[1]<=31)||(octets[0]===192&&octets[1]===168))))throw Error('An explicit private VPN IPv4 route requires HTTPS');
 // Lookup override preserves the approved URL, Host, SNI and normal certificate checks.
 const transport=routeIP?{servername:upstream.hostname,lookup:(hostname,options,callback)=>{if(hostname!==upstream.hostname)return callback(Error('Unexpected route hostname'));if(options?.all)callback(null,[{address:routeIP,family:4}]);else callback(null,routeIP,4)}}:{};
-let serverToken='';
+let serverToken='',serverSession='';
 if(process.env.DEBUGYCH_REMOTE_AUTH_STDIN==='1'){
  if(!approvedHTTPS)throw Error('Credentials require an approved HTTPS server');
- serverToken=await new Promise((resolve,reject)=>{let raw='';const timer=setTimeout(()=>{cleanup();reject(Error('Credential pipe timeout'))},5000);const cleanup=()=>{clearTimeout(timer);process.stdin.off('data',read);process.stdin.pause()};const read=chunk=>{raw+=chunk;if(raw.length>1024){cleanup();reject(Error('Invalid credential envelope'));return}if(raw.includes('\n')){cleanup();try{const value=JSON.parse(raw.split('\n')[0]).token;if(typeof value!=='string'||!/^[A-Za-z0-9_-]{43,256}$/.test(value))throw Error();resolve(value)}catch{reject(Error('Invalid credential envelope'))}}};process.stdin.setEncoding('utf8');process.stdin.on('data',read);process.stdin.resume()});
+ const credential=await new Promise((resolve,reject)=>{let raw='';const timer=setTimeout(()=>{cleanup();reject(Error('Credential pipe timeout'))},5000);const cleanup=()=>{clearTimeout(timer);process.stdin.off('data',read);process.stdin.pause()};const read=chunk=>{raw+=chunk;if(raw.length>1024){cleanup();reject(Error('Invalid credential envelope'));return}if(raw.includes('\n')){cleanup();try{const value=JSON.parse(raw.split('\n')[0]);if(!value||Object.keys(value).length!==1)throw Error();if(typeof value.token==='string'&&/^[A-Za-z0-9_-]{43,256}$/.test(value.token))resolve(value);else if(typeof value.session==='string'&&/^[a-f0-9]{64}$/.test(value.session))resolve(value);else throw Error()}catch{reject(Error('Invalid credential envelope'))}}};process.stdin.setEncoding('utf8');process.stdin.on('data',read);process.stdin.resume()});
+ serverToken=credential.token||'';serverSession=credential.session||'';
 }
 if(!Number.isInteger(port)||port<1024||port>65535||!(localHTTP||approvedHTTPS)||upstream.username||upstream.password||upstream.pathname!=='/'||upstream.search||upstream.hash)throw Error('Use a loopback HTTP API origin or an explicitly configured HTTPS server and port 1024..65535');
 await stat(path.join(root,'index.html'));
@@ -34,7 +35,8 @@ const server=http.createServer(async(req,res)=>{
   }
   const headers={...req.headers,host:upstream.host,connection:'close'};delete headers.authorization;delete headers.cookie;
   if(serverToken)headers.authorization='Bearer '+serverToken;
-  const proxy=(upstream.protocol==='https:'?https:http).request(new URL(raw,upstream),{...transport,method:req.method,headers,timeout:90000},reply=>{res.writeHead(reply.statusCode||502,reply.headers);reply.pipe(res)});
+  if(serverSession){headers.cookie='__Host-debugych='+serverSession;headers.origin=upstream.origin;headers['x-debugych-require-session']='1';}
+  const proxy=(upstream.protocol==='https:'?https:http).request(new URL(raw,upstream),{...transport,method:req.method,headers,timeout:90000},reply=>{const safe={...reply.headers};delete safe['set-cookie'];res.writeHead(reply.statusCode||502,safe);reply.pipe(res)});
   proxy.on('timeout',()=>proxy.destroy());proxy.on('error',()=>{if(!res.headersSent)res.writeHead(502,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify({detail:'Backend недоступен. Проверьте локальный запуск API.'}))});
   req.on('aborted',()=>proxy.destroy());res.on('close',()=>{if(!res.writableEnded)proxy.destroy()});req.pipe(proxy);return;
  }

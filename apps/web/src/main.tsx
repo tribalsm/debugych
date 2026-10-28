@@ -1,4 +1,4 @@
-import {connectDesktopProject,publishDesktopProject} from './desktopBridge';
+import {connectDesktopProject,publishDesktopProject,requestDesktopLogin} from './desktopBridge';
 import {ProjectImportDialog} from './ProjectImportDialog';
 import {readResultTarget,targetError} from './resultTarget';
 import type {ValidationReport} from './validationBinding';
@@ -40,7 +40,7 @@ async function api<T>(path:string, options?:RequestInit):Promise<T> {
  if(publicDemoMode&&!['GET','HEAD'].includes(options?.method||'GET'))throw new Error('Публичное демо доступно только для просмотра.');
  let response:Response;try{response=await fetch('/api'+path,options)}catch(e){if(options?.signal?.aborted)throw e;throw new Error('Нет связи с backend. Проверьте локальный сервер и повторите подключение.');}
  if(response.headers.get('X-Debugych-Public-Demo')==='1'){publicDemoMode=true;window.dispatchEvent(new Event('debugych-public-demo'));}
- if(response.status===401&&window.location.protocol==='https:'){window.location.assign('/auth/login');throw new Error('Сеанс завершён. Войдите снова.');}
+ if(response.status===401){requestDesktopLogin();if(window.location.protocol==='https:')window.location.assign('/auth/login');throw new Error('Сеанс завершён. Войдите снова.');}
  if(!response.ok){const body = await response.json().catch(()=>({detail:response.statusText}));throw new Error(typeof body.detail==='string'?body.detail:JSON.stringify(body.detail));}
  return response.json();
 }

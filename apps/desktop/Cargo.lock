@@ -730,7 +730,7 @@ dependencies = [
 
 [[package]]
 name = "debugych-desktop"
-version = "1.2.1"
+version = "1.2.2"
 dependencies = [
  "futures-util",
  "reqwest",

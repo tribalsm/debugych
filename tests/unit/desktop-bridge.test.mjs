@@ -3,17 +3,18 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import {stripTypeScriptTypes} from 'node:module';
-const source=stripTypeScriptTypes(fs.readFileSync(new URL('../../apps/web/src/desktopBridge.ts',import.meta.url),'utf8')).replaceAll('export function','function')+'\nglobalThis.bridge={connectDesktopProject,publishDesktopProject};';
+const source=stripTypeScriptTypes(fs.readFileSync(new URL('../../apps/web/src/desktopBridge.ts',import.meta.url),'utf8')).replaceAll('export function','function')+'\nglobalThis.bridge={connectDesktopProject,publishDesktopProject,requestDesktopLogin};';
 const A='4552f6ba-cd41-48d4-a947-39e3b58314ac',B='024f84b2-6cc8-49dc-87a1-e0c5c35b63eb';
-function setup({backend='http://127.0.0.1:8000',oldBackend=backend,embedded=true}={}){
+function setup({backend='http://127.0.0.1:8000',oldBackend=backend,embedded=true,session=null}={}){
  const sent=[],listeners=new Map(),values=new Map([['debugych-project',A],['debugych-desktop-backend',oldBackend]]);
  const parent={postMessage:(data,origin)=>sent.push({data,origin})},window={parent,addEventListener:(k,f)=>listeners.set(k,f),removeEventListener:k=>listeners.delete(k)};
  if(!embedded)window.parent=window;
- const sandbox={window,location:{search:'?desktop_backend='+encodeURIComponent(backend),hash:''},localStorage:{getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)},URLSearchParams};
+ const sandbox={window,location:{search:'?desktop_backend='+encodeURIComponent(backend)+(session?'&desktop_session='+encodeURIComponent(session):''),hash:''},localStorage:{getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)},URLSearchParams};
  vm.runInNewContext(source,sandbox);let selected='';sandbox.bridge.connectDesktopProject(id=>{selected=id},()=>selected);
  return{...sandbox,sent,values,parent,select:id=>{selected=id;sandbox.bridge.publishDesktopProject(id)},receive:(data,{origin='http://tauri.localhost',source=parent}={})=>listeners.get('message')?.({data:{session:null,...data},origin,source})};
 }
 test('standalone website has no desktop messages or storage migration',()=>{const c=setup({embedded:false,oldBackend:'https://old.test'});c.bridge.publishDesktopProject(A);assert.equal(c.sent.length,0);assert.equal(c.values.get('debugych-project'),A)});
+test('expiry notification is bound to the existing frame nonce and has no credentials',()=>{const c=setup({session:'contract-frame-nonce'});c.bridge.requestDesktopLogin();assert.equal(c.sent.at(-1).data.type,'debugych-desktop-auth-required');assert.equal(c.sent.at(-1).data.session,'contract-frame-nonce');assert.deepEqual(Object.keys(c.sent.at(-1).data).sort(),['session','type']);assert.equal(c.sent.at(-1).origin,'http://tauri.localhost');const standalone=setup({embedded:false,session:'contract-frame-nonce'});standalone.bridge.requestDesktopLogin();assert.equal(standalone.sent.length,0)});
 test('only the native parent can synchronize a project',()=>{const c=setup();for(const opts of[{origin:'https://other.test'},{source:{}}])c.receive({type:'debugych-desktop-context',projectId:B,revision:2},opts);c.select(A);assert.equal(c.sent.length,1);c.receive({type:'debugych-desktop-context',projectId:B,revision:2});c.select(B);assert.equal(c.sent.at(-1).data.projectId,B);assert.equal(c.sent.at(-1).origin,'http://tauri.localhost')});
 test('pending host selection suppresses a late update from the previous project',()=>{const c=setup();c.receive({type:'debugych-desktop-context',projectId:B,revision:3});c.select(A);assert.equal(c.sent.length,1);c.select(B);assert.equal(c.sent.at(-1).data.projectId,B);assert.equal(c.sent.at(-1).data.revision,3)});
 test('same-project acknowledgement does not block the next user selection',()=>{const c=setup();c.receive({type:'debugych-desktop-context',projectId:A,revision:1});c.select(A);c.receive({type:'debugych-desktop-context',projectId:A,revision:2});c.select(B);assert.equal(c.sent.at(-1).data.projectId,B);assert.equal(c.sent.at(-1).data.revision,2)});

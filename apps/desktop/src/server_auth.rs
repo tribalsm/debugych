@@ -22,10 +22,11 @@ fn target(origin:&str)->Result<Vec<u16>,String>{let u=reqwest::Url::parse(origin
 #[cfg(not(windows))]pub fn load(_origin:&str)->Result<Option<String>,String>{Ok(None)}
 #[cfg(not(windows))]pub fn store(_origin:&str,_token:&str)->Result<(),String>{Err("Windows Credential Manager required".into())}
 #[cfg(not(windows))]pub fn remove(_origin:&str)->Result<(),String>{Err("Windows Credential Manager required".into())}
-pub fn blocking(client:&reqwest::blocking::Client,url:&str,origin:&str)->Result<reqwest::blocking::RequestBuilder,String>{let request=client.get(url);Ok(if let Some(token)=load(origin)?{request.bearer_auth(token)}else{request})}
-pub fn asynchronous(request:reqwest::RequestBuilder,origin:&str)->Result<reqwest::RequestBuilder,String>{Ok(if let Some(token)=load(origin)?{request.bearer_auth(token)}else{request})}
+pub fn envelope(origin:&str)->Result<Option<serde_json::Value>,String>{if let Some(s)=crate::account_auth::load(origin)?{return Ok(Some(serde_json::json!({"session":s.sid})))}Ok(load(origin)?.map(|token|serde_json::json!({"token":token})))}
+pub fn blocking(client:&reqwest::blocking::Client,url:&str,origin:&str)->Result<reqwest::blocking::RequestBuilder,String>{let request=client.get(url);if let Some(s)=crate::account_auth::load(origin)?{return crate::account_auth::blocking(request,&s,origin)}Ok(if let Some(token)=load(origin)?{request.bearer_auth(token)}else{request})}
+pub fn asynchronous(request:reqwest::RequestBuilder,origin:&str)->Result<reqwest::RequestBuilder,String>{if let Some(s)=crate::account_auth::load(origin)?{return crate::account_auth::asynchronous(request,&s,origin)}Ok(if let Some(token)=load(origin)?{request.bearer_auth(token)}else{request})}
 #[tauri::command]pub fn set_server_token(window:tauri::Window,app:tauri::AppHandle,api_url:String,token:String)->Result<(),String>{
- use tauri::Manager;if window.label()!="main"{return Err("Use main connection settings".into())}let state=app.state::<crate::Runtime>();if *state.busy.lock().unwrap(){return Err("Startup is in progress".into())}if token.is_empty(){remove(&api_url)?}else{store(&api_url,&token)?}state.web.lock().unwrap().take();state.frontend.lock().unwrap().clear();app.state::<crate::backend::Backend>().cancel_all();Ok(())
+ use tauri::Manager;if window.label()!="main"{return Err("Use main connection settings".into())}let state=app.state::<crate::Runtime>();if *state.busy.lock().unwrap(){return Err("Startup is in progress".into())}if token.is_empty(){remove(&api_url)?}else{store(&api_url,&token)?;crate::account_auth::remove(&api_url)?}state.web.lock().unwrap().take();state.frontend.lock().unwrap().clear();app.state::<crate::backend::Backend>().cancel_all();Ok(())
 }
 #[tauri::command]pub fn server_token_configured(api_url:String)->Result<bool,String>{Ok(load(&api_url)?.is_some())}
 #[cfg(test)]mod tests{use super::*;

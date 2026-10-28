@@ -125,6 +125,7 @@ export function createGateway({root,origin,upstream,demo=null,accounts=null,team
     // are ambient credentials, so all their mutations require the exact Origin.
     const explicit=req.headers.authorization;
     if(explicit){if(!/^Bearer [-_A-Za-z0-9]{43,256}$/.test(explicit))return json(res,401,'Требуется действующий токен доступа');return proxy(req,res,explicit.slice(7),null)}
+    if(req.headers['x-debugych-require-session']==='1'&&!s)return json(res,401,'Сеанс завершён. Войдите снова в Desktop.');
     if(!canWork(s)&&demo){
      res.setHeader('X-Debugych-Public-Demo','1');
      if(!['GET','HEAD'].includes(req.method))return json(res,403,'Публичное демо доступно только для просмотра. Запуск AI и изменение проектов закрыты.');

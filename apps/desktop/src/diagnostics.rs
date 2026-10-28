@@ -6,6 +6,7 @@ pub struct Check {pub name:String,pub status:String,pub detail:String}
 fn check(name:&str,ok:bool,yes:&str,no:&str)->Check{Check{name:name.into(),status:if ok{"pass"}else{"fail"}.into(),detail:if ok{yes}else{no}.into()}}
 pub fn health_checks(h:Option<&Value>)->Vec<Check>{
  let empty=Value::Null;let h=h.unwrap_or(&empty);
+ if h["ai_status"]=="public_demo"{return vec![check("API / профиль",h["status"]=="ok","Доступен просмотр сохранённого контрольного проекта","Демонстрация недоступна"),Check{name:"Linux runner / gVisor".into(),status:"not_applicable".into(),detail:"Профиль жюри: показаны сохранённые результаты. Новые задания закрыты, состояние runner сейчас не проверяется.".into()},Check{name:"Playwright".into(),status:"not_applicable".into(),detail:"Доступен просмотр результатов; исполнение для этого профиля закрыто.".into()},Check{name:"AI-провайдер".into(),status:"not_applicable".into(),detail:"Для профиля просмотра платная генерация закрыта.".into()}]}
  vec![check("API",h["status"]=="ok","Backend отвечает","Backend недоступен: проверьте адрес, соединение и журнал запуска"),
  check("Linux runner / gVisor",h["execution"]=="gvisor-python"&&h["sandbox_available"]==true,"Backend подтвердил доступность изолированного runner","Runner недоступен. Требуется настроенное Linux-окружение с gVisor"),
  check("Playwright",h["playwright_available"]==true,"Образ Playwright доступен runner","Backend не подтвердил готовность Playwright"),
@@ -32,4 +33,5 @@ pub fn run(config:&super::Config,folder:&std::path::Path)->Vec<Check>{
  #[test]fn missing_backend_is_not_ready(){let c=health_checks(None);assert_eq!(c[0].status,"fail");assert_eq!(c[1].status,"fail");}
  #[test]fn ai_configuration_never_claims_paid_connectivity(){let h=serde_json::json!({"status":"ok","execution":"gvisor-python","sandbox_available":true,"playwright_available":true,"ai_available":true,"ai_provider_mode":"live"});let c=health_checks(Some(&h));assert_eq!(c[1].status,"pass");assert_eq!(c[3].status,"warning");assert!(c[3].detail.contains("не проверялись"));}
  #[test]fn configured_sandbox_is_not_available_sandbox(){let h=serde_json::json!({"status":"ok","sandbox_configured":true,"execution":"trusted-demo-only","sandbox_available":false});assert_eq!(health_checks(Some(&h))[1].status,"fail");}
+ #[test]fn jury_is_read_only_not_an_infrastructure_failure(){let h=serde_json::json!({"status":"ok","ai_status":"public_demo","sandbox_available":false});let c=health_checks(Some(&h));assert_eq!(c[0].status,"pass");assert_eq!(c[1].status,"not_applicable");assert_eq!(c[3].status,"not_applicable");}
 }

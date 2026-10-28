@@ -71,6 +71,7 @@ test('public demo serves only its frozen allowlist and never forwards anonymous 
   assert.equal((await request('/')).status,200);assert.equal((await request('/auth/login')).headers.location,'/');assert.equal((await request('/auth/login?owner=1')).status,200);
   const projects=await request('/api/projects');assert.deepEqual(JSON.parse(projects.body),demo.routes['/api/projects']);assert.equal(projects.headers['x-debugych-public-demo'],'1');assert.equal(projects.headers['set-cookie'],undefined);
   assert.equal((await request('/api/projects/'+projectId+'/runs')).status,200);
+  assert.equal((await request('/api/projects','GET',{'X-Debugych-Require-Session':'1'})).status,401);assert.equal(calls,0);
   for(const url of ['/api/projects/private','/api/bugs/private','/api/projects?include=private','/api/ai/status','/api/projects/'+projectId+'/source-archive','/docs','/openapi.json'])assert.equal((await request(url)).status,404,url);
   for(const method of ['POST','PATCH','PUT','DELETE'])for(const url of ['/api/projects','/api/projects/'+projectId+'/autonomous','/api/bugs/any/verify-fix','/api/bugs/any/apply-fix','/api/companion/ask'])assert.equal((await request(url,method)).status,403,method+' '+url);
   assert.equal(calls,0);

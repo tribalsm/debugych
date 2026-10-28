@@ -3,7 +3,7 @@ use std::{fs,path::PathBuf,process::{Command,Stdio},sync::Mutex,time::{Duration,
 use serde::{Deserialize,Serialize};
 use tauri::{Emitter,Manager,State,menu::{Menu,MenuItem}};
 use std::sync::atomic::{AtomicBool,Ordering};
-mod server_auth;mod diagnostics;mod legacy;mod owned_process;mod backend;mod pet;use owned_process::OwnedChild;
+mod account_auth;mod server_auth;mod diagnostics;mod legacy;mod owned_process;mod backend;mod pet;use owned_process::OwnedChild;
 #[cfg(windows)]use std::os::windows::process::CommandExt;
 #[derive(Clone,Serialize,Deserialize)]
 #[serde(default)]
@@ -50,11 +50,12 @@ fn restore_main(app:&tauri::AppHandle)->Result<(),String>{let w=app.get_webview_
 #[tauri::command]fn show_connection_settings(app:tauri::AppHandle)->Result<(),String>{restore_main(&app)?;app.emit("desktop-settings",true).map_err(|_|"Настройки недоступны".into())}
 fn own_spawn(app:&tauri::AppHandle,slot:&Mutex<Option<OwnedChild>>,command:&mut Command)->Result<(),String>{let r=app.state::<Runtime>();let mut child=slot.lock().unwrap();if r.closing.load(Ordering::SeqCst){return Err("Приложение завершается".into())}*child=Some(OwnedChild::spawn(command).map_err(|_|"Не удалось запустить локальный процесс приложения")?);Ok(())}
 fn probe_health(client:&reqwest::blocking::Client,url:&str)->Result<(),String>{
+ let account=account_auth::load(url)?;if let Some(s)=account.as_ref(){account_auth::status(client,url,s)?;}
  use std::io::Read;let response=server_auth::blocking(client,&format!("{}/api/health",url.trim_end_matches('/')),url)?.send().map_err(|_|"Сервер недоступен. Проверьте сеть, HTTPS и сертификат.".to_string())?;
- if matches!(response.status().as_u16(),401|403){return Err("Токен сервера не принят или отозван. Откройте подключение и обновите токен.".into())}
+ if matches!(response.status().as_u16(),401|403){return Err("Сеанс не принят или завершён. Войдите снова в настройках подключения.".into())}
  if !response.status().is_success(){return Err(format!("Сервер вернул HTTP {}",response.status().as_u16()))}
  let mut data=Vec::new();response.take(65537).read_to_end(&mut data).map_err(|_|"Ответ сервера прерван")?;if data.len()>65536{return Err("Ответ проверки сервера слишком велик".into())}let h:serde_json::Value=serde_json::from_slice(&data).map_err(|_|"Ответ сервера не соответствует API")?;
- if h["status"]=="ok"&&h["execution"]=="gvisor-python"&&h["sandbox_available"]==true{Ok(())}else{Err("API отвечает, но Linux runner/gVisor недоступен. Небезопасный запуск запрещён.".into())}
+ if h["status"]=="ok"&&h["execution"]=="gvisor-python"&&(h["sandbox_available"]==true||(account.is_some()&&h["ai_status"]=="public_demo")){Ok(())}else{Err("API отвечает, но Linux runner/gVisor недоступен. Небезопасный запуск запрещён.".into())}
 }
 fn health(client:&reqwest::blocking::Client,url:&str)->bool{probe_health(client,url).is_ok()}
 fn bundled_default()->Config{
@@ -71,7 +72,7 @@ fn boot(app:&tauri::AppHandle)->Result<String,String>{
  if c.mode=="local"&&state.wsl.lock().unwrap().is_none(){
   let _=own_spawn(app,&state.wsl,command("wsl.exe").args(["-d","Ubuntu","-u","root","--","sh","-c","read -r debugych_keepalive"]).stdin(Stdio::piped()).stdout(Stdio::null()).stderr(Stdio::null()));
  }
- let ready=if c.mode=="remote"{if server_auth::load(&c.api_url)?.is_none(){return Err("Укажите токен владельца сервера в настройках подключения. Он будет сохранён в Windows Credential Manager.".into())}probe_health(&client,&c.api_url)?;true}else{health(&client,&c.api_url)};
+ let ready=if c.mode=="remote"{if account_auth::load(&c.api_url)?.is_none()&&server_auth::load(&c.api_url)?.is_none(){return Err("Войдите в аккаунт сайта в настройках подключения: логин и пароль. Серверный ключ не требуется.".into())}probe_health(&client,&c.api_url)?;true}else{health(&client,&c.api_url)};
  if !ready{
   if c.mode=="remote"{return Err("Сервер недоступен или gVisor не готов. Проверьте адрес и подключение. Локальный стек не изменялся.".into())}
   if c.api_url.trim_end_matches('/')!="http://127.0.0.1:8000"{return Err("Автозапуск локального backend использует 127.0.0.1:8000. Для другого адреса сначала запустите его отдельно.".into())}
@@ -88,9 +89,9 @@ fn boot(app:&tauri::AppHandle)->Result<String,String>{
  let port_file=data.join("frontend-port.txt");let preferred=fs::read_to_string(&port_file).ok().and_then(|s|s.trim().parse::<u16>().ok()).filter(|p|*p>=1024).unwrap_or(0);
  let socket=TcpListener::bind(("127.0.0.1",preferred)).map_err(|_|"Порт приложения занят другим процессом. Закройте другую копию или проверьте frontend-port.txt в каталоге данных.")?;let port=socket.local_addr().unwrap().port();drop(socket);fs::write(port_file,port.to_string()).map_err(|_|"Не удалось сохранить адрес приложения")?;
  let log=fs::OpenOptions::new().create(true).append(true).open(data.join("frontend.log")).map_err(|_|"Не удалось открыть журнал запуска")?;
- let token=server_auth::load(&c.api_url)?;
- own_spawn(app,&state.web,command(root.join("runtime/node.exe")).arg(root.join("scripts/serve-web.mjs")).env("DEBUGYCH_WEB_PORT",port.to_string()).env("DEBUGYCH_API_URL",&c.api_url).stdin(Stdio::piped()).env("DEBUGYCH_API_CONNECT_IP",&c.route_ip).env("DEBUGYCH_REMOTE_AUTH_STDIN",if token.is_some(){"1"}else{"0"}).env("DEBUGYCH_DESKTOP_EMBED","1").env("DEBUGYCH_ALLOW_REMOTE_API",if c.mode=="remote"{"1"}else{"0"}).stdout(Stdio::null()).stderr(log))?;
- if let Some(token)=token {use std::io::Write;let mut slot=state.web.lock().unwrap();let pipe=slot.as_mut().and_then(|child|child.stdin()).ok_or("Proxy credential pipe unavailable")?;writeln!(pipe,"{}",serde_json::json!({"token":token})).map_err(|_|"Proxy credential handoff failed")?;}
+ let credential=server_auth::envelope(&c.api_url)?;
+ own_spawn(app,&state.web,command(root.join("runtime/node.exe")).arg(root.join("scripts/serve-web.mjs")).env("DEBUGYCH_WEB_PORT",port.to_string()).env("DEBUGYCH_API_URL",&c.api_url).stdin(Stdio::piped()).env("DEBUGYCH_API_CONNECT_IP",&c.route_ip).env("DEBUGYCH_REMOTE_AUTH_STDIN",if credential.is_some(){"1"}else{"0"}).env("DEBUGYCH_DESKTOP_EMBED","1").env("DEBUGYCH_ALLOW_REMOTE_API",if c.mode=="remote"{"1"}else{"0"}).stdout(Stdio::null()).stderr(log))?;
+ if let Some(credential)=credential {use std::io::Write;let mut slot=state.web.lock().unwrap();let pipe=slot.as_mut().and_then(|child|child.stdin()).ok_or("Proxy credential pipe unavailable")?;writeln!(pipe,"{}",credential).map_err(|_|"Proxy credential handoff failed")?;}
  let address=format!("http://127.0.0.1:{port}/");
  let deadline=Instant::now()+Duration::from_secs(15);while !client.get(&address).send().map_or(false,|r|r.status().is_success()){if Instant::now()>deadline{return Err("Не удалось открыть встроенный frontend. Проверьте комплект ресурсов и frontend.log.".into())}std::thread::sleep(Duration::from_millis(200));}
  *state.frontend.lock().unwrap()=address.trim_end_matches('/').into();broadcast_context(app);Ok(address)
@@ -123,7 +124,7 @@ fn main(){
  })
  .on_menu_event(|app,event|match event.id().as_ref(){"open"=>{let _=restore_main(app);},"diagnostics"=>{let _=restore_main(app);let _=app.emit("desktop-diagnostics",true);},"connection"=>{let _=show_connection_settings(app.clone());},"pet"=>{let _=set_pet_visible_inner(app,!context(app).pet_visible);},"quit"=>app.exit(0),_=>{}})
  .on_window_event(|window,event|{if window.label()=="main"{if let tauri::WindowEvent::CloseRequested{api,..}=event{api.prevent_close();window.app_handle().exit(0);}}})
- .invoke_handler(tauri::generate_handler![server_auth::set_server_token,server_auth::server_token_configured,environment_diagnostics,get_config,startup_status,save_config,start_application,get_desktop_context,set_selected_project,set_pet_visible,open_main_window,show_connection_settings,pet::set_expanded,pet::pet_ready,pet::drag_pet,pet::get_preferences,pet::set_motion,pet::set_size,pet::set_panel_height,pet::hide_pet,backend::get_companion_settings,backend::save_companion_config,backend::save_companion_seen,backend::backend_get,backend::cancel_backend_read,backend::open_companion_page,backend::companion_post,backend::get_chat_history,backend::save_chat_history]).build(ctx).expect("Debugych startup");
+ .invoke_handler(tauri::generate_handler![account_auth::account_info,account_auth::account_sign_in,account_auth::account_sign_out,server_auth::set_server_token,server_auth::server_token_configured,environment_diagnostics,get_config,startup_status,save_config,start_application,get_desktop_context,set_selected_project,set_pet_visible,open_main_window,show_connection_settings,pet::set_expanded,pet::pet_ready,pet::drag_pet,pet::get_preferences,pet::set_motion,pet::set_size,pet::set_panel_height,pet::hide_pet,backend::get_companion_settings,backend::save_companion_config,backend::save_companion_seen,backend::backend_get,backend::cancel_backend_read,backend::open_companion_page,backend::companion_post,backend::get_chat_history,backend::save_chat_history]).build(ctx).expect("Debugych startup");
  app.run(|app,event|{if matches!(event,tauri::RunEvent::Exit){let state=app.state::<Runtime>();state.closing.store(true,Ordering::SeqCst);app.state::<backend::Backend>().cancel_all();for slot in [&state.bootstrap,&state.web,&state.wsl]{slot.lock().unwrap().take();}}});
 }
 fn migrate_pet(folder:&std::path::Path)->std::io::Result<()>{

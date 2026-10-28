@@ -4,6 +4,7 @@ const embedded=window.parent!==window;
 const host='http://tauri.localhost';
 const binding=new URLSearchParams(location.search).get('desktop_backend');
 const session=new URLSearchParams(location.search).get('desktop_session');
+export function requestDesktopLogin(){if(embedded&&session)window.parent.postMessage({type:'debugych-desktop-auth-required',session},host);}
 if(embedded&&binding){if(localStorage.getItem('debugych-desktop-backend')!==binding)localStorage.removeItem('debugych-project');localStorage.setItem('debugych-desktop-backend',binding);}
 export function publishDesktopProject(projectId:string){if(!embedded||revision<0)return;if(pending!==undefined&&pending!==projectId)return;pending=undefined;window.parent.postMessage({type:'debugych-desktop-project',projectId,revision,session},host);}
 export function connectDesktopProject(select:(id:string)=>void,current:()=>string){
