@@ -37,7 +37,8 @@ evidence=out/'evidence';evidence.mkdir(exist_ok=True)
 for name in ['baseline-rust.log', 'baseline-pet.log', 'baseline-web.log', 'baseline-browser.log', 'baseline-bootstrap.log', 'rust-tests.log', 'bridge-tests.log', 'launcher-proxy-linux.log', 'typecheck.log', 'lint.log', 'web-build.log', 'pet-typecheck.log', 'pet-embed.log', 'release-final.log', 'shell-browser-tests.log', 'installed-modes-smoke.log', 'installed-modes-smoke.json', 'installed-modes-first-attempt.log', 'running-update-guard.json', 'installation-check.json', 'update-check.json', 'uninstall-check.json', 'reinstall-check.json', 'shortcut-launch-check.json', 'portable-owned-after.json', 'legacy-conflict-processes.json', 'legacy-blocked-children.json', 'installed-test-cleanup.json', 'native-diagnostics.png', 'native-legacy-conflict.png', 'installer-finished.png', 'saved-qa-api-smoke.json', 'provider-config.json', 'ai-before.json', 'ai-after.json', 'dependencies.json', 'shared-services-check.json', 'listeners.json', 'video-metadata.json', 'video-overview-control.png', 'debugych_desktop_1.2_overview.mp4']:
  source=root/'outputs/desktop12'/name
  if source.is_file():shutil.copy2(source,evidence/name)
-validation=root/'docs/desktop-account-login.md'
+validation=root/'docs/desktop-thin-client.md'
+if not validation.is_file():validation=root/'docs/desktop-account-login.md'
 if not validation.is_file():validation=root/'docs/debugych-server-1.0.md'
 if not validation.is_file():validation=root/'docs/desktop-1.2-validation.md'
 if validation.is_file():shutil.copy2(validation,out/'VALIDATION.md')
@@ -47,7 +48,10 @@ for name in ['new-domain-validation.json','live-token-rotation.json','native-rem
 for name in ['desktop-account-rust.log','desktop-account-live-rust.log','desktop-account-node-tests.log','desktop-account-shell.log','desktop-account-bridge.log','desktop-account-typecheck.log','desktop-account-lint.log','desktop-account-web-build.log','desktop-account-web-unit.log','desktop-account-release-build.log','desktop-account-connection.png']:
  source=root/'outputs/server10'/name
  if source.is_file():shutil.copy2(source,evidence/name)
-meta={'version':version,'pet':'embedded v3.2.1 transparent window; same process and connection','commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'exeSha256':hashlib.sha256((out/'Debugych.exe').read_bytes()).hexdigest(),'web':'existing production build','engine':'unchanged','runtime':'Tauri 2 + Windows WebView2 + bundled Node','requires':'configured Linux Docker/gVisor for local QA; remote HTTPS mode available','paidCallsDuringPackaging':0}
+for name in ['thin-rust-tests.log','thin-security-final.log','thin-proxy-tests.log','thin-shell-tests.log','thin-bridge-tests.log','thin-web-unit.log','thin-pet-tests.log','thin-typecheck.log','thin-lint.log','thin-web-build.log','thin-live-jury.log','thin-live-admin.log','thin-public-demo.log']:
+ source=root/'outputs/server10'/name
+ if source.is_file():shutil.copy2(source,evidence/name)
+meta={'version':version,'pet':'embedded v3.2.1 transparent window; same process and connection','commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'exeSha256':hashlib.sha256((out/'Debugych.exe').read_bytes()).hexdigest(),'web':'Remote: current HTTPS server UI through trusted loopback proxy; Local: bundled production build','engine':'unchanged','runtime':'Tauri 2 + Windows WebView2 + bundled Node','requires':'configured Linux Docker/gVisor for local QA; remote HTTPS mode available','paidCallsDuringPackaging':0}
 (out/'build.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf8')
 archive=root/f'outputs/debugych_desktop_{version}_windows.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:

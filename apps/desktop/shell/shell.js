@@ -15,6 +15,7 @@ async function configure(){if(busy||authBusy)return;$('diagnostic-results').hidd
 $('workspace').onload=postContext;
 window.addEventListener('message',async e=>{
  if(bindingChanging||e.source!==$('workspace').contentWindow||e.origin!==frameOrigin||!e.data||typeof e.data!=='object'||e.data.session!==frameSession)return;
+ if(e.data.type==='debugych-desktop-open-settings'){await configure();return;}
  if(e.data.type==='debugych-desktop-auth-required'){clearWorkspace();await configure();$('status').textContent='Сеанс завершён. Войдите снова.';return;}
  if(e.data.type==='debugych-desktop-ready'){frameReady=true;postContext();return;}
  if(e.data.type!=='debugych-desktop-project'||typeof e.data.projectId!=='string'||!Number.isSafeInteger(e.data.revision))return;
@@ -26,7 +27,7 @@ $('mode').onchange=()=>{$('api').value=$('mode').value==='local'?'http://127.0.0
 $('save').onclick=async()=>{if(busy||authBusy)return;bindingChanging=true;const config={mode:$('mode').value,api_url:$('api').value.trim(),backend_root:$('backend').value.trim(),route_ip:$('mode').value==='remote'?$('route-ip').value.trim():''};let password=$('account-password').value;const username=$('account-username').value.trim(),secret=$('server-token').value;$('account-password').value='';$('server-token').value='';authControls(true);clearWorkspace();try{if(config.mode==='remote'&&!password&&!secret&&username&&(!savedAccount||username.toLowerCase()!==savedUsername.toLowerCase()))throw Error('Введите пароль для входа в указанный аккаунт.');await invoke('save_config',{config});if(config.mode==='remote'&&password){$('status').textContent='Вхожу в аккаунт…';await invoke('account_sign_in',{apiUrl:config.api_url,routeIp:config.route_ip,username,password});password=''}else if(config.mode==='remote'&&secret){await invoke('set_server_token',{apiUrl:config.api_url,token:secret})}authControls(false);await connect()}catch(e){password='';$('status').textContent=String(e);$('settings').hidden=false;$('startup').hidden=false;$('spinner').hidden=true}finally{authControls(false);bindingChanging=false;postContext()}};
 $('account-sign-out').onclick=async()=>{if(busy||authBusy)return;bindingChanging=true;authControls(true);clearWorkspace();try{await invoke('account_sign_out',{apiUrl:context.backendUrl});authControls(false);await configure();$('status').textContent='Вы вышли. Введите логин и пароль для нового входа.'}catch(e){$('status').textContent=String(e)}finally{authControls(false);bindingChanging=false}};
 for(const id of ['account-username','account-password'])$(id).addEventListener('keydown',event=>{if(event.key==='Enter'&&!busy&&!authBusy){event.preventDefault();$('save').click()}});
-setInterval(async()=>{try{const s=await invoke('startup_status');if(s)$('status').textContent=s}catch{}},700);
+setInterval(async()=>{if(!busy||authBusy)return;try{const s=await invoke('startup_status');if(busy&&!authBusy&&s)$('status').textContent=s}catch{}},700);
 async function initialize(){
 await window.__TAURI__.event.listen('desktop-context',e=>{if(context&&e.payload.revision<context.revision)return;context=e.payload;$('pet-visible').checked=context.petVisible;postContext();});
 await window.__TAURI__.event.listen('desktop-settings',()=>configure());

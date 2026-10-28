@@ -148,6 +148,11 @@ export function createGateway({root,origin,upstream,demo=null,accounts=null,team
    let info;try{info=await stat(file)}catch{}
    if(!info?.isFile()){if(path.extname(pathname))return json(res,404,'Файл не найден');file=path.join(root,'index.html');info=await stat(file)}
    const actual=await realpath(file);if(!actual.startsWith(root+path.sep))return json(res,400,'Недопустимый путь');
+   const isHTML=path.extname(file)==='.html';
+   const etag='"'+info.size.toString(16)+'-'+Math.floor(info.mtimeMs).toString(16)+'"';
+   const immutable=/^\/assets\/.*-[A-Za-z0-9_-]{8,}\.[a-z0-9]+$/i.test(pathname);
+   res.setHeader('Cache-Control',isHTML?'no-store':immutable?'public, max-age=31536000, immutable':'private, max-age=0, must-revalidate');
+   if(!isHTML){res.setHeader('ETag',etag);if(req.headers['if-none-match']===etag){res.writeHead(304);res.end();return;}}
    res.writeHead(200,{'Content-Type':types[path.extname(file)]||'application/octet-stream','Content-Length':info.size});
    if(req.method==='HEAD')res.end();else createReadStream(file).on('error',()=>res.destroy()).pipe(res);
   }catch{if(!res.headersSent)json(res,400,'Не удалось обработать запрос');else res.destroy()}

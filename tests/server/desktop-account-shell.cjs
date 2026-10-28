@@ -10,7 +10,7 @@ async function fixture(saved=false){
   window.ctx={backendUrl:cfg.api_url,frontendUrl:'',projectId:'',revision:0,petVisible:false};
   window.__TAURI__={event:{listen:async(n,f)=>{listeners[n]=f}},core:{invoke:async(n,args)=>{
    calls.push({name:n,args});
-   if(n==='get_config')return {...cfg};if(n==='get_desktop_context')return {...ctx};if(n==='startup_status')return '';
+   if(n==='get_config')return {...cfg};if(n==='get_desktop_context')return {...ctx};if(n==='startup_status')return window.staleStatus||'';
    if(n==='account_info')return {saved:savedAccount,username:savedAccount?accountUsername:'',role:savedAccount?'jury':''};
    if(n==='save_config'){cfg={...cfg,...args.config};ctx.backendUrl=cfg.api_url;ctx.revision++;return;}
    if(n==='account_sign_in'){if(args.password==='wrong-offline-password')throw 'Неверный логин или пароль';savedAccount=true;accountUsername=args.username;ctx.projectId='';ctx.revision++;return {saved:true,username:accountUsername,role:'jury'}}
@@ -30,7 +30,7 @@ test('fresh Desktop asks for website credentials and never writes the password i
  }finally{await browser.close()}
 });
 test('wrong credentials leave the workspace hidden and never fall back to an owner key',async()=>{
- const {page,browser}=await fixture();try{await expect(page.locator('#settings')).toBeVisible();await page.locator('#account-username').fill('jury-contract');await page.locator('#account-password').fill('wrong-offline-password');await page.locator('#save').click();await expect(page.locator('#status')).toContainText('Неверный логин или пароль');await expect(page.locator('#workspace')).toBeHidden();await expect(page.locator('#account-password')).toHaveValue('');assert.equal(await page.evaluate(()=>calls.filter(c=>c.name==='set_server_token').length),0);}finally{await browser.close()}
+ const {page,browser}=await fixture();try{await expect(page.locator('#settings')).toBeVisible();await page.evaluate(()=>window.staleStatus='Old ready status');await page.locator('#account-username').fill('jury-contract');await page.locator('#account-password').fill('wrong-offline-password');await page.locator('#save').click();await expect(page.locator('#status')).toContainText('Неверный логин или пароль');await page.waitForTimeout(850);await expect(page.locator('#status')).toContainText('Неверный логин или пароль');await expect(page.locator('#workspace')).toBeHidden();await expect(page.locator('#account-password')).toHaveValue('');assert.equal(await page.evaluate(()=>calls.filter(c=>c.name==='set_server_token').length),0);}finally{await browser.close()}
 });
 test('saved session resumes without a password; logout clears the old workspace',async()=>{
  const {page,browser}=await fixture(true);try{await expect(page.locator('#workspace')).toBeVisible();assert.equal(await page.evaluate(()=>calls.filter(c=>c.name==='account_sign_in').length),0);await page.locator('#connection').click();await expect(page.locator('#account-username')).toHaveValue('jury-contract');await page.locator('#account-sign-out').click();await expect(page.locator('#status')).toContainText('Вы вышли');await expect(page.locator('#workspace')).toBeHidden();await expect(page.locator('#back')).toBeHidden();await expect(page.locator('#account-password')).toHaveValue('');await expect(page.locator('#account-sign-out')).toBeDisabled();assert.equal(await page.locator('#workspace').getAttribute('src'),'about:blank');}finally{await browser.close()}

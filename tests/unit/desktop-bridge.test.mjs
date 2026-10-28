@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import {stripTypeScriptTypes} from 'node:module';
-const source=stripTypeScriptTypes(fs.readFileSync(new URL('../../apps/web/src/desktopBridge.ts',import.meta.url),'utf8')).replaceAll('export function','function')+'\nglobalThis.bridge={connectDesktopProject,publishDesktopProject,requestDesktopLogin};';
+const source=stripTypeScriptTypes(fs.readFileSync(new URL('../../apps/web/src/desktopBridge.ts',import.meta.url),'utf8')).replaceAll('export function','function')+'\nglobalThis.bridge={connectDesktopProject,publishDesktopProject,requestDesktopLogin,isDesktopHost,requestDesktopSettings};';
 const A='4552f6ba-cd41-48d4-a947-39e3b58314ac',B='024f84b2-6cc8-49dc-87a1-e0c5c35b63eb';
 function setup({backend='http://127.0.0.1:8000',oldBackend=backend,embedded=true,session=null}={}){
  const sent=[],listeners=new Map(),values=new Map([['debugych-project',A],['debugych-desktop-backend',oldBackend]]);
@@ -25,3 +25,5 @@ test('an empty workspace does not create a project echo loop',()=>{const c=setup
 test('an authoritative clear removes the prior scope without echoing its old project',()=>{const c=setup();c.receive({type:'debugych-desktop-context',projectId:A,revision:0});c.select(A);const count=c.sent.length;c.receive({type:'debugych-desktop-context',projectId:'',revision:1});assert.equal(c.sent.length,count);c.select('');assert.equal(c.sent.at(-1).data.projectId,'');});
 
 test('messages belonging to a previous iframe lifetime are rejected',()=>{const c=setup();c.receive({type:'debugych-desktop-context',projectId:B,revision:2,session:'previous-frame'});c.select(A);assert.equal(c.sent.length,1)});
+
+test('account settings use only the nonce-bound native channel',()=>{const c=setup({session:'contract-frame-nonce'});assert.equal(c.bridge.isDesktopHost(),true);c.bridge.requestDesktopSettings();assert.equal(c.sent.at(-1).data.type,'debugych-desktop-open-settings');assert.equal(c.sent.at(-1).data.session,'contract-frame-nonce');assert.equal(c.sent.at(-1).origin,'http://tauri.localhost');for(const options of [{embedded:false,session:'nonce'},{}]){const web=setup(options);const count=web.sent.length;assert.equal(web.bridge.isDesktopHost(),false);web.bridge.requestDesktopSettings();assert.equal(web.sent.length,count)}});

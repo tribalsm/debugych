@@ -1,6 +1,6 @@
 # Дебагыч / DEBUGYCH
 
-**Debugych Desktop 1.2 для Windows:** [установка, обновление и удаление](docs/windows-desktop.md). Одно приложение Tauri/WebView2 включает основное окно, Desktop Pet и комплектный Node runtime. Доступны пользовательский NSIS-установщик и дополнительный portable ZIP. [Проверки и ограничения релиза](docs/desktop-1.2-validation.md), [подготовка Remote Mode](docs/server-migration-readiness.md). Чистая Windows VM и полный повтор интерактивного сценария двух окон пока не проверены.
+**Debugych Desktop 1.3 для Windows:** [установка, обновление и удаление](docs/windows-desktop.md). Одно приложение Tauri/WebView2 включает основное окно, Desktop Pet и комплектный Node runtime. В Remote Mode интерфейс загружается с HTTPS-сервера и обновляется вместе с сайтом при перезагрузке. Питомец остаётся native-окном. [Проверка тонкого клиента](docs/desktop-thin-client.md). Доступны пользовательский NSIS-установщик и дополнительный portable ZIP. [Проверки и ограничения релиза](docs/desktop-1.2-validation.md), [подготовка Remote Mode](docs/server-migration-readiness.md). Чистая Windows VM и полный повтор интерактивного сценария двух окон пока не проверены.
 
 ## Локальный web release, 27.10.2026
 
