@@ -1,0 +1,15 @@
+[Unit]
+Description=Debugych single-owner QA stack
+After=docker.service network-online.target
+Requires=docker.service
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/debugych/current
+ExecStart=/bin/sh /opt/debugych/current/scripts/serverctl.sh up
+# Stop only this application's services, never the Docker daemon or foreign stacks.
+ExecStop=/bin/sh /opt/debugych/current/scripts/serverctl.sh stop
+TimeoutStartSec=900
+TimeoutStopSec=120
+[Install]
+WantedBy=multi-user.target

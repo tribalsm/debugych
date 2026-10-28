@@ -3,7 +3,7 @@ use std::{fs,path::PathBuf,process::{Command,Stdio},sync::Mutex,time::{Duration,
 use serde::{Deserialize,Serialize};
 use tauri::{Emitter,Manager,State,menu::{Menu,MenuItem}};
 use std::sync::atomic::{AtomicBool,Ordering};
-mod diagnostics;mod legacy;mod owned_process;mod backend;mod pet;use owned_process::OwnedChild;
+mod server_auth;mod diagnostics;mod legacy;mod owned_process;mod backend;mod pet;use owned_process::OwnedChild;
 #[cfg(windows)]use std::os::windows::process::CommandExt;
 #[derive(Clone,Serialize,Deserialize)]
 #[serde(default)]
@@ -49,7 +49,7 @@ fn restore_main(app:&tauri::AppHandle)->Result<(),String>{let w=app.get_webview_
 #[tauri::command]fn open_main_window(app:tauri::AppHandle)->Result<(),String>{restore_main(&app)}
 #[tauri::command]fn show_connection_settings(app:tauri::AppHandle)->Result<(),String>{restore_main(&app)?;app.emit("desktop-settings",true).map_err(|_|"Настройки недоступны".into())}
 fn own_spawn(app:&tauri::AppHandle,slot:&Mutex<Option<OwnedChild>>,command:&mut Command)->Result<(),String>{let r=app.state::<Runtime>();let mut child=slot.lock().unwrap();if r.closing.load(Ordering::SeqCst){return Err("Приложение завершается".into())}*child=Some(OwnedChild::spawn(command).map_err(|_|"Не удалось запустить локальный процесс приложения")?);Ok(())}
-fn health(client:&reqwest::blocking::Client,url:&str)->bool{client.get(format!("{}/api/health",url.trim_end_matches('/'))).send().ok().filter(|r|r.status().is_success()).and_then(|r|r.json::<serde_json::Value>().ok()).map_or(false,|h|h["status"]=="ok"&&h["execution"]=="gvisor-python"&&h["sandbox_available"]==true)}
+fn health(client:&reqwest::blocking::Client,url:&str)->bool{server_auth::blocking(client,&format!("{}/api/health",url.trim_end_matches('/')),url).ok().and_then(|r|r.send().ok()).filter(|r|r.status().is_success()).and_then(|r|r.json::<serde_json::Value>().ok()).map_or(false,|h|h["status"]=="ok"&&h["execution"]=="gvisor-python"&&h["sandbox_available"]==true)}
 fn boot(app:&tauri::AppHandle)->Result<String,String>{
  let conflicts=legacy::conflicts();if !conflicts.is_empty(){return Err(format!("Работает старая portable-версия. Закройте её через меню Выход и нажмите Повторить. Данные и старые ярлыки сохранены.\n{}",conflicts.join("\n")))}
  let state=app.state::<Runtime>();let c=state.config.lock().unwrap().clone();if !valid(&c){return Err("Проверьте настройки подключения".into())}
@@ -76,7 +76,9 @@ fn boot(app:&tauri::AppHandle)->Result<String,String>{
  let port_file=data.join("frontend-port.txt");let preferred=fs::read_to_string(&port_file).ok().and_then(|s|s.trim().parse::<u16>().ok()).filter(|p|*p>=1024).unwrap_or(0);
  let socket=TcpListener::bind(("127.0.0.1",preferred)).map_err(|_|"Порт приложения занят другим процессом. Закройте другую копию или проверьте frontend-port.txt в каталоге данных.")?;let port=socket.local_addr().unwrap().port();drop(socket);fs::write(port_file,port.to_string()).map_err(|_|"Не удалось сохранить адрес приложения")?;
  let log=fs::OpenOptions::new().create(true).append(true).open(data.join("frontend.log")).map_err(|_|"Не удалось открыть журнал запуска")?;
- own_spawn(app,&state.web,command(root.join("runtime/node.exe")).arg(root.join("scripts/serve-web.mjs")).env("DEBUGYCH_WEB_PORT",port.to_string()).env("DEBUGYCH_API_URL",&c.api_url).env("DEBUGYCH_DESKTOP_EMBED","1").env("DEBUGYCH_ALLOW_REMOTE_API",if c.mode=="remote"{"1"}else{"0"}).stdout(Stdio::null()).stderr(log))?;
+ let token=server_auth::load(&c.api_url)?;
+ own_spawn(app,&state.web,command(root.join("runtime/node.exe")).arg(root.join("scripts/serve-web.mjs")).env("DEBUGYCH_WEB_PORT",port.to_string()).env("DEBUGYCH_API_URL",&c.api_url).stdin(Stdio::piped()).env("DEBUGYCH_REMOTE_AUTH_STDIN",if token.is_some(){"1"}else{"0"}).env("DEBUGYCH_DESKTOP_EMBED","1").env("DEBUGYCH_ALLOW_REMOTE_API",if c.mode=="remote"{"1"}else{"0"}).stdout(Stdio::null()).stderr(log))?;
+ if let Some(token)=token {use std::io::Write;let mut slot=state.web.lock().unwrap();let pipe=slot.as_mut().and_then(|child|child.stdin()).ok_or("Proxy credential pipe unavailable")?;writeln!(pipe,"{}",serde_json::json!({"token":token})).map_err(|_|"Proxy credential handoff failed")?;}
  let address=format!("http://127.0.0.1:{port}/");
  let deadline=Instant::now()+Duration::from_secs(15);while !client.get(&address).send().map_or(false,|r|r.status().is_success()){if Instant::now()>deadline{return Err("Не удалось открыть встроенный frontend. Проверьте комплект ресурсов и frontend.log.".into())}std::thread::sleep(Duration::from_millis(200));}
  *state.frontend.lock().unwrap()=address.trim_end_matches('/').into();broadcast_context(app);Ok(address)
@@ -109,7 +111,7 @@ fn main(){
  })
  .on_menu_event(|app,event|match event.id().as_ref(){"open"=>{let _=restore_main(app);},"diagnostics"=>{let _=restore_main(app);let _=app.emit("desktop-diagnostics",true);},"connection"=>{let _=show_connection_settings(app.clone());},"pet"=>{let _=set_pet_visible_inner(app,!context(app).pet_visible);},"quit"=>app.exit(0),_=>{}})
  .on_window_event(|window,event|{if window.label()=="main"{if let tauri::WindowEvent::CloseRequested{api,..}=event{api.prevent_close();window.app_handle().exit(0);}}})
- .invoke_handler(tauri::generate_handler![environment_diagnostics,get_config,startup_status,save_config,start_application,get_desktop_context,set_selected_project,set_pet_visible,open_main_window,show_connection_settings,pet::set_expanded,pet::pet_ready,pet::drag_pet,pet::get_preferences,pet::set_motion,pet::set_size,pet::set_panel_height,pet::hide_pet,backend::get_companion_settings,backend::save_companion_config,backend::save_companion_seen,backend::backend_get,backend::cancel_backend_read,backend::open_companion_page,backend::companion_post,backend::get_chat_history,backend::save_chat_history]).build(ctx).expect("Debugych startup");
+ .invoke_handler(tauri::generate_handler![server_auth::set_server_token,server_auth::server_token_configured,environment_diagnostics,get_config,startup_status,save_config,start_application,get_desktop_context,set_selected_project,set_pet_visible,open_main_window,show_connection_settings,pet::set_expanded,pet::pet_ready,pet::drag_pet,pet::get_preferences,pet::set_motion,pet::set_size,pet::set_panel_height,pet::hide_pet,backend::get_companion_settings,backend::save_companion_config,backend::save_companion_seen,backend::backend_get,backend::cancel_backend_read,backend::open_companion_page,backend::companion_post,backend::get_chat_history,backend::save_chat_history]).build(ctx).expect("Debugych startup");
  app.run(|app,event|{if matches!(event,tauri::RunEvent::Exit){let state=app.state::<Runtime>();state.closing.store(true,Ordering::SeqCst);app.state::<backend::Backend>().cancel_all();for slot in [&state.bootstrap,&state.web,&state.wsl]{slot.lock().unwrap().take();}}});
 }
 fn migrate_pet(folder:&std::path::Path)->std::io::Result<()>{

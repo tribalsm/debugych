@@ -1,6 +1,6 @@
 {
   "productName": "Дебагыч",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "identifier": "local.debugych.desktop.client",
   "build": {
     "frontendDist": "shell"

@@ -45,3 +45,5 @@ apps/pet/evidence/v31/*
 !apps/pet/evidence/v31/latest-context.json
 !apps/pet/evidence/v31/final-test-cases.json
 !apps/pet/evidence/v31/final-requirements.json
+
+outputs/server10/

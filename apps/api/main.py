@@ -26,6 +26,8 @@ async def lifespan(app):
     yield
 
 app = FastAPI(title='Дебагыч · AI QA Assistant', lifespan=lifespan)
+from apps.api.access import OwnerAccess
+app.add_middleware(OwnerAccess)
 from apps.api.companion_chat import router as companion_chat_router
 app.include_router(companion_chat_router)
 

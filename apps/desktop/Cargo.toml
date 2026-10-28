@@ -1,6 +1,6 @@
 [package]
 name = "debugych-desktop"
-version = "1.2.0"
+version = "1.2.1"
 edition = "2021"
 
 [build-dependencies]
@@ -16,7 +16,7 @@ reqwest = { version = "=0.13.5", features = ["json", "blocking"] }
 futures-util = "=0.3.34"
 
 [target.'cfg(windows)'.dependencies]
-windows-sys = { version = "=0.61.2", features = ["Win32_System_JobObjects", "Win32_System_Threading", "Win32_Foundation", "Win32_Security", "Win32_System_Diagnostics_ToolHelp"] }
+windows-sys = { version = "=0.61.2", features = ["Win32_System_JobObjects", "Win32_System_Threading", "Win32_Foundation", "Win32_Security", "Win32_Security_Credentials", "Win32_System_Diagnostics_ToolHelp"] }
 
 [features]
 default = ["custom-protocol"]

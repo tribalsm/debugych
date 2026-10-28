@@ -8,7 +8,7 @@ function loadFrame(address){const u=new URL(address);if(u.protocol!=='http:'||u.
  if(frameUrl!==next){frameReady=false;frameUrl=next;$('workspace').src=next;}displayWorkspace();}
 async function refreshContext(){context=await invoke('get_desktop_context');$('pet-visible').checked=context.petVisible;postContext();}
 async function connect(){if(busy)return;busy=true;$('settings').hidden=true;$('retry').hidden=true;$('spinner').hidden=false;try{const address=await invoke('start_application');await refreshContext();loadFrame(address)}catch(e){$('status').textContent=String(e);$('retry').hidden=false;$('spinner').hidden=true}finally{busy=false}}
-async function configure(){if(busy)return;$('diagnostic-results').hidden=true;const c=await invoke('get_config');$('config-directory').textContent='Каталог настроек: '+c.config_directory;$('mode').value=c.mode;$('api').value=c.api_url;$('backend').value=c.backend_root;$('root-label').hidden=c.mode!=='local';$('settings').hidden=false;$('startup').hidden=false;$('workspace').hidden=true;$('back').hidden=!frameUrl;$('spinner').hidden=true;document.querySelector('h1').textContent='Подключение Дебагыча';}
+async function configure(){if(busy)return;$('diagnostic-results').hidden=true;const c=await invoke('get_config');$('config-directory').textContent='Каталог настроек: '+c.config_directory;$('mode').value=c.mode;$('api').value=c.api_url;$('backend').value=c.backend_root;$('root-label').hidden=c.mode!=='local';$('server-auth').hidden=c.mode!=='remote';$('server-token').value='';$('settings').hidden=false;$('startup').hidden=false;$('workspace').hidden=true;$('back').hidden=!frameUrl;$('spinner').hidden=true;document.querySelector('h1').textContent='Подключение Дебагыча';}
 $('workspace').onload=postContext;
 window.addEventListener('message',async e=>{
  if(bindingChanging||e.source!==$('workspace').contentWindow||e.origin!==frameOrigin||!e.data||typeof e.data!=='object'||e.data.session!==frameSession)return;
@@ -18,8 +18,8 @@ window.addEventListener('message',async e=>{
 });
 $('pet-visible').onchange=async()=>{try{context=await invoke('set_pet_visible',{visible:$('pet-visible').checked})}catch(e){$('status').textContent=String(e);$('startup').hidden=false}finally{await refreshContext()}};
 $('configure').onclick=$('connection').onclick=()=>configure().catch(e=>$('status').textContent=String(e));$('retry').onclick=connect;$('back').onclick=displayWorkspace;
-$('mode').onchange=()=>{$('api').value=$('mode').value==='local'?'http://127.0.0.1:8000':'https://';$('root-label').hidden=$('mode').value!=='local'};
-$('save').onclick=async()=>{bindingChanging=true;try{await invoke('save_config',{config:{mode:$('mode').value,api_url:$('api').value.trim(),backend_root:$('backend').value.trim()}});frameUrl='';frameOrigin='';frameReady=false;pendingRoute='';$('back').hidden=true;$('workspace').src='about:blank';await connect()}catch(e){$('status').textContent=String(e)}finally{bindingChanging=false;postContext()}};
+$('mode').onchange=()=>{$('api').value=$('mode').value==='local'?'http://127.0.0.1:8000':'https://';$('root-label').hidden=$('mode').value!=='local';$('server-auth').hidden=$('mode').value!=='remote'};
+$('save').onclick=async()=>{bindingChanging=true;try{const secret=$('server-token').value;$('server-token').value='';if($('mode').value==='remote'&&secret)await invoke('set_server_token',{apiUrl:$('api').value.trim(),token:secret});await invoke('save_config',{config:{mode:$('mode').value,api_url:$('api').value.trim(),backend_root:$('backend').value.trim()}});frameUrl='';frameOrigin='';frameReady=false;pendingRoute='';$('back').hidden=true;$('workspace').src='about:blank';await connect()}catch(e){$('status').textContent=String(e)}finally{bindingChanging=false;postContext()}};
 setInterval(async()=>{try{const s=await invoke('startup_status');if(s)$('status').textContent=s}catch{}},700);
 async function initialize(){
 await window.__TAURI__.event.listen('desktop-context',e=>{if(context&&e.payload.revision<context.revision)return;context=e.payload;$('pet-visible').checked=context.petVisible;postContext();});
@@ -38,3 +38,5 @@ async function diagnose(){
 }
 $('diagnostics').onclick=diagnose;
 window.__TAURI__.event.listen('desktop-diagnostics',diagnose);
+
+$('remove-server-token').onclick=async()=>{try{await invoke('set_server_token',{apiUrl:$('api').value.trim(),token:''});$('server-token-state').textContent='Сохранённый токен удалён. Потребуется новый токен и повторное подключение.'}catch{$('server-token-state').textContent='Не удалось изменить Windows Credential Manager.'}};

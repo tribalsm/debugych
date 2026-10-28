@@ -3,6 +3,7 @@ from pathlib import Path
 import shutil, subprocess, zipfile, json, hashlib, os
 
 root=Path(__file__).resolve().parents[1]
+version=json.loads((root/'apps/desktop/tauri.conf.json').read_text(encoding='utf-8'))['version']
 out=root/'outputs/windows-app'
 out.mkdir(parents=True,exist_ok=True)
 resources=out/'resources'
@@ -36,9 +37,9 @@ for name in ['baseline-rust.log', 'baseline-pet.log', 'baseline-web.log', 'basel
  if source.is_file():shutil.copy2(source,evidence/name)
 validation=root/'docs/desktop-1.2-validation.md'
 if validation.is_file():shutil.copy2(validation,out/'VALIDATION.md')
-meta={'version':'1.2.0','pet':'embedded v3.2.1 transparent window; same process and connection','commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'exeSha256':hashlib.sha256((out/'Debugych.exe').read_bytes()).hexdigest(),'web':'existing production build','engine':'unchanged','runtime':'Tauri 2 + Windows WebView2 + bundled Node','requires':'configured Linux Docker/gVisor for local QA; remote HTTPS mode available','paidCallsDuringPackaging':0}
+meta={'version':version,'pet':'embedded v3.2.1 transparent window; same process and connection','commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'exeSha256':hashlib.sha256((out/'Debugych.exe').read_bytes()).hexdigest(),'web':'existing production build','engine':'unchanged','runtime':'Tauri 2 + Windows WebView2 + bundled Node','requires':'configured Linux Docker/gVisor for local QA; remote HTTPS mode available','paidCallsDuringPackaging':0}
 (out/'build.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf8')
-archive=root/'outputs/debugych_desktop_1.2_windows.zip'
+archive=root/f'outputs/debugych_desktop_{version}_windows.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
  for p in out.rglob('*'):
   if p.is_file() and p.name not in {"native-runtime.json","native-startup-error.txt"}:

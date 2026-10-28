@@ -1,0 +1,72 @@
+# Overlay the existing stack. Requires Compose >= 2.24.4 for !override.
+# Explicit service list in serverctl excludes the development web server.
+x-logging: &bounded-logs
+  driver: json-file
+  options: {max-size: "10m", max-file: "3"}
+services:
+  api:
+    logging: *bounded-logs
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/tmp:rw,noexec,nosuid,nodev,size=64m,uid=10001,gid=10001"]
+    ports: !override ["127.0.0.1:18080:8000"]
+    environment:
+      DEBUGYCH_SERVER: "1"
+      DEBUGYCH_AUTH_MODE: required
+      DEBUGYCH_AUTH_HASHES_FILE: /run/secrets/owner-hashes
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://triklz27.ru/v1}
+      LLM_MODEL: ${LLM_MODEL:-gpt-6-luna}
+      LLM_MAX_DAILY_CALLS: ${LLM_MAX_DAILY_CALLS:-6}
+      LLM_MAX_DAILY_USD: ${LLM_MAX_DAILY_USD:-1}
+    volumes:
+      - /etc/debugych/owner-hashes:/run/secrets/owner-hashes:ro
+    mem_limit: 512m
+    cpus: 0.5
+    pids_limit: 128
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz')"]
+  worker:
+    logging: *bounded-logs
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/tmp:rw,noexec,nosuid,nodev,size=64m,uid=10001,gid=10001"]
+    command: [celery, -A, apps.api.jobs.celery, worker, --loglevel=WARNING, --concurrency=1, --prefetch-multiplier=1]
+    environment:
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://triklz27.ru/v1}
+      LLM_MODEL: ${LLM_MODEL:-gpt-6-luna}
+      LLM_MAX_DAILY_CALLS: ${LLM_MAX_DAILY_CALLS:-6}
+      LLM_MAX_DAILY_USD: ${LLM_MAX_DAILY_USD:-1}
+    mem_limit: 512m
+    pids_limit: 128
+    restart: unless-stopped
+  supervisor:
+    logging: *bounded-logs
+    environment:
+      SANDBOX_CONCURRENCY: "1"
+      SANDBOX_SCOPE: debugych-server
+    restart: unless-stopped
+  postgres:
+    logging: *bounded-logs
+    mem_limit: 256m
+    command: [postgres, -c, shared_buffers=64MB, -c, max_connections=30]
+    restart: unless-stopped
+  redis:
+    logging: *bounded-logs
+    mem_limit: 96m
+    command: [redis-server, --appendonly, "yes", --maxmemory, 64mb, --maxmemory-policy, noeviction]
+    volumes: ["redis-data:/data"]
+    restart: unless-stopped
+  web:
+    profiles: [development-only]
+  token-init:
+    restart: "no"
+  runner:
+    logging: *bounded-logs
+volumes:
+  redis-data:
+networks:
+  backend:
+    internal: false

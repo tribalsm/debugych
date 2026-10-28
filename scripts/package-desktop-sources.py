@@ -3,7 +3,8 @@ from pathlib import Path
 import subprocess, zipfile, json
 
 root = Path(__file__).resolve().parents[1]
-out = root / 'outputs/debugych_desktop_1.2_sources.zip'
+version = json.loads((root / 'apps/desktop/tauri.conf.json').read_text(encoding='utf-8'))['version']
+out = root / f'outputs/debugych_desktop_{version}_sources.zip'
 names = subprocess.check_output(['git', 'ls-files', '-z'], cwd=root).decode().split('\0')
 excluded = {'outputs', 'node_modules', 'target', '.git', '__pycache__', 'dist'}
 private = {'.env', 'backend.env', 'connection.json', 'chat-history.json', 'companion.json'}

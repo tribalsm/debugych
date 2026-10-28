@@ -20,7 +20,11 @@ IMAGE = os.getenv('SANDBOX_IMAGE','debugych-sandbox:local')
 PLAYWRIGHT_IMAGE = os.getenv('PLAYWRIGHT_IMAGE','debugych-playwright:local')
 RUNTIME = 'runsc'  # Fail closed; intentionally no environment override to runc.
 LABEL = 'debugych.sandbox'
-slots = threading.BoundedSemaphore(2)
+_concurrency = int(os.getenv('SANDBOX_CONCURRENCY', '2'))
+if not 1 <= _concurrency <= 2:
+    raise RuntimeError('Sandbox concurrency must be 1 or 2')
+SCOPE = os.getenv('SANDBOX_SCOPE', '')
+slots = threading.BoundedSemaphore(_concurrency)
 client = None
 
 def connection():
@@ -43,7 +47,8 @@ def available(profile=None):
 def reap():
     while True:
         try:
-            for container in connection().containers.list(all=True,filters={'label':LABEL+'=1'}):
+            labels = [LABEL+'=1'] + (['debugych.scope='+SCOPE] if SCOPE else [])
+            for container in connection().containers.list(all=True,filters={'label':labels}):
                 if float(container.labels.get('debugych.deadline','0')) < time.time():
                     container.remove(force=True,v=True)
         except Exception:
@@ -78,7 +83,7 @@ def policy(job, image_id):
                 tmpfs={'/tmp':f'rw,nosuid,nodev,noexec,size={"192m" if browser else "96m"},uid=10000,gid=10000,mode=700'},
                 ulimits=[Ulimit(name='nofile',soft=512 if browser else 128,hard=512 if browser else 128),Ulimit(name='core',soft=0,hard=0),Ulimit(name='fsize',soft=8000000,hard=8000000)],
                 environment={'PYTHONDONTWRITEBYTECODE':'1','PYTHONUNBUFFERED':'1'},
-                labels={LABEL:'1','debugych.job_id':str(job.id),'debugych.deadline':str(time.time()+90)},
+                labels={LABEL:'1','debugych.job_id':str(job.id),'debugych.deadline':str(time.time()+90),**({'debugych.scope':SCOPE} if SCOPE else {})},
                 log_config=LogConfig(type=LogConfig.types.JSON,config={'max-size':'5m' if browser else '1m','max-file':'1'}))
 
 def execute_snapshot(job):

@@ -15,7 +15,7 @@ pub fn run(config:&super::Config,folder:&std::path::Path)->Vec<Check>{
  let mut results=vec![check("Конфигурация",super::valid(config),"Адрес соответствует выбранному режиму","Local требует loopback HTTP, Remote требует HTTPS без ключей и пути")];
  if !super::valid(config){return results}
  let client=reqwest::blocking::Client::builder().timeout(std::time::Duration::from_secs(5)).redirect(reqwest::redirect::Policy::none()).no_proxy().build();
- let health=client.ok().and_then(|c|c.get(format!("{}/api/health",config.api_url.trim_end_matches('/'))).send().ok()).filter(|r|r.status().is_success()).and_then(|r|r.json::<Value>().ok());
+ let health=client.ok().and_then(|c|super::server_auth::blocking(&c,&format!("{}/api/health",config.api_url.trim_end_matches('/')),&config.api_url).ok().and_then(|r|r.send().ok())).filter(|r|r.status().is_success()).and_then(|r|r.json::<Value>().ok());
  results.extend(health_checks(health.as_ref()));
  if config.mode=="remote"{results.push(Check{name:"WSL / Docker на Windows".into(),status:"not_applicable".into(),detail:"Remote Mode: локальные службы не запускаются и не проверяются. Runner находится на сервере".into()});return results}
  // Bounded read-only probe of the actual bootstrap distribution. The job owns only this probe.

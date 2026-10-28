@@ -19,6 +19,7 @@ impl OwnedChild {
   }
   #[cfg(not(windows))] {Ok(Self{child})}
  }
+ pub fn stdin(&mut self)->Option<&mut std::process::ChildStdin>{self.child.stdin.as_mut()}
  pub fn try_wait(&mut self)->std::io::Result<Option<ExitStatus>>{self.child.try_wait()}
 }
 impl Drop for OwnedChild {fn drop(&mut self){let _=self.child.stdin.take();#[cfg(windows)]unsafe{windows_sys::Win32::System::JobObjects::TerminateJobObject(self.job.0,0);};let _=self.child.kill();let _=self.child.wait();}}
