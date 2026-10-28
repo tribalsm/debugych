@@ -25,7 +25,7 @@
 | Rust unit tests на Windows | 34 passed, 1 live test отдельно |
 | Native Rust HTTPS к настоящему серверу | 1 passed, оба аккаунта |
 | Node gateway/proxy/account security | 5 passed |
-| Headless UI реальной shell с контрактным IPC | 4 passed |
+| Headless UI реальной shell с контрактным IPC | 5 passed |
 | Desktop bridge unit tests | 10 passed |
 | Frontend unit tests | 8 passed |
 | TypeScript / lint / production build | PASS |
@@ -33,7 +33,7 @@
 
 Live native test действительно вошёл как жюри и как команда, прочитал профиль и API через cookie, проверил режим snapshot, запрет команды применения для жюри с confirm=false, logout и 401 при повторном использовании cookie. Пароли читались из приватного локального файла, в env передавался только путь. В Windows Vault во время live test не записывались пользовательские credentials. Самостоятельные Vault roundtrip tests используют отдельные фиктивные HTTPS origins и удаляют записи.
 
-UI tests проверяют свежий запуск без ключа, вход по Enter, отсутствие пароля в конфигурации и localStorage, очистку ввода, ошибочный пароль без owner fallback, возобновление сохранённого сеанса, выход и удаление старого iframe, отказ поддельному сообщению истечения и обработку корректного сообщения. Это контрактные тесты IPC, не новый live AI workflow.
+UI tests проверяют свежий запуск без ключа, вход по Enter, отсутствие пароля в конфигурации и localStorage, очистку ввода, ошибочный пароль без owner fallback, запрет переключения логина без нового пароля, возобновление сохранённого сеанса, выход и удаление старого iframe, отказ поддельному сообщению истечения и обработку корректного сообщения. Это контрактные тесты IPC, не новый live AI workflow.
 
 Proxy test использует настоящие локальные TLS-сертификаты: проверены credential pipe, cookie injection, правильный Origin, отсутствие caller Authorization/Cookie, отсутствие Set-Cookie в React, запрет CSRF/подмены Host и отказ недоверенному сертификату.
 
