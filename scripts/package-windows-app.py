@@ -40,7 +40,7 @@ for name in ['baseline-rust.log', 'baseline-pet.log', 'baseline-web.log', 'basel
 validation=root/'docs/debugych-server-1.0.md'
 if not validation.is_file():validation=root/'docs/desktop-1.2-validation.md'
 if validation.is_file():shutil.copy2(validation,out/'VALIDATION.md')
-for name in ['new-domain-validation.json','live-token-rotation.json','native-remote-connection.json','vps-control-e2e.json','vps-gvisor-workloads.log','owner-auth-tests.log','backend-regression.log','proxy-auth-tests.log','rust-auth-tests.log','vps-restore-retry.log']:
+for name in ['new-domain-validation.json','live-token-rotation.json','native-remote-connection.json','vps-control-e2e.json','vps-gvisor-workloads.log','owner-auth-tests.log','backend-regression-final.log','proxy-auth-tests.log','rust-auth-tests.log','vps-restore-retry.log']:
  source=root/'outputs/server10'/name
  if source.is_file():shutil.copy2(source,evidence/name)
 meta={'version':version,'pet':'embedded v3.2.1 transparent window; same process and connection','commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'exeSha256':hashlib.sha256((out/'Debugych.exe').read_bytes()).hexdigest(),'web':'existing production build','engine':'unchanged','runtime':'Tauri 2 + Windows WebView2 + bundled Node','requires':'configured Linux Docker/gVisor for local QA; remote HTTPS mode available','paidCallsDuringPackaging':0}
