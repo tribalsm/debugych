@@ -13,11 +13,11 @@ case "${1:-health}" in
  up)
   sh "$0" validate
   docker info --format '{{json .Runtimes}}' | grep -q '"runsc"' || { echo 'gVisor runtime missing; refusing startup' >&2; exit 1; }
-  dc build api worker token-init runner supervisor sandbox-image playwright-image
+  dc build api worker token-init runner supervisor sandbox-image playwright-image server-web
   docker run --rm --runtime=runsc --network none --read-only --cap-drop ALL --security-opt no-new-privileges:true --pids-limit 32 --memory 96m --cpus 0.5 debugych-sandbox:local python -c 'print("runsc smoke passed")'
-  dc up -d --no-build postgres redis token-init sandbox-image playwright-image supervisor runner api worker
+  dc up -d --no-build postgres redis token-init sandbox-image playwright-image supervisor runner api worker server-web
   ;;
- stop) dc stop worker api supervisor runner redis postgres ;;
+ stop) dc stop server-web worker api supervisor runner redis postgres ;;
  health)
   dc ps
   curl --fail --silent --max-time 5 http://127.0.0.1:18080/healthz

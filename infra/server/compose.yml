@@ -4,6 +4,21 @@ x-logging: &bounded-logs
   driver: json-file
   options: {max-size: "10m", max-file: "3"}
 services:
+  server-web:
+    build: {context: ., dockerfile: infra/server/web.Dockerfile}
+    ports: ["127.0.0.1:18081:8080"]
+    environment:
+      PUBLIC_ORIGIN: ${DEBUGYCH_PUBLIC_ORIGIN:-https://debugych.89-22-232-119.nip.io:9443}
+      API_UPSTREAM: http://api:8000
+    networks: [backend]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 192m
+    cpus: 0.5
+    pids_limit: 64
+    restart: unless-stopped
+    logging: *bounded-logs
   api:
     logging: *bounded-logs
     read_only: true
