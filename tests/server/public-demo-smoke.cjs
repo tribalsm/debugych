@@ -26,7 +26,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises');
   for(const path of [`/api/projects/${pid}/autonomous`,`/api/projects/${pid}/files`,'/api/companion/ask',`/api/bugs/${bug.id}/verify-fix`,`/api/bugs/${bug.id}/apply-fix`]){const response=await context.request.post(origin+path,{data:{confirm:true},headers:{Origin:origin}});assert.equal(response.status(),403,path);blocked.push(path)}
   assert.equal((await context.request.get(origin+'/api/projects/00000000-1111-4111-8111-111111111111')).status(),404);
   assert.equal((await context.request.get(origin+'/docs')).status(),404);
-  await page.goto(origin+'/auth/login');await expect(page.getByText('Публичное демо · только просмотр',{exact:true})).toBeVisible();checked.push('old-login-url-opens-demo');
+  await page.goto(origin+'/auth/login');await expect(page.getByLabel('Логин',{exact:true})).toBeVisible();await page.getByRole('link',{name:'Зарегистрироваться',exact:true}).click();await expect(page.getByRole('heading',{name:'Создайте аккаунт',exact:true})).toBeVisible();checked.push('login-and-registration-available');
   assert.deepEqual(await context.cookies(),[]);assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
   const result={classification:'PUBLIC_DEMO_NO_KEY_PASS',checked,projectCount:projects.length,serverDeniedCommands:blocked.length,otherProjectsHidden:true,ownerCookieCreated:false,browserErrors:errors,browserWrites:writes,patchApplied:false};await fs.writeFile(out+'/result.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));
  }finally{await browser.close()}

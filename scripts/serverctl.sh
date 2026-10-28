@@ -28,14 +28,15 @@ case "${1:-health}" in
   case "$DEST" in /*) ;; *) echo 'Absolute backup path required' >&2; exit 1;; esac
   umask 077
   mkdir -p "$DEST"
-  test ! -e "$DEST/database.dump" && test ! -e "$DEST/projects.tar.gz"
+  test ! -e "$DEST/database.dump" && test ! -e "$DEST/projects.tar.gz" && test ! -e "$DEST/accounts.tar.gz"
   # Consistent point-in-time snapshot; stop only this application's writers.
-  trap 'dc start api worker >/dev/null' EXIT INT TERM
-  dc stop worker api
+  trap 'dc start api worker server-web >/dev/null' EXIT INT TERM
+  dc stop server-web worker api
   dc exec -T postgres pg_dump -U debugych -d debugych -Fc > "$DEST/database.dump"
   IMAGE=$(dc images -q api | head -1)
   docker run --rm --network none --read-only --entrypoint tar -v debugych-server_project-data:/data:ro "$IMAGE" -C /data -czf - . > "$DEST/projects.tar.gz"
-  (cd "$DEST" && sha256sum database.dump projects.tar.gz > SHA256SUMS)
+  docker run --rm --network none --read-only --user 1000:1000 --entrypoint tar -v debugych-server_web-accounts:/data:ro "$IMAGE" -C /data -czf - . > "$DEST/accounts.tar.gz"
+  (cd "$DEST" && sha256sum database.dump projects.tar.gz accounts.tar.gz > SHA256SUMS)
   if test -f SOURCE_COMMIT; then cat SOURCE_COMMIT; else git rev-parse HEAD; fi > "$DEST/source-commit"
   echo 'Backup written to a private directory. Credentials are excluded.'
   ;;

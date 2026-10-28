@@ -1,0 +1,43 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import http from 'node:http';
+import {mkdtemp,writeFile,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
+import {Accounts} from '../../scripts/web-accounts.mjs';
+import {createGateway} from '../../scripts/serve-server-web.mjs';
+test('real HTTP registration and invitations enforce jury/team/admin rights and key revocation',async()=>{
+ const root=await mkdtemp(path.join(tmpdir(),'debugych-account-http-'));await writeFile(path.join(root,'index.html'),'<h1>Workspace</h1>');
+ const store=new Accounts(':memory:'),token='a'.repeat(64),password='Offline-account-password-123!';let enabled=true,calls=0;
+ const backend=http.createServer((req,res)=>{calls++;res.writeHead(req.url==='/api/forbidden'?403:enabled&&req.headers.authorization==='Bearer '+token?200:401,{'Content-Type':'application/json'});res.end('{"private":true}')});await new Promise(r=>backend.listen(0,'127.0.0.1',r));
+ const origin='https://debugych.test',projectId='public-control',demo={version:1,projectId,routes:{'/api/projects':[{id:projectId}]}};
+ const gateway=createGateway({root,origin,upstream:`http://127.0.0.1:${backend.address().port}`,accounts:store,teamToken:()=>token,demo});await new Promise(r=>gateway.listen(0,'127.0.0.1',r));
+ const request=(url,method='GET',data=null,cookie=null,extra={})=>new Promise((resolve,reject)=>{const headers={Host:'debugych.test',Connection:'close',...extra};if(cookie)headers.Cookie=cookie;let body='';if(data){body=new URLSearchParams(data).toString();headers['Content-Type']='application/x-www-form-urlencoded';if(!Object.hasOwn(extra,'Origin'))headers.Origin=origin;}const req=http.request({host:'127.0.0.1',port:gateway.address().port,path:url,method,headers},res=>{let text='';res.setEncoding('utf8');res.on('data',s=>text+=s);res.on('end',()=>{assert.ok(!text.includes(password));resolve({status:res.statusCode,headers:res.headers,text})})});req.on('error',reject);req.end(body)});
+ const cookie=response=>response.headers['set-cookie'][0].split(';')[0];
+ try{
+  assert.ok((await request('/auth/login')).text.includes('name="username"'));assert.equal((await request('/auth/register')).status,200);
+  let r=await request('/auth/register','POST',{username:'jury-person',password,confirm:password,profile:'jury'},null,{Origin:'https://evil.test'});assert.equal(r.status,403);assert.equal(store.users().length,0);
+  r=await request('/auth/register','POST',{username:'jury-person',password,confirm:password,profile:'jury'});assert.equal(r.status,303);const jury=cookie(r);
+  assert.equal(JSON.parse((await request('/auth/session','GET',null,jury)).text).role,'jury');
+  assert.equal((await request('/auth/account','GET',null,jury)).status,200);assert.equal((await request('/api/projects','GET',null,jury)).headers['x-debugych-public-demo'],'1');assert.equal(calls,0);
+  assert.equal((await request('/api/projects/private','GET',null,jury)).status,404);assert.equal((await request('/api/companion/ask','POST',{prompt:'must not run'},jury)).status,403);assert.equal(calls,0);
+  assert.equal((await request('/auth/invitations','POST',{role:'admin'},jury)).status,403);
+  assert.equal((await request('/auth/register','POST',{username:'forged',password,confirm:password,role:'admin'})).status,403);
+  r=await request('/auth/login','POST',{token});assert.equal(r.status,303);const owner=cookie(r);
+  const grant=await request('/auth/invitations','POST',{role:'team'},owner);assert.equal(grant.status,200);const invitation=grant.text.match(/id="invitation-code">([a-f0-9]{64})</)[1];
+  r=await request('/auth/register','POST',{username:'team-person',password,confirm:password,invitation});assert.equal(r.status,303);const team=cookie(r);
+  assert.equal(JSON.parse((await request('/auth/session','GET',null,team)).text).role,'team');
+  store.db.prepare('UPDATE users SET must_change=1 WHERE username=?').run('team-person');let unchanged=calls;assert.equal((await request('/api/projects/private','GET',null,team)).status,404);assert.equal(calls,unchanged);store.db.prepare('UPDATE users SET must_change=0 WHERE username=?').run('team-person');
+  let count=calls;assert.equal((await request('/api/projects/private','GET',null,team)).status,200);assert.equal(calls,count+1);
+  assert.equal((await request('/api/forbidden','GET',null,team)).status,403);assert.equal(JSON.parse((await request('/auth/session','GET',null,team)).text).authenticated,true);
+  count=calls;assert.equal((await request('/api/projects','POST',{name:'fake backend only'},team,{Origin:'https://evil.test'})).status,403);assert.equal(calls,count);
+  assert.equal((await request('/auth/invitations','POST',{role:'admin'},team)).status,403);
+  assert.equal((await request('/auth/register','POST',{username:'reused',password,confirm:password,invitation})).status,400);
+  const member=store.users().find(u=>u.username==='team-person');
+  assert.equal((await request('/auth/member','POST',{id:member.id,role:'jury',active:'1'},owner)).status,303);
+  assert.equal(JSON.parse((await request('/auth/session','GET',null,team)).text).authenticated,false);
+  r=await request('/auth/sign-in','POST',{username:'team-person',password});assert.equal(r.status,303);const downgraded=cookie(r);assert.equal(JSON.parse((await request('/auth/session','GET',null,downgraded)).text).role,'jury');
+  const admin=await store.register({username:'local-admin',password,invitation:store.createInvitation('admin','owner-key')});const adminCookie='__Host-debugych='+store.createSession(admin.id);assert.equal((await request('/auth/invitations','POST',{role:'team'},adminCookie)).status,200);assert.equal((await request('/auth/member','POST',{id:admin.id,role:'viewer',active:'1'},adminCookie)).status,409);
+  enabled=false;assert.equal((await request('/auth/invitations','POST',{role:'admin'},owner)).status,303);assert.equal(JSON.parse((await request('/auth/session','GET',null,owner)).text).authenticated,false);
+ }finally{gateway.closeAllConnections();backend.closeAllConnections();await Promise.all([new Promise(r=>gateway.close(r)),new Promise(r=>backend.close(r))]);store.close();await rm(root,{recursive:true,force:true})}
+});
