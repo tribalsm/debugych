@@ -1,6 +1,12 @@
 //! An origin-scoped Windows Credential Manager entry shared by both windows.
 //! Never return a credential through IPC, config JSON or logs.
 pub fn token_valid(token:&str)->bool{(43..=256).contains(&token.len())&&token.bytes().all(|b|b.is_ascii_alphanumeric()||b==b'-'||b==b'_')}
+pub fn valid_route(route:&str)->bool{route.is_empty()||route.parse::<std::net::Ipv4Addr>().is_ok_and(|ip|ip.is_private())}
+fn route_address(origin:&str,route:&str)->Result<Option<(String,std::net::SocketAddr)>,String>{
+ if route.is_empty(){return Ok(None)}if !valid_route(route){return Err("Only a private VPN IPv4 route is allowed".into())}let url=reqwest::Url::parse(origin).map_err(|_|"Invalid server origin")?;if url.scheme()!="https"{return Err("VPN route requires HTTPS".into())}let host=url.host_str().ok_or("Missing HTTPS hostname")?.to_owned();let ip=route.parse::<std::net::IpAddr>().map_err(|_|"Invalid VPN address")?;Ok(Some((host,std::net::SocketAddr::new(ip,url.port_or_known_default().unwrap_or(443)))))
+}
+pub fn blocking_client(origin:&str,route:&str,seconds:u64)->Result<reqwest::blocking::Client,String>{let mut builder=reqwest::blocking::Client::builder().timeout(std::time::Duration::from_secs(seconds)).redirect(reqwest::redirect::Policy::none()).no_proxy();if let Some((host,address))=route_address(origin,route)?{builder=builder.resolve(&host,address)}builder.build().map_err(|_|"HTTPS transport unavailable".into())}
+pub fn async_client(origin:&str,route:&str)->Result<reqwest::Client,String>{let mut builder=reqwest::Client::builder().timeout(std::time::Duration::from_secs(8)).connect_timeout(std::time::Duration::from_secs(3)).redirect(reqwest::redirect::Policy::none()).no_proxy();if let Some((host,address))=route_address(origin,route)?{builder=builder.resolve(&host,address)}builder.build().map_err(|_|"HTTPS transport unavailable".into())}
 fn target(origin:&str)->Result<Vec<u16>,String>{let u=reqwest::Url::parse(origin).map_err(|_|"Invalid HTTPS origin")?;if u.scheme()!="https"||u.host_str().is_none()||!u.username().is_empty()||u.password().is_some()||u.query().is_some()||u.fragment().is_some()||u.path()!="/"{return Err("Server credentials require an HTTPS origin".into())}Ok(format!("Debugych.Server.{}\0",u.origin().ascii_serialization()).encode_utf16().collect())}
 #[cfg(windows)]pub fn load(origin:&str)->Result<Option<String>,String>{
  if reqwest::Url::parse(origin).map_or(true,|u|u.scheme()!="https"){return Ok(None)}let name=target(origin)?;use windows_sys::Win32::{Security::Credentials::*,Foundation::GetLastError};
@@ -25,5 +31,6 @@ pub fn asynchronous(request:reqwest::RequestBuilder,origin:&str)->Result<reqwest
 #[cfg(test)]mod tests{use super::*;
  #[test]fn secrets_are_bound_to_https_origin(){assert!(target("https://one.example").is_ok());assert_ne!(target("https://one.example").unwrap(),target("https://two.example").unwrap());for s in ["http://example.com","https://user:key@example.com","https://example.com/path","https://example.com/?token=x"]{assert!(target(s).is_err())}}
  #[test]fn header_injection_and_weak_tokens_are_rejected(){assert!(token_valid(&"A".repeat(64)));for t in ["short".into(),format!("{}\r\nX: y","A".repeat(64)),"A".repeat(257)]{assert!(!token_valid(&t))}}
+ #[test]fn vpn_routing_preserves_origin_and_refuses_unsafe_targets(){let route=route_address("https://api.example:9443","10.66.66.1").unwrap().unwrap();assert_eq!(route.0,"api.example");assert_eq!(route.1.port(),9443);for ip in ["127.0.0.1","0.0.0.0","169.254.169.254","8.8.8.8","bad"]{assert!(!valid_route(ip))}assert!(route_address("http://api.example","10.66.66.1").is_err())}
  #[cfg(windows)]#[test]fn credential_store_roundtrip_and_removal(){let origin=format!("https://credential-test-{}.invalid",std::process::id());store(&origin,&"Q".repeat(64)).unwrap();assert_eq!(load(&origin).unwrap().unwrap(),"Q".repeat(64));remove(&origin).unwrap();assert!(load(&origin).unwrap().is_none())}
 }

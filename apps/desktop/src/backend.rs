@@ -8,7 +8,7 @@ pub struct Config {pub backend_url:String,pub frontend_url:String,pub project_id
 impl Default for Config {fn default()->Self{Self{backend_url:"http://127.0.0.1:8000".into(),frontend_url:"http://127.0.0.1:5173".into(),project_id:String::new(),run_id:String::new(),enabled:true,notifications:true,phrases:true,contextual_ai_enabled:false}}}
 #[derive(Clone,Default,Serialize,Deserialize)]
 pub struct Saved {pub config:Config,#[serde(default)]pub seen:Vec<String>}
-pub struct Backend {saved:Mutex<Saved>,path:PathBuf,client:reqwest::Client,pending:Mutex<HashMap<String,AbortHandle>>,history_lock:Mutex<()>}
+pub struct Backend {saved:Mutex<Saved>,path:PathBuf,client:Mutex<Option<reqwest::Client>>,pending:Mutex<HashMap<String,AbortHandle>>,history_lock:Mutex<()>}
 pub fn valid_id(id:&str)->bool{id.len()==36&&id.bytes().enumerate().all(|(i,c)|if [8,13,18,23].contains(&i){c==b'-'}else{c.is_ascii_hexdigit()})}
 pub fn origin(value:&str)->Result<String,String>{
  if value.len()>2048{return Err("Адрес слишком длинный".into());}
@@ -27,10 +27,12 @@ impl Backend {
   let mut saved:Saved=std::fs::read(&path).ok().and_then(|s|serde_json::from_slice(&s).ok()).unwrap_or_default();
   if origin(&saved.config.backend_url).is_err()||origin(&saved.config.frontend_url).is_err(){saved=Saved::default();}
   saved.seen=saved.seen.into_iter().filter(|s|s.len()<256).rev().take(128).collect();saved.seen.reverse();
-  Ok(Self{saved:Mutex::new(saved),path,client:reqwest::Client::builder().timeout(Duration::from_secs(8)).connect_timeout(Duration::from_secs(3)).redirect(reqwest::redirect::Policy::none()).no_proxy().build()?,pending:Mutex::new(HashMap::new()),history_lock:Mutex::new(())})
+  Ok(Self{saved:Mutex::new(saved),path,client:Mutex::new(Some(crate::server_auth::async_client("http://127.0.0.1:8000","")?)),pending:Mutex::new(HashMap::new()),history_lock:Mutex::new(())})
  }
  fn save(&self,saved:&Saved)->Result<(),String>{if let Some(parent)=self.path.parent(){std::fs::create_dir_all(parent).map_err(|e|e.to_string())?;}let tmp=self.path.with_extension("json.tmp");std::fs::write(&tmp,persisted_settings(saved)?).map_err(|e|e.to_string())?;std::fs::rename(tmp,&self.path).map_err(|e|e.to_string())}
- pub fn set_context(&self,backend:&str,frontend:&str,project:&str){
+ fn client(&self)->Result<reqwest::Client,String>{self.client.lock().unwrap().clone().ok_or("Server transport not configured".into())}
+ pub fn set_context(&self,backend:&str,frontend:&str,project:&str,route:&str){
+  *self.client.lock().unwrap()=crate::server_auth::async_client(backend,route).ok();self.cancel_all();
   let mut saved=self.saved.lock().unwrap();let changed=saved.config.backend_url!=backend||saved.config.project_id!=project;
   saved.config.backend_url=backend.into();saved.config.frontend_url=if frontend.is_empty(){"http://127.0.0.1:8000".into()}else{frontend.into()};saved.config.project_id=project.into();if changed{saved.config.run_id.clear();}drop(saved);if changed{self.cancel_all();}
  }
@@ -69,7 +71,7 @@ pub async fn backend_get(state:State<'_,Backend>,path:String,request_id:String)-
  }
  let result=Abortable::new(async{
   let current=state.saved.lock().unwrap().config.clone();if current.backend_url!=config.backend_url||current.project_id!=config.project_id{return Err("Контекст изменился".into());}
-  let mut response=crate::server_auth::asynchronous(state.client.get(format!("{}{}",origin(&config.backend_url)?,path)).header("Accept","application/json"),&config.backend_url)?.send().await.map_err(|_|"Backend недоступен".to_string())?;
+  let mut response=crate::server_auth::asynchronous(state.client()?.get(format!("{}{}",origin(&config.backend_url)?,path)).header("Accept","application/json"),&config.backend_url)?.send().await.map_err(|_|"Backend недоступен".to_string())?;
   let status=response.status().as_u16();let mut bytes=Vec::new();
   while let Some(chunk)=response.chunk().await.map_err(|_|"Ответ backend прерван".to_string())?{if bytes.len()+chunk.len()>4*1024*1024{return Err("Ответ API превышает 4 MiB".into());}bytes.extend_from_slice(&chunk);}
   let data=if status==200{serde_json::from_slice(&bytes).map_err(|_|"Backend вернул не JSON".to_string())?}else{serde_json::Value::Null};
@@ -86,7 +88,7 @@ pub async fn companion_post(state:State<'_,Backend>,path:String,body:serde_json:
  if!allowed_chat_post(&path)||!valid_id(&request_id)||serde_json::to_vec(&body).map_err(|_|"Неверный запрос")?.len()>16000{return Err("Запрос вне API объяснений".into());}
  let config=state.saved.lock().unwrap().config.clone();if!config.enabled||!config.contextual_ai_enabled{return Err("AI-ответы выключены".into());}
  let(handle,registration)=AbortHandle::new_pair();{let mut p=state.pending.lock().unwrap();if p.len()>=8||p.contains_key(&request_id){return Err("Слишком много запросов".into());}p.insert(request_id.clone(),handle);}
- let result=Abortable::new(async{let current=state.saved.lock().unwrap().config.clone();if current.backend_url!=config.backend_url||current.project_id!=config.project_id{return Err("Контекст изменился".into());}let mut response=crate::server_auth::asynchronous(state.client.post(format!("{}{}",origin(&config.backend_url)?,path)).timeout(Duration::from_secs(65)).json(&body),&config.backend_url)?.send().await.map_err(|e|if e.is_timeout(){"AI_TIMEOUT"}else{"AI_UNAVAILABLE"})?;let status=response.status().as_u16();let mut bytes=Vec::new();while let Some(chunk)=response.chunk().await.map_err(|_|"Ответ прерван")?{if bytes.len()+chunk.len()>1024*1024{return Err("Ответ слишком велик".into());}bytes.extend_from_slice(&chunk);}let data=serde_json::from_slice(&bytes).map_err(|_|"AI_INVALID_RESPONSE")?;Ok(Reply{status,data})},registration).await;
+ let result=Abortable::new(async{let current=state.saved.lock().unwrap().config.clone();if current.backend_url!=config.backend_url||current.project_id!=config.project_id{return Err("Контекст изменился".into());}let mut response=crate::server_auth::asynchronous(state.client()?.post(format!("{}{}",origin(&config.backend_url)?,path)).timeout(Duration::from_secs(65)).json(&body),&config.backend_url)?.send().await.map_err(|e|if e.is_timeout(){"AI_TIMEOUT"}else{"AI_UNAVAILABLE"})?;let status=response.status().as_u16();let mut bytes=Vec::new();while let Some(chunk)=response.chunk().await.map_err(|_|"Ответ прерван")?{if bytes.len()+chunk.len()>1024*1024{return Err("Ответ слишком велик".into());}bytes.extend_from_slice(&chunk);}let data=serde_json::from_slice(&bytes).map_err(|_|"AI_INVALID_RESPONSE")?;Ok(Reply{status,data})},registration).await;
  state.pending.lock().unwrap().remove(&request_id);result.map_err(|_|"Запрос отменён".to_string())?
 }
 pub fn valid_history(history:&serde_json::Value)->bool{let Some(rows)=history.as_array()else{return false;};if rows.len()>5{return false;}for row in rows{let Some(scope)=row["scope"].as_str()else{return false;};let parts:Vec<_>=scope.split('|').collect();if parts.len()!=3||origin(parts[0]).is_err()||!valid_id(parts[1])||(parts[2]!="empty"&&!valid_id(parts[2])){return false;}let Some(messages)=row["messages"].as_array()else{return false;};if messages.len()>24{return false;}for m in messages{if!matches!(m["role"].as_str(),Some("user"|"assistant"))||m["text"].as_str().map_or(true,|s|s.len()>16000)||m["scope"].as_str()!=Some(scope){return false;}}}true}

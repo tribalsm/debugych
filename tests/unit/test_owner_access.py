@@ -46,3 +46,14 @@ def test_duplicates_and_invalid_tokens_are_rejected(monkeypatch, tmp_path):
 def test_oversized_upload_rejected_before_handler(monkeypatch, tmp_path):
     client, _ = setup(monkeypatch, tmp_path)
     assert client.post('/protected',headers={'Authorization':'Bearer '+'A'*64,'Content-Length':str(50*1024*1024)}).status_code == 413
+
+def test_provision_rotation_preserves_the_bound_inode(monkeypatch, tmp_path):
+    import runpy
+    provision = runpy.run_path('scripts/server-auth.py')['provision']
+    client, path = setup(monkeypatch, tmp_path)
+    before = path.stat().st_ino
+    owner_file = tmp_path / 'owner-token'
+    provision(path, owner_file)
+    assert path.stat().st_ino == before
+    assert client.get('/protected',headers={'Authorization':'Bearer '+'A'*64}).status_code == 401
+    assert client.get('/protected',headers={'Authorization':'Bearer '+owner_file.read_text().strip()}).status_code == 200

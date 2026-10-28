@@ -13,7 +13,7 @@ case "${1:-health}" in
  up)
   sh "$0" validate
   docker info --format '{{json .Runtimes}}' | grep -q '"runsc"' || { echo 'gVisor runtime missing; refusing startup' >&2; exit 1; }
-  dc build api worker runner supervisor sandbox-image playwright-image
+  dc build api worker token-init runner supervisor sandbox-image playwright-image
   docker run --rm --runtime=runsc --network none --read-only --cap-drop ALL --security-opt no-new-privileges:true --pids-limit 32 --memory 96m --cpus 0.5 debugych-sandbox:local python -c 'print("runsc smoke passed")'
   dc up -d --no-build postgres redis token-init sandbox-image playwright-image supervisor runner api worker
   ;;

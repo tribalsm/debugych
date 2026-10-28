@@ -7,9 +7,9 @@ mod server_auth;mod diagnostics;mod legacy;mod owned_process;mod backend;mod pet
 #[cfg(windows)]use std::os::windows::process::CommandExt;
 #[derive(Clone,Serialize,Deserialize)]
 #[serde(default)]
-struct Config{mode:String,api_url:String,backend_root:String,pet_visible:bool,project_id:String,#[serde(skip)]revision:u64}
-impl Default for Config{fn default()->Self{Self{mode:"local".into(),api_url:"http://127.0.0.1:8000".into(),backend_root:String::new(),pet_visible:false,project_id:String::new(),revision:0}}}
-fn valid(c:&Config)->bool{let Ok(u)=reqwest::Url::parse(&c.api_url)else{return false};let local=matches!(u.host_str(),Some("127.0.0.1"|"localhost"|"[::1]"|"::1"));u.username().is_empty()&&u.password().is_none()&&u.path()=="/"&&u.query().is_none()&&u.fragment().is_none()&&(c.project_id.is_empty()||backend::valid_id(&c.project_id))&&match c.mode.as_str(){"local"=>local&&u.scheme()=="http","remote"=>u.scheme()=="https",_=>false}}
+struct Config{mode:String,api_url:String,route_ip:String,backend_root:String,pet_visible:bool,project_id:String,#[serde(skip)]revision:u64}
+impl Default for Config{fn default()->Self{Self{mode:"local".into(),api_url:"http://127.0.0.1:8000".into(),route_ip:String::new(),backend_root:String::new(),pet_visible:false,project_id:String::new(),revision:0}}}
+fn valid(c:&Config)->bool{let Ok(u)=reqwest::Url::parse(&c.api_url)else{return false};let local=matches!(u.host_str(),Some("127.0.0.1"|"localhost"|"[::1]"|"::1"));server_auth::valid_route(&c.route_ip)&&(c.route_ip.is_empty()||c.mode=="remote")&&u.username().is_empty()&&u.password().is_none()&&u.path()=="/"&&u.query().is_none()&&u.fragment().is_none()&&(c.project_id.is_empty()||backend::valid_id(&c.project_id))&&match c.mode.as_str(){"local"=>local&&u.scheme()=="http","remote"=>u.scheme()=="https",_=>false}}
 struct Runtime{config:Mutex<Config>,status:Mutex<String>,busy:Mutex<bool>,web:Mutex<Option<OwnedChild>>,wsl:Mutex<Option<OwnedChild>>,bootstrap:Mutex<Option<OwnedChild>>,frontend:Mutex<String>,closing:AtomicBool,context_gate:Mutex<()>}
 fn command(exe:impl AsRef<std::ffi::OsStr>)->Command{let mut c=Command::new(exe);#[cfg(windows)]c.creation_flags(0x08000000);c}
 fn config_dir(app:&tauri::AppHandle)->Result<PathBuf,String>{
@@ -22,14 +22,14 @@ fn persist(app:&tauri::AppHandle,c:&Config)->Result<(),String>{let p=config_path
 #[derive(Clone,Serialize)]#[serde(rename_all="camelCase")]
 struct DesktopContext{backend_url:String,frontend_url:String,project_id:String,revision:u64,pet_visible:bool}
 fn context(app:&tauri::AppHandle)->DesktopContext{let r=app.state::<Runtime>();let c=r.config.lock().unwrap();let frontend_url=r.frontend.lock().unwrap().clone();DesktopContext{backend_url:c.api_url.trim_end_matches('/').into(),frontend_url,project_id:c.project_id.clone(),revision:c.revision,pet_visible:c.pet_visible}}
-fn broadcast_context(app:&tauri::AppHandle){let c=context(app);app.state::<backend::Backend>().set_context(&c.backend_url,&c.frontend_url,&c.project_id);let _=app.emit("desktop-context",c);}
+fn broadcast_context(app:&tauri::AppHandle){let c=context(app);app.state::<backend::Backend>().set_context(&c.backend_url,&c.frontend_url,&c.project_id,&app.state::<Runtime>().config.lock().unwrap().route_ip);let _=app.emit("desktop-context",c);}
 #[tauri::command]fn get_desktop_context(app:tauri::AppHandle)->DesktopContext{context(&app)}
 #[tauri::command]fn get_config(app:tauri::AppHandle,state:State<Runtime>)->serde_json::Value{let mut value=serde_json::to_value(state.config.lock().unwrap().clone()).unwrap();value["config_directory"]=serde_json::json!(config_dir(&app).unwrap_or_default());value}
 #[tauri::command]fn startup_status(state:State<Runtime>)->String{state.status.lock().unwrap().clone()}
 #[tauri::command]fn save_config(app:tauri::AppHandle,state:State<Runtime>,mut config:Config)->Result<(),String>{
  if *state.busy.lock().unwrap(){return Err("Дождитесь завершения запуска".into())}
  if !valid(&config){return Err("Локальный API: HTTP localhost; сервер: HTTPS без ключей и пути в URL".into())}
- let _gate=state.context_gate.lock().unwrap();let mut old=state.config.lock().unwrap();let changed=old.api_url!=config.api_url||old.mode!=config.mode;config.pet_visible=old.pet_visible;config.project_id=if old.api_url==config.api_url{old.project_id.clone()}else{String::new()};config.revision=old.revision+1;persist(&app,&config)?;*old=config;drop(old);if changed{state.web.lock().unwrap().take();state.frontend.lock().unwrap().clear();if state.config.lock().unwrap().mode=="remote"{state.wsl.lock().unwrap().take();}}broadcast_context(&app);Ok(())
+ let _gate=state.context_gate.lock().unwrap();let mut old=state.config.lock().unwrap();let changed=old.api_url!=config.api_url||old.mode!=config.mode||old.route_ip!=config.route_ip;config.pet_visible=old.pet_visible;config.project_id=if old.api_url==config.api_url{old.project_id.clone()}else{String::new()};config.revision=old.revision+1;persist(&app,&config)?;*old=config;drop(old);if changed{state.web.lock().unwrap().take();state.frontend.lock().unwrap().clear();if state.config.lock().unwrap().mode=="remote"{state.wsl.lock().unwrap().take();}}broadcast_context(&app);Ok(())
 }
 fn select_project(app:&tauri::AppHandle,id:String,expected:Option<u64>)->Result<DesktopContext,String>{
  if !id.is_empty()&&!backend::valid_id(&id){return Err("Некорректный проект".into())}
@@ -49,18 +49,30 @@ fn restore_main(app:&tauri::AppHandle)->Result<(),String>{let w=app.get_webview_
 #[tauri::command]fn open_main_window(app:tauri::AppHandle)->Result<(),String>{restore_main(&app)}
 #[tauri::command]fn show_connection_settings(app:tauri::AppHandle)->Result<(),String>{restore_main(&app)?;app.emit("desktop-settings",true).map_err(|_|"Настройки недоступны".into())}
 fn own_spawn(app:&tauri::AppHandle,slot:&Mutex<Option<OwnedChild>>,command:&mut Command)->Result<(),String>{let r=app.state::<Runtime>();let mut child=slot.lock().unwrap();if r.closing.load(Ordering::SeqCst){return Err("Приложение завершается".into())}*child=Some(OwnedChild::spawn(command).map_err(|_|"Не удалось запустить локальный процесс приложения")?);Ok(())}
-fn health(client:&reqwest::blocking::Client,url:&str)->bool{server_auth::blocking(client,&format!("{}/api/health",url.trim_end_matches('/')),url).ok().and_then(|r|r.send().ok()).filter(|r|r.status().is_success()).and_then(|r|r.json::<serde_json::Value>().ok()).map_or(false,|h|h["status"]=="ok"&&h["execution"]=="gvisor-python"&&h["sandbox_available"]==true)}
+fn probe_health(client:&reqwest::blocking::Client,url:&str)->Result<(),String>{
+ use std::io::Read;let response=server_auth::blocking(client,&format!("{}/api/health",url.trim_end_matches('/')),url)?.send().map_err(|_|"Сервер недоступен. Проверьте сеть, HTTPS и сертификат.".to_string())?;
+ if matches!(response.status().as_u16(),401|403){return Err("Токен сервера не принят или отозван. Откройте подключение и обновите токен.".into())}
+ if !response.status().is_success(){return Err(format!("Сервер вернул HTTP {}",response.status().as_u16()))}
+ let mut data=Vec::new();response.take(65537).read_to_end(&mut data).map_err(|_|"Ответ сервера прерван")?;if data.len()>65536{return Err("Ответ проверки сервера слишком велик".into())}let h:serde_json::Value=serde_json::from_slice(&data).map_err(|_|"Ответ сервера не соответствует API")?;
+ if h["status"]=="ok"&&h["execution"]=="gvisor-python"&&h["sandbox_available"]==true{Ok(())}else{Err("API отвечает, но Linux runner/gVisor недоступен. Небезопасный запуск запрещён.".into())}
+}
+fn health(client:&reqwest::blocking::Client,url:&str)->bool{probe_health(client,url).is_ok()}
+fn bundled_default()->Config{
+ let file=std::env::current_exe().ok().and_then(|p|p.parent().map(|p|p.join("resources/server-default.json")));
+ if let Some(file)=file{if file.is_file(){let url=file.metadata().ok().filter(|m|m.len()<=4096).and_then(|_|fs::read(&file).ok()).and_then(|b|serde_json::from_slice::<serde_json::Value>(&b).ok()).and_then(|v|v["api_url"].as_str().map(str::to_owned)).unwrap_or_else(||"invalid".into());let route=fs::read(&file).ok().and_then(|b|serde_json::from_slice::<serde_json::Value>(&b).ok()).and_then(|v|v["route_ip"].as_str().map(str::to_owned)).unwrap_or_default();return Config{mode:"remote".into(),api_url:url,route_ip:route,..Config::default()}}}Config::default()
+}
 fn boot(app:&tauri::AppHandle)->Result<String,String>{
  let conflicts=legacy::conflicts();if !conflicts.is_empty(){return Err(format!("Работает старая portable-версия. Закройте её через меню Выход и нажмите Повторить. Данные и старые ярлыки сохранены.\n{}",conflicts.join("\n")))}
  let state=app.state::<Runtime>();let c=state.config.lock().unwrap().clone();if !valid(&c){return Err("Проверьте настройки подключения".into())}
  let root=std::env::current_exe().map_err(|_|"Каталог приложения недоступен")?.parent().unwrap().join("resources");
  let data=config_dir(app)?;fs::create_dir_all(&data).map_err(|_|"Не удалось создать каталог данных")?;
- let client=reqwest::blocking::Client::builder().timeout(Duration::from_secs(4)).redirect(reqwest::redirect::Policy::none()).no_proxy().build().map_err(|_|"HTTP клиент недоступен")?;
+ let client=server_auth::blocking_client(&c.api_url,&c.route_ip,4)?;
  *state.status.lock().unwrap()="Проверяю backend и gVisor...".into();
  if c.mode=="local"&&state.wsl.lock().unwrap().is_none(){
   let _=own_spawn(app,&state.wsl,command("wsl.exe").args(["-d","Ubuntu","-u","root","--","sh","-c","read -r debugych_keepalive"]).stdin(Stdio::piped()).stdout(Stdio::null()).stderr(Stdio::null()));
  }
- if !health(&client,&c.api_url){
+ let ready=if c.mode=="remote"{if server_auth::load(&c.api_url)?.is_none(){return Err("Укажите токен владельца сервера в настройках подключения. Он будет сохранён в Windows Credential Manager.".into())}probe_health(&client,&c.api_url)?;true}else{health(&client,&c.api_url)};
+ if !ready{
   if c.mode=="remote"{return Err("Сервер недоступен или gVisor не готов. Проверьте адрес и подключение. Локальный стек не изменялся.".into())}
   if c.api_url.trim_end_matches('/')!="http://127.0.0.1:8000"{return Err("Автозапуск локального backend использует 127.0.0.1:8000. Для другого адреса сначала запустите его отдельно.".into())}
   *state.status.lock().unwrap()="Запускаю локальный backend. При первом запуске сборка контейнеров может занять несколько минут...".into();
@@ -77,7 +89,7 @@ fn boot(app:&tauri::AppHandle)->Result<String,String>{
  let socket=TcpListener::bind(("127.0.0.1",preferred)).map_err(|_|"Порт приложения занят другим процессом. Закройте другую копию или проверьте frontend-port.txt в каталоге данных.")?;let port=socket.local_addr().unwrap().port();drop(socket);fs::write(port_file,port.to_string()).map_err(|_|"Не удалось сохранить адрес приложения")?;
  let log=fs::OpenOptions::new().create(true).append(true).open(data.join("frontend.log")).map_err(|_|"Не удалось открыть журнал запуска")?;
  let token=server_auth::load(&c.api_url)?;
- own_spawn(app,&state.web,command(root.join("runtime/node.exe")).arg(root.join("scripts/serve-web.mjs")).env("DEBUGYCH_WEB_PORT",port.to_string()).env("DEBUGYCH_API_URL",&c.api_url).stdin(Stdio::piped()).env("DEBUGYCH_REMOTE_AUTH_STDIN",if token.is_some(){"1"}else{"0"}).env("DEBUGYCH_DESKTOP_EMBED","1").env("DEBUGYCH_ALLOW_REMOTE_API",if c.mode=="remote"{"1"}else{"0"}).stdout(Stdio::null()).stderr(log))?;
+ own_spawn(app,&state.web,command(root.join("runtime/node.exe")).arg(root.join("scripts/serve-web.mjs")).env("DEBUGYCH_WEB_PORT",port.to_string()).env("DEBUGYCH_API_URL",&c.api_url).stdin(Stdio::piped()).env("DEBUGYCH_API_CONNECT_IP",&c.route_ip).env("DEBUGYCH_REMOTE_AUTH_STDIN",if token.is_some(){"1"}else{"0"}).env("DEBUGYCH_DESKTOP_EMBED","1").env("DEBUGYCH_ALLOW_REMOTE_API",if c.mode=="remote"{"1"}else{"0"}).stdout(Stdio::null()).stderr(log))?;
  if let Some(token)=token {use std::io::Write;let mut slot=state.web.lock().unwrap();let pipe=slot.as_mut().and_then(|child|child.stdin()).ok_or("Proxy credential pipe unavailable")?;writeln!(pipe,"{}",serde_json::json!({"token":token})).map_err(|_|"Proxy credential handoff failed")?;}
  let address=format!("http://127.0.0.1:{port}/");
  let deadline=Instant::now()+Duration::from_secs(15);while !client.get(&address).send().map_or(false,|r|r.status().is_success()){if Instant::now()>deadline{return Err("Не удалось открыть встроенный frontend. Проверьте комплект ресурсов и frontend.log.".into())}std::thread::sleep(Duration::from_millis(200));}
@@ -91,7 +103,7 @@ fn main(){
  if std::env::var_os("DEBUGYCH_DESKTOP_PROFILE").is_some(){use std::hash::{Hash,Hasher};let mut hash=std::collections::hash_map::DefaultHasher::new();std::env::var_os("DEBUGYCH_DESKTOP_PROFILE").hash(&mut hash);ctx.config_mut().identifier.push_str(&format!(".qa{:x}",hash.finish()));}
  let app=tauri::Builder::default().plugin(tauri_plugin_single_instance::init(|app,_,_|{let _=restore_main(app);}))
  .setup(|app|{
-  let path=config_path(app.handle()).unwrap();let cfg=fs::read(path).ok().and_then(|b|serde_json::from_slice::<Config>(&b).ok()).filter(valid).unwrap_or_default();
+  let path=config_path(app.handle()).unwrap();let cfg=fs::read(path).ok().and_then(|b|serde_json::from_slice::<Config>(&b).ok()).filter(valid).unwrap_or_else(bundled_default);
   app.manage(Runtime{config:Mutex::new(cfg),status:Mutex::new(String::new()),busy:Mutex::new(false),web:Mutex::new(None),wsl:Mutex::new(None),bootstrap:Mutex::new(None),frontend:Mutex::new(String::new()),closing:AtomicBool::new(false),context_gate:Mutex::new(())});
   let folder=config_dir(app.handle())?;
   if let Ok(exe)=std::env::current_exe(){let _=fs::write(exe.parent().unwrap().join("native-runtime.json"),serde_json::json!({"configDirectory":folder,"processId":std::process::id()}).to_string());}

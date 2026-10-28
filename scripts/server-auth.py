@@ -14,6 +14,23 @@ def provision(hashes, client_out, api_uid=None):
     for path, value in [(client_out, token), (hashes, hashlib.sha256(token.encode()).hexdigest())]:
         path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
         temporary = path.with_name(path.name + '.new')
+        if path == hashes and path.exists():
+            # Docker's read-only single-file bind pins the inode. Replacing the
+            # path would leave the API reading the old token hash indefinitely.
+            # Update this same inode; a transient malformed read fails closed.
+            fd = os.open(path, os.O_WRONLY | os.O_NOFOLLOW)
+            try:
+                payload = (value + '\n').encode('ascii')
+                if os.pwrite(fd, payload, 0) != len(payload):
+                    raise OSError('Incomplete credential hash write')
+                os.ftruncate(fd, len(payload))
+                os.fsync(fd)
+                if api_uid is not None:
+                    os.fchown(fd, api_uid, api_uid)
+                    os.fchmod(fd, 0o400)
+            finally:
+                os.close(fd)
+            continue
         fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
         try:
             with os.fdopen(fd, 'w', encoding='ascii') as output:

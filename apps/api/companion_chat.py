@@ -48,7 +48,8 @@ def digest(value):return hashlib.sha256(json.dumps(value,sort_keys=True,ensure_a
 
 def context(db,q):
  """Project membership is checked before content reads, using existing local API policy.
- There is no user-auth API in this deployment; do not imply multi-user authorization.
+ The global owner-access middleware authenticates Server Mode. These checks bind
+ evidence to a project/run; they are not a multi-tenant identity/ACL system.
  """
  pid=str(q.project_id);p=db.get(Project,pid)
  if not p:raise HTTPException(404,'Проект не найден')

@@ -1,6 +1,7 @@
 // Local production frontend and same-origin proxy, using only Node built-ins.
 import http from 'node:http';
 import https from 'node:https';
+import net from 'node:net';
 import {createReadStream} from 'node:fs';
 import {stat} from 'node:fs/promises';
 import path from 'node:path';
@@ -9,6 +10,11 @@ const root=path.resolve(fileURLToPath(new URL('../apps/web/dist/',import.meta.ur
 const port=Number(process.env.DEBUGYCH_WEB_PORT||8798),upstream=new URL(process.env.DEBUGYCH_API_URL||'http://127.0.0.1:8000');
 const localHTTP=upstream.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(upstream.hostname);
 const approvedHTTPS=upstream.protocol==='https:'&&process.env.DEBUGYCH_ALLOW_REMOTE_API==='1';
+const routeIP=process.env.DEBUGYCH_API_CONNECT_IP||'';
+const octets=routeIP.split('.').map(Number);
+if(routeIP&&(!approvedHTTPS||net.isIP(routeIP)!==4||!(octets[0]===10||(octets[0]===172&&octets[1]>=16&&octets[1]<=31)||(octets[0]===192&&octets[1]===168))))throw Error('An explicit private VPN IPv4 route requires HTTPS');
+// Lookup override preserves the approved URL, Host, SNI and normal certificate checks.
+const transport=routeIP?{servername:upstream.hostname,lookup:(hostname,options,callback)=>{if(hostname!==upstream.hostname)return callback(Error('Unexpected route hostname'));if(options?.all)callback(null,[{address:routeIP,family:4}]);else callback(null,routeIP,4)}}:{};
 let serverToken='';
 if(process.env.DEBUGYCH_REMOTE_AUTH_STDIN==='1'){
  if(!approvedHTTPS)throw Error('Credentials require an approved HTTPS server');
@@ -28,7 +34,7 @@ const server=http.createServer(async(req,res)=>{
   }
   const headers={...req.headers,host:upstream.host,connection:'close'};delete headers.authorization;delete headers.cookie;
   if(serverToken)headers.authorization='Bearer '+serverToken;
-  const proxy=(upstream.protocol==='https:'?https:http).request(new URL(raw,upstream),{method:req.method,headers,timeout:90000},reply=>{res.writeHead(reply.statusCode||502,reply.headers);reply.pipe(res)});
+  const proxy=(upstream.protocol==='https:'?https:http).request(new URL(raw,upstream),{...transport,method:req.method,headers,timeout:90000},reply=>{res.writeHead(reply.statusCode||502,reply.headers);reply.pipe(res)});
   proxy.on('timeout',()=>proxy.destroy());proxy.on('error',()=>{if(!res.headersSent)res.writeHead(502,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify({detail:'Backend недоступен. Проверьте локальный запуск API.'}))});
   req.on('aborted',()=>proxy.destroy());res.on('close',()=>{if(!res.writableEnded)proxy.destroy()});req.pipe(proxy);return;
  }

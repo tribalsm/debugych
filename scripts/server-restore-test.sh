@@ -16,7 +16,7 @@ docker volume create "$DATA" >/dev/null
 docker volume create "$PROJECT-pg" >/dev/null
 docker run -d --name "$DB" --network none --env-file "$SECRET" -e POSTGRES_USER=debugych -e POSTGRES_DB=debugych -v "$PROJECT-pg:/var/lib/postgresql/data" postgres:16-alpine >/dev/null
 for attempt in $(seq 1 60); do
- if docker exec "$DB" pg_isready -U debugych >/dev/null 2>&1; then break; fi
+ if docker exec "$DB" sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" psql -h 127.0.0.1 -U debugych -d debugych -Atc "SELECT 1"' >/dev/null 2>&1; then break; fi
  sleep 1
 done
 docker exec -i "$DB" pg_restore -U debugych -d debugych --exit-on-error --no-owner < "$BACKUP/database.dump"
