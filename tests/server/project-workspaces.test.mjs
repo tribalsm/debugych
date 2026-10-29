@@ -51,6 +51,10 @@ test('HTTP workspace isolation, guest no-AI execution, CSRF, transfer, logout co
   const health=await request('/api/health',{cookie:guest});assert.equal(health.value.ai_available,false);assert.equal(health.value.workspace_mode,'guest');
   const project=await request('/api/projects',{method:'POST',cookie:guest,body:{name:'Own'}});assert.equal(project.status,201);const pid=project.value.id;
   const guest2=cookie(await request('/auth/guest',{method:'POST'}));assert.equal((await request('/api/projects',{cookie:guest2})).value.length,0);
+  const beforeDuplicates=calls.length;
+  assert.equal((await request('/api/exports?project_id='+pid+'&project_id='+randomUUID(),{cookie:guest})).status,400);
+  assert.equal((await request('/api/exports?project_id='+pid+'&%70roject_id='+randomUUID(),{cookie:guest})).status,400);
+  assert.equal(calls.length,beforeDuplicates);
   for(const method of ['GET','DELETE','POST'])assert.equal((await request('/api/projects/'+pid,{method,cookie:guest2,body:method==='POST'?{}:undefined})).status,404);
   const bug={id:randomUUID(),project_id:pid,kind:'bug'},run={id:randomUUID(),project_id:pid},tc={id:randomUUID(),project_id:pid};records.set('/api/bugs/'+bug.id,bug);records.set('/api/runs/'+run.id,run);records.set('/api/test-cases/'+tc.id,tc);
   for(const url of ['/api/bugs/'+bug.id,'/api/runs/'+run.id,'/api/test-cases/'+tc.id,'/api/runs/'+run.id+'/artifacts/'+randomUUID(),'/api/exports?project_id='+pid])assert.equal((await request(url,{cookie:guest2})).status,404);

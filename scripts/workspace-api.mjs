@@ -20,6 +20,9 @@ export function workspaceAPI({api,store,proxy,tokenFor,now=Date.now}){
  }
  const handle=async function(req,res,s,pathname){
   const token=tokenFor(s),u=new URL(req.url,'http://workspace'),method=req.method;
+  // URLSearchParams.get uses the first value; FastAPI can use the last.
+  // Reject duplicates before forwarding to prevent ownership-check ambiguity.
+  if([...u.searchParams.keys()].some(key=>u.searchParams.getAll(key).length!==1))throw new AccountError(400,'Повторяющиеся параметры запроса недопустимы');
   void clean(token).catch(()=>{});
   const upstream=async(path,options)=>{const result=await call(path,token,options);reply(res,result.status,result.value,s);return result};
   if(pathname==='/api/health'||pathname==='/api/ai/status'){
