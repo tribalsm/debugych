@@ -8,7 +8,7 @@ services:
   api:
     environment:
       # Offline reviewer/adjudicator/patch stages need more than four stub replies.
-      LLM_MAX_CALLS: "8"
+      LLM_MAX_CALLS: "6"
       LLM_TEST_REVIEW: "0"
       LLM_API_KEY: contract-test-only
       LLM_BASE_URL: http://llm-stub:8101/v1
@@ -19,7 +19,7 @@ services:
   worker:
     environment:
       # Offline reviewer/adjudicator/patch stages need more than four stub replies.
-      LLM_MAX_CALLS: "8"
+      LLM_MAX_CALLS: "6"
       LLM_TEST_REVIEW: "0"
       LLM_API_KEY: contract-test-only
       LLM_PROVIDER_MODE: contract-test

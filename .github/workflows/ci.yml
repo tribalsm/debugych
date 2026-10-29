@@ -57,6 +57,11 @@ jobs:
         run: sudo bash infra/install-gvisor.sh
       - run: docker compose -f docker-compose.yml -f compose.test.yml up --build -d --wait
       - run: python tests/compose/stack_smoke.py
+      - run: npm run test:e2e
+        working-directory: apps/web
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
+          COMPOSE_CONTRACT_TEST: "1"
       - run: python tests/compose/fix_verify_smoke.py
       - run: python tests/compose/playwright_smoke.py
       - run: python tests/compose/novel_projects.py
@@ -70,11 +75,6 @@ jobs:
         run: docker compose exec -T supervisor python < tests/compose/react_smoke.py
       - name: Verify browser ownership and context isolation after failed tests
         run: docker compose exec -T supervisor python < tests/compose/browser_lifecycle_probe.py
-      - run: npm run test:e2e
-        working-directory: apps/web
-        env:
-          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
-          COMPOSE_CONTRACT_TEST: "1"
       - name: Run sandbox boundary and resource probes
         run: docker compose exec -T supervisor python < tests/compose/sandbox_probe.py
       - name: Run Playwright sandbox probes
