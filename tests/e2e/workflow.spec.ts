@@ -5,7 +5,7 @@ test('Демо: требования → тест → доказательств
  await page.goto('/');
  await expect(page.getByRole('heading',{name:'Привет! Я Дебагыч. Проверим твой код?'})).toBeVisible();
  const demo=await (await request.post('/api/demo')).json();await page.goto('/#/workspace/overview?project='+demo.id);
- await expect(page.getByText('DEMO · подготовленные тесты')).toBeVisible();
+ await expect(page.getByText('Демо-проект',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Загрузить демоплан'}).click();
  await navigate(page,'Тесты');
  await expect(page.getByRole('heading',{name:'Границы оплаты, скидки и количества',exact:true})).toBeVisible();

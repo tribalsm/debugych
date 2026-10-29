@@ -13,7 +13,9 @@ test('Навигация: адрес, Назад, перезагрузка, вк
  const opener=page.getByRole('button',{name:'Новый проект'});await opener.click();
  const dialog=page.getByRole('dialog',{name:'Новый проект'});await expect(page.getByLabel('Название проекта')).toBeFocused();
  await page.keyboard.press('Shift+Tab');await expect(dialog.getByRole('button',{name:'Закрыть',exact:true})).toBeFocused();
- await page.keyboard.press('Shift+Tab');await expect(page.getByLabel('Название проекта')).toBeFocused();
+ await page.keyboard.press('Shift+Tab');await expect(page.getByLabel('Требования нового проекта')).toBeFocused();
+ await page.keyboard.press('Tab');await expect(dialog.getByRole('button',{name:'Закрыть',exact:true})).toBeFocused();
+ await page.keyboard.press('Tab');await expect(page.getByLabel('Название проекта')).toBeFocused();
  await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);await expect(opener).toBeFocused();
  await navigate(page,'Мои проекты');await expect(page).toHaveURL(/#\/projects$/);
  await page.goto('/#/workspace/report?project='+id);await page.goBack();await expect(page.getByRole('heading',{name:'Ваши проекты'})).toBeVisible();

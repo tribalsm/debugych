@@ -3,6 +3,8 @@ on: [push, pull_request]
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      LLM_API_KEY: ""
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -12,11 +14,17 @@ jobs:
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm, cache-dependency-path: apps/web/package-lock.json}
       - run: node --test tests/unit/browser_lifecycle.test.cjs
-      - run: npm ci && npm run build
+      - run: npm ci && npm run lint && npm test && npm run build
         working-directory: apps/web
+      - name: Check desktop transport and account boundaries without external APIs
+        run: node --test tests/unit/desktop-bridge.test.mjs tests/server/web-cache.test.mjs tests/server/web-session.test.mjs tests/server/web-accounts.test.mjs tests/server/account-gateway.test.mjs tests/server/proxy-auth.test.mjs
       - run: docker compose config --quiet
       - run: npx playwright install --with-deps chromium
         working-directory: apps/web
+      - name: Check native shell account contract in headless Chromium
+        run: node --test tests/server/desktop-account-shell.cjs
+        env:
+          DEBUGYCH_PLAYWRIGHT_MODULE: ${{ github.workspace }}/apps/web/node_modules/@playwright/test
       - name: Start local integration services
         run: |
           python -m uvicorn services.runner.main:app --host 127.0.0.1 --port 8090 > /tmp/debugych-runner.log 2>&1 &

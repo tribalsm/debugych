@@ -15,6 +15,10 @@ test('Вход в существующее демо работает без ду
 });
 
 test('Мастер: код, требования, настройки, отказ от отправки данных',async({page})=>{
+ // Consent UI is an explicit offline fixture, independent of developer API keys.
+ await page.route('**/api/health',async route=>{const response=await route.fetch();await route.fulfill({json:{...await response.json(),ai_available:true,ai_provider_mode:'contract-test'}})});
+ await page.route('**/api/projects/*/ai-context',route=>route.fulfill({json:{project_state_sha256:'offline-state',provider_fingerprint:'offline-provider',provider:'contract-test',model:'offline-test',manifest:[],max_job_usd_estimate:0}}));
+ await page.route('**/api/projects/*/autonomous',route=>route.abort());
  await page.goto('/');await page.getByRole('button',{name:'Проверить проект',exact:true}).click();await page.getByLabel('Название проекта').fill('Redesign · first-use walkthrough');await page.getByRole('button',{name:'Создать проект'}).click();
  await expect(page.getByRole('button',{name:'Продолжить',exact:true})).toBeDisabled();
  await page.getByLabel('Загрузить файлы').setInputFiles({name:'calc.py',mimeType:'text/plain',buffer:Buffer.from('def add(a,b): return a-b\n')});await expect(page.getByText('calc.py',{exact:true})).toBeVisible();
@@ -24,6 +28,15 @@ test('Мастер: код, требования, настройки, отказ
  let posts=0;page.on('request',r=>{if(r.url().endsWith('/autonomous')&&r.method()==='POST')posts++});
  page.once('dialog',async d=>{expect(d.message()).toContain('Резерв расходов');expect(d.message()).toContain('Передать очищенные данные');await d.dismiss()});await page.getByRole('button',{name:'Начать проверку',exact:true}).click();await expect(page.getByRole('button',{name:'Начать проверку',exact:true})).toBeEnabled();expect(posts).toBe(0);
  await page.getByRole('button',{name:'Назад',exact:true}).click();await expect(page.getByRole('heading',{name:'Рекомендуемая проверка'})).toBeVisible();
+});
+
+test('Без ключа загрузка доступна, но запуск AI остаётся заблокирован',async({page,request})=>{
+ const project=await(await request.post('/api/projects',{data:{name:'No-key UI boundary'}})).json();
+ await page.route('**/api/health',async route=>{const response=await route.fetch();await route.fulfill({json:{...await response.json(),ai_available:false}})});
+ let calls=0;await page.route('**/api/projects/*/ai-context',route=>{calls++;return route.abort()});
+ await page.goto('/#/workspace/overview?project='+project.id);
+ await expect(page.getByRole('button',{name:'Запустить проверку',exact:true})).toBeDisabled();
+ await expect(page.getByLabel('Загрузить файлы')).toBeEnabled();expect(calls).toBe(0);
 });
 
 test('Старые URL, project ID, Назад и выбор проекта сохраняют контекст',async({page,request})=>{
