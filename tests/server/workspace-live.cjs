@@ -9,7 +9,7 @@ test('live guest upload, history, gVisor Python/Playwright, account claim and pr
  const json=async response=>{assert.ok(response.ok(),'Unexpected HTTP '+response.status());return response.json()};
  async function waitRun(id){for(let i=0;i<90;i++){const r=await json(await api.get(url+'/api/runs/'+id));if(!['queued','running','analyzing','generating'].includes(r.status))return r;await new Promise(r=>setTimeout(r,1000))}throw Error('Run did not finish')}
  try{
-  await page.goto(url);await page.getByRole('button',{name:'Загрузить свой проект без регистрации'}).click();await page.getByText('Гостевая история этого браузера',{exact:true}).waitFor();
+  await page.goto(url);const entry=page.waitForResponse(r=>r.url()===url+'/auth/guest'&&r.request().method()==='POST');await page.getByRole('button',{name:'Загрузить свой проект без регистрации'}).click();assert.equal((await entry).status(),303,'Guest entry must succeed; a daily quota response is not a completed workflow');await page.getByText('Гостевая история этого браузера',{exact:true}).waitFor();
   await page.getByRole('button',{name:'Новый проект',exact:true}).click();await page.getByLabel('Название проекта').fill('Workspace QA Python '+Date.now());
   await page.getByLabel('Файлы нового проекта').setInputFiles([
    {name:'calc.py',mimeType:'text/plain',buffer:Buffer.from('def add(a,b): return a+b\n')},

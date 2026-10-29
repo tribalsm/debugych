@@ -2,7 +2,7 @@
 const {chromium,expect}=require(process.env.DEBUGYCH_PLAYWRIGHT_MODULE||'@playwright/test');
 const assert=require('node:assert/strict'),fs=require('node:fs/promises');
 (async()=>{
- const origin='https://debugych.89-22-232-119.nip.io:9443',out='outputs/server10/public-demo';await fs.mkdir(out,{recursive:true});
+ const origin=process.env.DEBUGYCH_PUBLIC_URL||'https://debugych.89-22-232-119.sslip.io:9443',out=process.env.DEBUGYCH_PUBLIC_EVIDENCE||'outputs/server10/public-demo';await fs.mkdir(out,{recursive:true});
  const browser=await chromium.launch({headless:true}),context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'}),page=await context.newPage();const errors=[],writes=[];
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',r=>{if(!['GET','HEAD','OPTIONS'].includes(r.request().method())){writes.push(new URL(r.request().url()).pathname);return r.abort()}return r.continue()});

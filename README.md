@@ -2,9 +2,9 @@
 
 AI QA Assistant для разработчиков и QA: загрузите код и требования, получите Gherkin и исполняемые тесты, исследуйте воспроизводимое отклонение и проверьте исправление в изолированной копии.
 
-[![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=fix%2Frelease-readiness)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Afix%2Frelease-readiness)
+[![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=fix%2Ffree-public-address)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Afix%2Ffree-public-address)
 
-[Веб-приложение](https://debugych.89-22-232-119.nip.io:9443/) · [Документация](docs/README.md) · [Подтверждённые проверки](docs/current-status.md) · [Если адрес не открывается](docs/public-access.md)
+[Веб-приложение](https://debugych.89-22-232-119.sslip.io:9443/) · [Документация](docs/README.md) · [Подтверждённые проверки](docs/current-status.md) · [Если адрес не открывается](docs/public-access.md)
 
 После входа можно загружать собственные проекты и запускать проверки. Гостевая история сохраняется в браузере 30 дней после последнего посещения и переносится в аккаунт при входе. Гость выполняет собственные pytest/Playwright-тесты или подготовленное демо; для AI-генерации нужен аккаунт и согласие на передачу очищенного кода.
 
@@ -43,7 +43,7 @@ LLM-ключ для старта приложения не требуется. �
 - Java можно загрузить; исполнения Java нет. pgvector/embeddings пока не реализованы. Обязательность этого слоя нужно сверить с оригинальным ТЗ.
 - Автономный live-цикл ранее подтверждён на небольших независимых Python и JS/TS контролях, а не на любых репозиториях. [Датированный отчёт](docs/archive/mvp-readiness.md).
 - Неоднозначность требований останавливает автоматическую проверку. Успешный набор не доказывает отсутствие всех дефектов.
-- Текущий адрес стенда требует проверки DNS и доступности порта 9443 из сети посетителя. Порт 443 на VPS занят VPN и не освобождается автоматически.
+- Бесплатный адрес использует sslip.io и порт 9443. Порт 443 сохранён за VPN. Доступность из конкретной корпоративной или мобильной сети требует отдельной проверки.
 
 ## Дополнительные интерфейсы
 

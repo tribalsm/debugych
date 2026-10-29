@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
-if [ "${RENEWED_LINEAGE:-}" = /etc/letsencrypt/live/debugych-server-20261028 ]; then
+case "${RENEWED_LINEAGE:-}" in
+ /etc/letsencrypt/live/debugych-server-20261028|/etc/letsencrypt/live/debugych-sslip-20261030)
     /usr/sbin/nginx -t
     /usr/bin/systemctl reload nginx
-fi
+ ;;
+esac

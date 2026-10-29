@@ -13,15 +13,16 @@ jobs:
       - run: pytest
       - name: Check current documentation and local launcher
         run: |
-          python scripts/check-doc-links.py README.md docs/README.md docs/current-status.md docs/quickstart.md docs/public-access.md docs/architecture.md docs/accounts-and-roles.md docs/debugych-server-1.0.md docs/public-demo.md docs/archive
+          python scripts/check-doc-links.py README.md docs/README.md docs/current-status.md docs/quickstart.md docs/public-access.md docs/free-public-address.md docs/architecture.md docs/accounts-and-roles.md docs/debugych-server-1.0.md docs/public-demo.md docs/archive
           sh -n scripts/start-compose.sh
+          sh -n infra/server/renew-nginx.sh
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm, cache-dependency-path: apps/web/package-lock.json}
       - run: node --test tests/unit/browser_lifecycle.test.cjs
       - run: npm ci && npm run lint && npm test && npm run build
         working-directory: apps/web
       - name: Check desktop transport and account boundaries without external APIs
-        run: node --test tests/unit/desktop-bridge.test.mjs tests/server/web-cache.test.mjs tests/server/web-session.test.mjs tests/server/web-accounts.test.mjs tests/server/account-gateway.test.mjs tests/server/project-workspaces.test.mjs tests/server/proxy-auth.test.mjs
+        run: node --test tests/unit/desktop-bridge.test.mjs tests/server/web-cache.test.mjs tests/server/web-session.test.mjs tests/server/web-accounts.test.mjs tests/server/account-gateway.test.mjs tests/server/project-workspaces.test.mjs tests/server/gateway-origins.test.mjs tests/server/proxy-auth.test.mjs
       - run: docker compose config --quiet
       - run: npx playwright install --with-deps chromium
         working-directory: apps/web

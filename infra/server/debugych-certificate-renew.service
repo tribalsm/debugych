@@ -1,0 +1,12 @@
+[Unit]
+Description=Renew the Debugych sslip certificate over IPv4
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/etc/letsencrypt/renewal/debugych-sslip-20261030.conf
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/lib/debugych/renew-debugych-certificate.py
+TimeoutStartSec=300
+PrivateTmp=true
+NoNewPrivileges=true

@@ -17,9 +17,16 @@ const page=(account=false,message='')=>`<!doctype html><html lang="ru"><meta cha
 *{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;padding:24px;background:#0b1018;color:#eef3ff;font:16px system-ui,sans-serif}main{width:min(460px,100%)}.brand{font-size:26px;font-weight:800}small,p{color:#b4c3d9;line-height:1.6}h1{font-size:32px;letter-spacing:-1px;margin:32px 0 14px}form{background:#141d2b;border:1px solid #2d3c52;border-radius:16px;padding:24px;margin-top:25px}label{display:block;margin-bottom:10px;font-weight:600}input,button{font:inherit;width:100%;padding:13px;border-radius:8px;border:1px solid #405578}input{background:#0b1320;color:#fff}button{margin-top:16px;background:#2860db;color:white;font-weight:600;cursor:pointer}a{color:#a9c8ff}:focus-visible{outline:3px solid #9dbbff;outline-offset:4px}.error{color:#ffb7bd}footer{margin-top:22px;font-size:13px;color:#8e9fb9}</style>
 <main><div class="brand">дебагыч<span style="color:#80a7ff">.</span></div><small>AI QA Assistant</small><h1>${account?'Сеанс сервера':'Войдите в рабочую область'}</h1><p>${account?'Вы подключены к защищённому серверу.':'Тесты, доказательства ошибок и проверка исправлений - в одном месте. Для входа нужен ключ владельца сервера.'}</p>${message?'<p class="error" role="alert">'+message+'</p>':''}${account?'<p><a href="/">Вернуться в приложение</a></p><form method="post" action="/auth/logout"><button>Выйти из сеанса</button></form>':'<form method="post" action="/auth/login"><label for="token">Ключ доступа</label><input id="token" name="token" type="password" autocomplete="off" required minlength="43" maxlength="256" spellcheck="false"><button>Войти в Дебагыч</button></form><footer>Ключ не сохраняется в браузерном хранилище. Доступ работает через защищённую HttpOnly-сессию. Это рабочий веб-сервис, установка Desktop не требуется.</footer>'}</main></html>`;
 
-export function createGateway({root,origin,upstream,demo=null,accounts=null,teamToken=null,workspaceMode=false,now=Date.now,idleMs=30*60*1000,maxAgeMs=8*60*60*1000}){
+export function createGateway({root,origin,aliases=[],upstream,demo=null,accounts=null,teamToken=null,workspaceMode=false,now=Date.now,idleMs=30*60*1000,maxAgeMs=8*60*60*1000}){
  const publicURL=new URL(origin),api=new URL(upstream);
  if(publicURL.protocol!=='https:'||publicURL.pathname!=='/'||publicURL.username||publicURL.password||publicURL.search||publicURL.hash)throw Error('HTTPS public origin required');
+ if(!Array.isArray(aliases)||aliases.length>2)throw Error('At most two explicit legacy HTTPS origins allowed');
+ const origins=new Map();
+ for(const value of [origin,...aliases]){
+  const u=new URL(value);
+  if(u.protocol!=='https:'||u.pathname!=='/'||u.username||u.password||u.search||u.hash||u.hostname.includes('*'))throw Error('Exact HTTPS origin required');
+  origins.set(u.host,u.origin);
+ }
  if(api.protocol!=='http:'||!['api','127.0.0.1','localhost'].includes(api.hostname)||api.pathname!=='/'||api.username||api.password||api.search||api.hash)throw Error('Fixed private API required');
  workspaceMode=workspaceMode||!!accounts?.db.prepare("SELECT 1 FROM sqlite_master WHERE name='project_owners'").get();
  if(workspaceMode&&(!accounts||!teamToken))throw Error('Workspace accounts and trusted backend credentials required');
@@ -34,7 +41,7 @@ export function createGateway({root,origin,upstream,demo=null,accounts=null,team
  const redirect=(res,to)=>{res.writeHead(303,{Location:to});res.end()};
  const html=(res,status,body)=>{res.writeHead(status,{'Content-Type':'text/html; charset=utf-8','Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"});res.end(body)};
  const json=(res,status,detail)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify({detail}))};
- const sameOrigin=req=>req.headers.origin===publicURL.origin&&req.headers['sec-fetch-site']!=='cross-site';
+ const sameOrigin=req=>req.headers.origin===origins.get(req.headers.host)&&req.headers['sec-fetch-site']!=='cross-site';
  const canManage=s=>s&&!s.mustChange&&['owner','admin'].includes(s.role);
  const canWork=s=>s&&!s.mustChange&&['owner','admin','team',...(workspaceMode?['viewer','jury','guest']:[])].includes(s.role);
  function forget(s){if(s){sessions.delete(s.key);accounts?.deleteSession(s.key);if(s.guest)workspaces?.end(s.key)}}
@@ -109,7 +116,7 @@ export function createGateway({root,origin,upstream,demo=null,accounts=null,team
  const server=http.createServer(async(req,res)=>{
   res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');res.setHeader('Referrer-Policy','same-origin');
   try{
-   if(req.headers.host!==publicURL.host)return json(res,403,'Недопустимый Host');
+   if(!origins.has(req.headers.host))return json(res,403,'Недопустимый Host');
    const raw=req.url||'/';if(!raw.startsWith('/')||raw.startsWith('//')||raw.includes('\\'))return json(res,400,'Недопустимый путь');
    const pathname=decodeURIComponent(raw.split('?')[0]);if(pathname.includes('\0')||pathname.includes('\\')||pathname.split('/').some(p=>p==='..'||p.startsWith('.')))return json(res,400,'Недопустимый путь');
    const s=session(req);
@@ -183,7 +190,7 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
  const demo=process.env.PUBLIC_DEMO_FILE?JSON.parse(readFileSync(process.env.PUBLIC_DEMO_FILE,'utf8')):null;
  const accounts=process.env.ACCOUNTS_DB?new Accounts(process.env.ACCOUNTS_DB):null;
  const teamToken=()=>readFileSync(process.env.WEB_OWNER_TOKEN_FILE||'/run/secrets/web-auth/token','utf8').trim();
- const server=createGateway({root:process.env.WEB_ROOT||'/app/public',origin:process.env.PUBLIC_ORIGIN,upstream:process.env.API_UPSTREAM||'http://api:8000',demo,accounts,teamToken,workspaceMode:process.env.PROJECT_WORKSPACES==='1'});
+ const server=createGateway({root:process.env.WEB_ROOT||'/app/public',origin:process.env.PUBLIC_ORIGIN,aliases:(process.env.PUBLIC_ORIGIN_ALIASES||'').split(',').map(v=>v.trim()).filter(Boolean),upstream:process.env.API_UPSTREAM||'http://api:8000',demo,accounts,teamToken,workspaceMode:process.env.PROJECT_WORKSPACES==='1'});
  server.listen(Number(process.env.PORT||8080),'0.0.0.0',()=>console.log('Debugych web gateway ready'));
  for(const signal of ['SIGTERM','SIGINT'])process.on(signal,()=>{server.close();server.closeIdleConnections();setTimeout(()=>process.exit(0),5000).unref()});
 }

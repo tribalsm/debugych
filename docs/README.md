@@ -4,7 +4,7 @@
 
 1. [Текущее состояние и результаты проверок](current-status.md)
 2. [Подготовка Linux-хоста и локальный запуск](quickstart.md)
-3. [Доступность публичного адреса](public-access.md)
+3. [Доступность публичного адреса](public-access.md), [новый бесплатный поддомен](free-public-address.md)
 4. [Архитектура и границы доверия](architecture.md)
 5. [AI Engine, согласие и бюджет](ai-engine.md)
 6. [Безопасность gVisor Runner](runner-security.md)
