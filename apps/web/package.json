@@ -10,7 +10,7 @@
     "typecheck": "tsc -b --pretty false",
     "lint": "eslint src --max-warnings 0",
     "test:companion": "node --test tests/companion.test.mjs",
-    "test": "npm run test:companion && node --test tests/release.test.mjs"
+    "test": "npm run test:companion && node --test tests/release.test.mjs tests/metrics.test.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",

@@ -344,9 +344,9 @@ def run(pid: UUID, background: BackgroundTasks):
         return new_job(db, pid, 'run', background, fixed=applied)
 
 @app.post('/api/projects/{pid}/import-tests',status_code=201)
-def import_uploaded_tests(pid: UUID):
+def import_uploaded_tests(pid: UUID, selection: dict | None = None):
     from apps.api.user_tests import import_tests
-    with Session() as db:return import_tests(db,str(pid))
+    with Session() as db:return import_tests(db,str(pid), selection)
 
 @app.delete('/api/projects/{pid}')
 def delete_uploaded_project(pid: UUID):
@@ -526,10 +526,16 @@ def apply_fix(bid: UUID, approval: Approval):
         return serialize(fix)
 
 @app.get('/api/exports')
-def exports(project_id: UUID, format: Literal['feature', 'py', 'js'] = 'feature'):
+def exports(project_id: UUID, format: Literal['feature', 'py', 'js', 'junit', 'ci'] = 'feature', run_id: UUID | None = None):
     with Session() as db:
         project_or_404(db, project_id)
+        if format == 'junit':
+            from apps.api.ci_exports import export_junit
+            return Response(export_junit(db,str(project_id),run_id),media_type='application/xml',headers={'Content-Disposition':'attachment; filename="debugych-junit.xml"'})
         rows = db.scalars(select(Record).where(Record.project_id == str(project_id), Record.kind == 'test')).all()
+        if format == 'ci':
+            from apps.api.ci_exports import export_ci
+            return Response(export_ci(rows),media_type='application/zip',headers={'Content-Disposition':'attachment; filename="debugych-ci.zip"'})
         values = [r.data['gherkin'] if format == 'feature' else r.data['code'] for r in rows if format == 'feature' or r.data['framework'] == ('pytest' if format == 'py' else 'playwright')]
         if not values:
             raise HTTPException(404, 'Нет сценариев для выбранного формата')

@@ -3,6 +3,7 @@ import {AccountError} from './web-accounts.mjs';
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 export function workspaceAPI({api,store,proxy,tokenFor,now=Date.now}){
  const uploads=new Set(),creating=new Set(),runChecks=new Set(),executions=new Map();let cleaning=false;
+ function releaseProject(pid){for(const [scope,entry]of executions)if(entry.project_id===pid)executions.delete(scope)}
  async function call(path,token,{method='GET',body}={}){
   return new Promise((resolve,reject)=>{
    const headers={Authorization:'Bearer '+token};if(body){headers['Content-Type']='application/json';headers['Content-Length']=Buffer.byteLength(body)}
@@ -16,7 +17,7 @@ export function workspaceAPI({api,store,proxy,tokenFor,now=Date.now}){
  async function capacity(token){const result=await call('/api/storage-usage',token);if(result.status!==200||!Number.isFinite(result.value.estimated_bytes))throw new AccountError(503,'Не удалось проверить свободное место');if(result.value.estimated_bytes>1792*1024*1024)throw new AccountError(507,'Хранилище заполнено. Удалите ненужные проекты или обратитесь к администратору.')}
  async function clean(token){
   if(cleaning)return;cleaning=true;
-  try{for(const {project_id}of store.expired().slice(0,5)){const result=await call('/api/projects/'+project_id,token,{method:'DELETE'});if([200,404].includes(result.status))store.remove(project_id)}store.prune()}finally{cleaning=false}
+  try{for(const {project_id}of store.expired().slice(0,5)){const result=await call('/api/projects/'+project_id,token,{method:'DELETE'});if([200,404].includes(result.status)){store.remove(project_id);releaseProject(project_id)}}store.prune()}finally{cleaning=false}
  }
  const handle=async function(req,res,s,pathname){
   const token=tokenFor(s),u=new URL(req.url,'http://workspace'),method=req.method;
@@ -70,7 +71,7 @@ export function workspaceAPI({api,store,proxy,tokenFor,now=Date.now}){
   if(!['GET','HEAD','POST','PATCH','DELETE'].includes(method))throw new AccountError(405,'Метод не разрешён');
   if(method==='DELETE'){
    if(operation||!pathname.startsWith('/api/projects/'))throw new AccountError(405,'Удаление недоступно');
-   const result=await call(pathname,token,{method});if([200,404].includes(result.status))store.remove(pid);return reply(res,result.status,result.value,s);
+   const result=await call(pathname,token,{method});if([200,404].includes(result.status)){store.remove(pid);releaseProject(pid)}return reply(res,result.status,result.value,s);
   }
   if(operation==='files'&&method==='POST'){
    if(uploads.has(s.id)||uploads.size>=2)throw new AccountError(429,'Другая загрузка ещё выполняется. Повторите после её завершения.');store.assertUpload(s,uploads.size*30*1024*1024);uploads.add(s.id);
@@ -91,8 +92,8 @@ export function workspaceAPI({api,store,proxy,tokenFor,now=Date.now}){
     if(!prior.id)throw new AccountError(429,'Предыдущий запуск ещё выполняется');const state=await call('/api/runs/'+prior.id,token);
     if(state.status!==200||!['completed','failed','cancelled','manual_review_required'].includes(state.value.status))throw new AccountError(429,'Предыдущий запуск ещё выполняется');
    }
-   store.reserveRun(s,req);if(!['owner','admin'].includes(s.role))store.consume('global','workspace-run',40);executions.set(s.id,{until:now()+600000});
-   return proxy(req,res,token,s,{capture:true,after:async value=>{if(value?.id)executions.set(s.id,{id:value.id,until:now()+600000});else executions.delete(s.id)}});
+   store.reserveRun(s,req);if(!['owner','admin'].includes(s.role))store.consume('global','workspace-run',40);executions.set(s.id,{project_id:pid,until:now()+600000});
+   return proxy(req,res,token,s,{capture:true,after:async value=>{if(value?.id)executions.set(s.id,{id:value.id,project_id:pid,until:now()+600000});else executions.delete(s.id)}});
    }finally{runChecks.delete(s.id)}
   }
   return proxy(req,res,token,s);

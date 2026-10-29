@@ -13,7 +13,7 @@ jobs:
       - run: pytest
       - name: Check current documentation and local launcher
         run: |
-          python scripts/check-doc-links.py README.md docs/README.md docs/current-status.md docs/quickstart.md docs/public-access.md docs/free-public-address.md docs/architecture.md docs/accounts-and-roles.md docs/debugych-server-1.0.md docs/public-demo.md docs/archive
+          python scripts/check-doc-links.py README.md docs/README.md docs/current-status.md docs/quickstart.md docs/public-access.md docs/free-public-address.md docs/testing-metrics-ci.md docs/architecture.md docs/accounts-and-roles.md docs/debugych-server-1.0.md docs/public-demo.md docs/archive
           sh -n scripts/start-compose.sh
           sh -n infra/server/renew-nginx.sh
       - uses: actions/setup-node@v4

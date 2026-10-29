@@ -67,6 +67,16 @@ test('HTTP workspace isolation, guest no-AI execution, CSRF, transfer, logout co
   const password='Offline-password-123!';const login=await request('/auth/register',{method:'POST',cookie:guest,form:true,body:{username:'jury-new',password,confirm:password,profile:'jury'}});assert.equal(login.status,303);const member=cookie(login);
   assert.equal((await request('/api/projects',{cookie:member})).value[0].id,pid);assert.equal((await request('/auth/session',{cookie:guest})).value.authenticated,false);
   assert.equal((await request('/api/projects',{method:'POST',cookie:member,body:{name:'Jury owns'}})).status,201);
+  // CI deletes its completed temporary project. The next job must not be
+  // blocked by the now-cascaded run, while rejected deletes retain admission.
+  const ci=await request('/api/projects',{method:'POST',cookie:member,body:{name:'CI temporary'}}),ciid=ci.value.id;
+  const ciRun=await request('/api/projects/'+ciid+'/runs',{method:'POST',cookie:member,body:{}});assert.equal(ciRun.status,202);
+  records.get('/api/runs/'+ciRun.value.id).status='running';busy=true;
+  assert.equal((await request('/api/projects/'+ciid,{method:'DELETE',cookie:member})).status,409);
+  assert.equal((await request('/api/projects/'+pid+'/runs',{method:'POST',cookie:member,body:{}})).status,429);
+  records.get('/api/runs/'+ciRun.value.id).status='completed';busy=false;
+  assert.equal((await request('/api/projects/'+ciid,{method:'DELETE',cookie:member})).status,200);records.delete('/api/runs/'+ciRun.value.id);
+  assert.equal((await request('/api/projects/'+pid+'/runs',{method:'POST',cookie:member,body:{}})).status,202);
   const second=await request('/api/projects',{method:'POST',cookie:guest2,body:{name:'Expires'}});busy=true;clock+=31*86400000;
   assert.equal((await request('/auth/session',{cookie:guest2})).value.authenticated,false);
   // A new valid session triggers asynchronous cleanup; busy work is retained.

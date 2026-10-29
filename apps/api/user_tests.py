@@ -7,18 +7,27 @@ from fastapi import HTTPException
 from apps.api.db import Record,add_record,serialize
 from apps.api.jobs import DATA
 
-def import_tests(db,pid):
+def import_tests(db,pid,selection=None):
     from apps.api.bug_workflow import lock_project
     project=lock_project(db,pid)
     if project.demo:raise HTTPException(409,'Для демо используйте подготовленный тестовый план.')
     if db.scalar(select(Record).where(Record.project_id==pid,Record.kind=='test')):
         raise HTTPException(409,'Набор тестов уже существует. Он не будет автоматически заменён.')
     files=db.scalars(select(Record).where(Record.project_id==pid,Record.kind=='file')).all()
+    if selection is not None and selection != {}:
+        paths=selection.get('paths')
+        if set(selection)!={'paths'} or not isinstance(paths,list) or not 1<=len(paths)<=40 or any(not isinstance(p,str) for p in paths) or len(set(paths))!=len(paths):
+            raise HTTPException(422,'Передайте от 1 до 40 уникальных путей тестов')
+        if not set(paths)<= {row.data['name'] for row in files}:
+            raise HTTPException(422,'Выбранный файл не найден в проекте')
+        files=[row for row in files if row.data['name'] in paths]
     candidates=[]
     for row in files:
         name=row.data['name'];base=PurePosixPath(name).name
         framework='pytest' if base.endswith('.py') and (base.startswith('test_') or base.endswith('_test.py')) else 'playwright' if re.search(r'\.(spec|test)\.(js|mjs|cjs|ts|tsx|jsx)$',base) else None
-        if not framework:continue
+        if not framework:
+            if selection and selection.get('paths'):raise HTTPException(422,'Выбранный файл не является тестовым модулем')
+            continue
         try:code=(DATA/row.data['storage']).read_text(encoding='utf-8-sig')
         except UnicodeError:raise HTTPException(422,f'{name}: сохраните кодировку UTF-8.') from None
         if not code.strip() or len(code)>16000:raise HTTPException(422,f'{name}: тестовый модуль должен содержать до 16000 символов.')

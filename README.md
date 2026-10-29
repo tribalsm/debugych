@@ -2,7 +2,7 @@
 
 AI QA Assistant для разработчиков и QA: загрузите код и требования, получите Gherkin и исполняемые тесты, исследуйте воспроизводимое отклонение и проверьте исправление в изолированной копии.
 
-[![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=fix%2Ffree-public-address)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Afix%2Ffree-public-address)
+[![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=feat%2Fqa-metrics-ci-export)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Afeat%2Fqa-metrics-ci-export)
 
 [Веб-приложение](https://debugych.89-22-232-119.sslip.io:9443/) · [Документация](docs/README.md) · [Подтверждённые проверки](docs/current-status.md) · [Если адрес не открывается](docs/public-access.md)
 
@@ -18,9 +18,11 @@ AI QA Assistant для разработчиков и QA: загрузите ко
 | Покрытие | coverage.py для Python, Istanbul для собранного JavaScript, строки и ветви |
 | Bug Proof | Проверка ожидания по требованию и повторное воспроизведение; инфраструктурная ошибка не считается дефектом |
 | Fix & Verify | Минимальный diff, проверка патча и регрессии в копии, отдельное подтверждение применения |
-| Отчёты и экспорт | История запусков, PNG/JSON-артефакты, экспорт Gherkin, Python и JavaScript |
+| Отчёты и экспорт | История и метрики успешности, PNG/JSON, JUnit XML, Gherkin/Python/JS и пакет GitHub Actions для запуска в gVisor |
 
 Проверенная основа `0066dc3`: **197 backend-тестов**, **31 браузерный сценарий**, **36 сценариев в Compose**. В браузерных сериях дополнительно 7 и 2 пропуска; причины и границы приведены в [отчёте](docs/current-status.md). [Оба задания CI прошли](https://github.com/tribalsm/debugych/actions/runs/40821353420). Новые изменения проверяются отдельным CI текущей ветки.
+
+[Метрики и настройка CI-экспорта](docs/testing-metrics-ci.md).
 
 ## Запуск
 
