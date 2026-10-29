@@ -60,7 +60,8 @@ def main():
     assert bugs[0]['requirement_id']==tests[0]['requirement_id']
     assert request(f'/api/projects/{pid}/test-cases')[0]['result']=='failed'
     exported=urllib.request.urlopen(BASE+'/api/exports?project_id='+pid+'&format=py').read().decode()
-    assert exported==tests[0]['code']
+    expected_export='\n\n'.join(test['code'] for test in tests if test['framework']=='pytest')
+    assert exported==expected_export,'Export must preserve every generated pytest module in order'
     print(json.dumps({'project_id':pid,'job_id':result['id'],'runtime':result['runtime'],'passed':result['passed'],'failed':result['failed'],
                       'coverage':result['coverage']['totals'],'snapshot_sha256':result['snapshot_sha256'],'bug_status':bugs[0]['status'],
                       'llm':'stubbed provider transport; real execution'},indent=2))
