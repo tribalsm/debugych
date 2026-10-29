@@ -48,4 +48,4 @@ foreach($mode in @('remote','local')){
  }
 }
 $results | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $output 'installed-modes-smoke.json') -Encoding utf8
-Write-Output 'PASS: installed Local/Remote process smoke; bundled runtime without Node/Python/Workspace in PATH; no local services in Remote. Native interaction and clean VM are separate checks.'
+Write-Output 'PASS: installed Local/Remote process smoke; bundled runtime without Node/Python in PATH; no local services in Remote. Native interaction and clean VM are separate checks.'

@@ -47,3 +47,5 @@ apps/pet/evidence/v31/*
 !apps/pet/evidence/v31/final-requirements.json
 
 outputs/server10/
+
+apps/web/outputs/
