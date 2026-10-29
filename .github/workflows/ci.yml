@@ -11,6 +11,10 @@ jobs:
         with: {python-version: '3.12'}
       - run: pip install -r requirements.txt
       - run: pytest
+      - name: Check current documentation and local launcher
+        run: |
+          python scripts/check-doc-links.py README.md docs/README.md docs/current-status.md docs/quickstart.md docs/public-access.md docs/architecture.md docs/accounts-and-roles.md docs/debugych-server-1.0.md docs/public-demo.md docs/archive
+          sh -n scripts/start-compose.sh
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm, cache-dependency-path: apps/web/package-lock.json}
       - run: node --test tests/unit/browser_lifecycle.test.cjs
@@ -55,8 +59,11 @@ jobs:
         working-directory: apps/web
       - name: Install mandatory gVisor runtime
         run: sudo bash infra/install-gvisor.sh
+      - name: Check registered runtime before building the stack
+        run: python scripts/preflight.py --project debugych
       - run: docker compose -f docker-compose.yml -f compose.test.yml up --build -d --wait
       - run: python tests/compose/stack_smoke.py
+      - run: python tests/compose/user_import_smoke.py
       - run: npm run test:e2e
         working-directory: apps/web
         env:
