@@ -40,7 +40,7 @@ def run_uploaded(db, job):
             for case in cases:
                 classification = FailureAnalyzer.classify(case, bool(requirement), False)
                 if classification in ('reproduced','suspected'):
-                    add_record(db,job.project_id,'bug',{'title':case['name'],'status':classification,'description':'AI-тест воспроизвёл отклонение. Ожидаемый результат требует независимой проверки; дефект автоматически не подтверждён.',
+                    add_record(db,job.project_id,'bug',{'title':case['name'],'status':classification,'description':'Тест воспроизвёл отклонение. Ожидаемый результат требует независимой проверки; дефект автоматически не подтверждён.',
                                'requirement':requirement.data['key'] if requirement else '', 'requirement_id':str(submitted.requirement_id),
                                'run_id':job.id,'framework':'playwright' if snapshot.profile=='playwright' else 'pytest','file':'tests/test_'+test_id.replace('-','')+('.spec.ts' if snapshot.profile=='playwright' else '.py'),'line':None,
                                'expected':requirement.data['text'] if requirement else 'Проверить assertion теста',

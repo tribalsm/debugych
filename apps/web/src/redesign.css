@@ -93,3 +93,5 @@
 .qa-metrics dd.metric-missing{font-size:16px;font-weight:500;color:#99abc5;letter-spacing:0;min-height:36px;display:flex;align-items:center}
 
 .public-demo-banner{display:grid;gap:8px;margin-bottom:24px;padding:18px 20px;border:1px solid #36558a;border-radius:12px;background:#13233d;color:#d9e7ff}.public-demo-banner strong{font-size:15px}.public-demo-banner span{font-size:13px;line-height:1.6;color:#b9cce8}
+
+.public-demo-banner .guest-history-actions{display:flex;flex-wrap:wrap;gap:10px 20px;margin:0;font-size:13px}.uploaded-tests ol{padding-left:22px;line-height:1.8}.uploaded-tests>p{line-height:1.65}

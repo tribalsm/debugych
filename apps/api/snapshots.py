@@ -14,7 +14,8 @@ def snapshot_project(db, project_id):
         raise ValueError('Нужен однородный план pytest или Playwright; смешанные планы не поддерживаются.')
     browser=frameworks=={'playwright'}
     suffixes=('.js','.mjs','.cjs','.ts','.tsx','.jsx','.html','.css','.json') if browser else ('.py',)
-    source = [{'path':f.data['name'],'content':(DATA / f.data['storage']).read_bytes().decode('utf-8-sig')} for f in files if f.data['name'].lower().endswith(suffixes)]
+    imported={t.data.get('source_test_path') for t in tests if t.data.get('origin')=='uploaded-user-tests'}
+    source = [{'path':f.data['name'],'content':(DATA / f.data['storage']).read_bytes().decode('utf-8-sig')} for f in files if f.data['name'].lower().endswith(suffixes) and f.data['name'] not in imported]
     generated = []
     for test in tests:
         if not browser:

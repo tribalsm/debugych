@@ -150,6 +150,19 @@ def projects():
     with Session() as db:
         return [serialize(p) for p in db.scalars(select(Project).order_by(Project.created_at.desc()))]
 
+@app.get('/api/storage-usage')
+def storage_usage():
+    from sqlalchemy import func,cast,Text
+    from apps.api.run_artifacts import directory
+    total=0
+    for folder in (DATA,directory()):
+        if folder.is_dir():
+            total+=sum(p.stat().st_size for p in folder.iterdir() if p.is_file() and not p.is_symlink())
+    with Session() as db:
+        # Four bytes per character conservatively bound UTF-8 JSON payloads.
+        total+=4*(db.scalar(select(func.sum(func.length(cast(Record.data,Text))))) or 0)
+    return {'estimated_bytes':total}
+
 @app.post('/api/projects', status_code=201)
 def create_project(value: NewProject):
     if not value.name.strip():
@@ -329,6 +342,20 @@ def run(pid: UUID, background: BackgroundTasks):
             raise HTTPException(409, 'Сначала создайте тестовый план')
         applied = any(r.data.get('applied') for r in db.scalars(select(Record).where(Record.project_id == str(pid), Record.kind == 'fix')))
         return new_job(db, pid, 'run', background, fixed=applied)
+
+@app.post('/api/projects/{pid}/import-tests',status_code=201)
+def import_uploaded_tests(pid: UUID):
+    from apps.api.user_tests import import_tests
+    with Session() as db:return import_tests(db,str(pid))
+
+@app.delete('/api/projects/{pid}')
+def delete_uploaded_project(pid: UUID):
+    from apps.api.user_tests import delete_project
+    with Session() as db:return delete_project(db,str(pid))
+
+@app.get('/api/test-cases/{tid}')
+def test_case(tid: UUID):
+    with Session() as db:return serialize(record_or_404(db,tid,'test'))
 
 @app.patch('/api/test-cases/{tid}')
 def edit_test(tid: UUID, value: EditTest):

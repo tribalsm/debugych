@@ -12,6 +12,7 @@ services:
       API_UPSTREAM: http://api:8000
       PUBLIC_DEMO_FILE: /app/demo.json
       ACCOUNTS_DB: /accounts/users.sqlite
+      PROJECT_WORKSPACES: "1"
       WEB_OWNER_TOKEN_FILE: /run/secrets/web-auth/token
     volumes:
       - web-accounts:/accounts
