@@ -19,4 +19,4 @@ export async function preparePlan(page:Page){
 }
 export async function startFullQA(page:Page){await page.getByRole('button',{name:'4 Запуск',exact:true}).click();await page.getByRole('button',{name:'Начать проверку',exact:true}).click()}
 export async function openDiff(page:Page){const control=page.getByText('Посмотреть предлагаемые изменения · diff',{exact:true});await expect(control).toBeVisible();if(!await page.getByLabel('Diff исправления',{exact:true}).isVisible())await control.click()}
-export async function openAnalytics(page:Page){const control=page.getByText('Подробная аналитика и артефакты',{exact:true});if(!await page.getByRole('heading',{name:'Качество и требования'}).isVisible())await control.click()}
+export async function openAnalytics(page:Page){const control=page.getByText('Артефакты и статистика AI',{exact:true});const panel=page.locator('details').filter({has:control});await expect(control).toBeVisible();if(!await panel.evaluate(element=>(element as HTMLDetailsElement).open))await control.click()}

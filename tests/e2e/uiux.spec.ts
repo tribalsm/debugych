@@ -1,4 +1,4 @@
-import {navigate} from './redesign-helpers';
+import {navigate,openAnalytics} from './redesign-helpers';
 import {test,expect} from '../../apps/web/node_modules/@playwright/test';
 import AxeBuilder from '../../apps/web/node_modules/@axe-core/playwright';
 import fs from 'node:fs/promises';
@@ -67,7 +67,7 @@ test('Пять экранов: реальные демопрогоны, desktop/
  }
  await fs.writeFile(path.join(output,'accessibility.json'),JSON.stringify(violations,null,2));expect(violations).toEqual([]);
  await navigate(page,'Тесты');await page.getByRole('tab',{name:'Gherkin',exact:true}).click();await page.getByRole('tab',{name:'Gherkin',exact:true}).focus();await page.keyboard.press('ArrowRight');await expect(page.getByRole('tab',{name:'Автотест',exact:true})).toBeFocused();await expect(page.getByLabel('Код · pytest',{exact:true})).toBeVisible();await page.reload();await expect(page.getByRole('tab',{name:'Автотест',exact:true})).toHaveAttribute('aria-selected','true');
- await navigate(page,'Отчёт');const downloaded=page.waitForEvent('download');await page.getByRole('button',{name:'QA-отчёт .json'}).click();const download=await downloaded;const data=JSON.parse(await fs.readFile((await download.path())!,'utf-8'));expect(data.project.id).toBe(demo.id);expect(data.tests.length).toBeGreaterThan(0);expect(data.runs.some((r:any)=>r.failed===1)).toBeTruthy();
+ await navigate(page,'Отчёт');await openAnalytics(page);await expect(page.getByRole('heading',{name:'AI Engine · журнал генераций'})).toBeVisible();await openAnalytics(page);await expect(page.getByRole('heading',{name:'AI Engine · журнал генераций'})).toBeVisible();const downloaded=page.waitForEvent('download');await page.getByRole('button',{name:'QA-отчёт .json'}).click();const download=await downloaded;const data=JSON.parse(await fs.readFile((await download.path())!,'utf-8'));expect(data.project.id).toBe(demo.id);expect(data.tests.length).toBeGreaterThan(0);expect(data.runs.some((r:any)=>r.failed===1)).toBeTruthy();
  await page.setViewportSize({width:390,height:844});await page.emulateMedia({reducedMotion:'reduce'});
  for(const [i,[name,heading]] of screens.entries()){
   await page.getByRole('button',{name:'Меню',exact:true}).click();await navigate(page,name);await expect(page.getByRole('heading',{name:heading,exact:true})).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();

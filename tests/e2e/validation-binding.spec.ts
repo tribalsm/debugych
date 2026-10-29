@@ -21,3 +21,18 @@ test('Агент не объявляет успех по прошедшему т
 });
 
 test('Исторический Fix Verified не подтверждает неуспешную новую версию патча',()=>{expect(agentState([{operation:'verify',status:'completed',verified:false}],[{status:'fix_verified'}])).not.toBe('success')});
+
+test('Ссылка на новый запуск обновляет данные уже выбранного проекта и сохраняет проверку чужих ID',async({page,request})=>{
+ const project=await(await request.post('/api/projects',{data:{name:'Result link refresh contract'}})).json();
+ const id='90000000-1111-4111-8111-111111111111',missing='90000000-2222-4222-8222-222222222222';
+ let published=false,reads=0;
+ await page.route(`**/api/projects/${project.id}/runs`,route=>{reads++;return route.fulfill({json:published?[{id,project_id:project.id,operation:'run',status:'completed',passed:0,failed:0,errors:0}]:[]})});
+ await page.goto('/#/workspace/overview?project='+project.id);
+ await expect(page.getByRole('status',{name:'Загружаем рабочее пространство'})).toHaveCount(0);const before=reads;
+ published=true;
+ await page.evaluate(({project,id})=>{location.hash=`/workspace/report?project=${project}&run=${id}`},{project:project.id,id});
+ await expect(page.getByLabel('Выбранный запуск')).toHaveValue(id);
+ await expect(page.getByRole('alert')).toHaveCount(0);expect(reads).toBeGreaterThan(before);
+ await page.evaluate(({project,missing})=>{location.hash=`/workspace/report?project=${project}&run=${missing}`},{project:project.id,missing});
+ await expect(page.getByRole('alert')).toContainText('Результат по ссылке не найден');
+});

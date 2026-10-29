@@ -105,7 +105,7 @@ function App(){
   }
   setDataReady(true);setCompanionNetworkError('');
  },[selected]);
- useEffect(()=>{let alive=true;setLoading(true);reload().catch(e=>alive&&(setError(e.message),setCompanionNetworkError(e.message))).finally(()=>alive&&setLoading(false));localStorage.setItem('debugych-project',selected);return()=>{alive=false}},[reload,selected]);
+ useEffect(()=>{let alive=true;setLoading(true);setDataReady(false);reload().catch(e=>alive&&(setError(e.message),setCompanionNetworkError(e.message))).finally(()=>alive&&setLoading(false));localStorage.setItem('debugych-project',selected);return()=>{alive=false}},[reload,selected,resultTarget.run,resultTarget.bug,resultTarget.fix]);
  const refreshHealth=useCallback(async()=>{await api<{ai_available:boolean;execution:string;ai_provider_mode:string;ai_status:string}>('/health').then(h=>{setAi(h.ai_available);setAiStatus(h.ai_status);setSandbox(h.execution==='gvisor-python');setTestProvider(h.ai_provider_mode==='contract-test');setHealthReady(true)}).catch(e=>setError(e.message));},[]);
  useEffect(()=>{void refreshHealth()},[refreshHealth]);
  useEffect(()=>{const refresh=()=>Promise.all([reload(),refreshHealth()]).catch(e=>{if(selectedRef.current===selected){setError(e.message);setCompanionNetworkError(e.message)}});window.addEventListener('focus',refresh);return()=>window.removeEventListener('focus',refresh)},[reload,selected,refreshHealth]);
