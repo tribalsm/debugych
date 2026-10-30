@@ -1,6 +1,6 @@
 FROM python:3.12-slim AS embeddings
 COPY scripts/prepare-embeddings.py /prepare.py
-RUN python /prepare.py --output /models
+RUN python /prepare.py --output /models --optional
 FROM python:3.12-slim
 WORKDIR /app
 COPY requirements.txt requirements-embeddings.txt ./

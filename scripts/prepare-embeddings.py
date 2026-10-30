@@ -8,7 +8,7 @@ REVISION='2c4055b12046f11709e9df2c122e59ffbdc2f900'
 FILES={'tokenizer.json':'b60b6b43406a48bf3638526314f3d232d97058bc93472ff2de930d43686fa441',
        'onnx/model_quantized.onnx':'66fc00f5f29afcaff34092e1bdd20008ca3918265a82fb9695a551e510cc4ebc'}
 
-def prepare(output):
+def _prepare(output):
     for name,expected in FILES.items():
         target=output/name;target.parent.mkdir(parents=True,exist_ok=True)
         if target.exists() and hashlib.sha256(target.read_bytes()).hexdigest()==expected:continue
@@ -25,6 +25,16 @@ def prepare(output):
         finally:temporary.unlink(missing_ok=True)
         print('Verified embedding asset: '+name)
 
+def prepare(output,optional=False):
+    output.mkdir(parents=True,exist_ok=True)
+    try:_prepare(output)
+    except Exception:
+        if not optional:raise
+        # App startup and own tests do not depend on the public weight host.
+        # Runtime still checks every checksum before loading any model bytes.
+        print('Embedding assets unavailable or invalid; app will use explicit lexical fallback.')
+
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',type=Path,required=True)
-    prepare(parser.parse_args().output)
+    parser.add_argument('--optional',action='store_true',help='Keep the app build usable without embedding assets')
+    args=parser.parse_args();prepare(args.output,args.optional)

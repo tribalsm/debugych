@@ -45,7 +45,7 @@ POST /api/projects/{project_id}/context-search
 
 Для отключения embedding inference используйте RAG_EMBEDDINGS=lexical. При запуске вне контейнера без RAG_MODEL_DIR также включается текстовый поиск. Это не семантический режим, UI и API показывают lexical-fallback. Лексические hash-векторы служат только совместимому хранению; fallback ранжирует реальные совпадения токенов и не выдаёт hash collisions за семантическую близость.
 
-Cold build скачивает около 135 MB весов и токенизатора. Требуется сетевой доступ хоста сборки к публичному репозиторию модели; приложение после сборки работает с ними локально. Подготовить проверенные файлы отдельно можно scripts/prepare-embeddings.py --output DIRECTORY. Пакеты ONNX/tokenizers из requirements-embeddings.txt устанавливаются только в доверенный API/worker image, не в тестовые sandbox.
+Cold build скачивает около 135 MB весов и токенизатора. Для семантического режима нужен доступ хоста сборки к публичному репозиторию модели; после сборки inference локальный. Если веса недоступны или не прошли проверку, Docker-сборка продолжает работу с явным текстовым fallback, не загружая недостоверную модель. Для обязательной проверенной загрузки используйте prepare-embeddings.py без --optional. Повторить загрузку после восстановления доступа можно пересборкой Docker embeddings stage без его cache. Подготовить проверенные файлы отдельно можно scripts/prepare-embeddings.py --output DIRECTORY. Пакеты ONNX/tokenizers из requirements-embeddings.txt устанавливаются только в доверенный API/worker image, не в тестовые sandbox.
 
 ## Проверки и источники
 

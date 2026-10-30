@@ -9,10 +9,21 @@ from apps.api.retrieval import index,search,generation_context
 from services.ai.retrieval import chunks,encode,FALLBACK_ID
 from services.ai.validation import ManualReview
 
-def test_embeddings_are_local_and_fallback_is_explicit(monkeypatch):
+def test_embeddings_are_local_and_fallback_is_explicit(monkeypatch,tmp_path):
     monkeypatch.setenv('RAG_EMBEDDINGS','local');monkeypatch.setenv('RAG_MODEL_DIR','/nonexistent-model')
     encoder,vectors=encode(['payment boundary','payment boundary'])
     assert encoder==FALLBACK_ID and vectors[0]==vectors[1] and len(vectors[0])==384
+    import runpy,urllib.request,urllib.error,io
+    from pathlib import Path
+    prepare=runpy.run_path(str(Path(__file__).resolve().parents[2]/'scripts/prepare-embeddings.py'))['prepare']
+    def offline(*args,**kwargs):raise urllib.error.URLError('offline test')
+    monkeypatch.setattr(urllib.request,'urlopen',offline)
+    prepare(tmp_path/'optional',optional=True)
+    assert (tmp_path/'optional').is_dir()
+    with pytest.raises(urllib.error.URLError):prepare(tmp_path/'required')
+    monkeypatch.setattr(urllib.request,'urlopen',lambda *args,**kwargs:io.BytesIO(b'corrupt fixture'))
+    with pytest.raises(ValueError,match='checksum'):prepare(tmp_path/'corrupt')
+    assert not list((tmp_path/'corrupt').rglob('*.download'))
 
 def test_chunks_preserve_lines_redact_and_exclude_private_oracles():
     files=[('requirements.md','R1. Payment accepted.\nR2. Reset.\n'),('app.py','API_KEY="super-private-value"\n'+'x'*2000),('.env','TOP_SECRET'),('oracles/test_private.py','RIGHT_PATCH')]
