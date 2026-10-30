@@ -1,0 +1,512 @@
+{
+  "version": 1,
+  "scope": "historical-live-controls-2026-10-20",
+  "notice": "Сохранённые настоящие live-прогоны, не новый запуск. Модель указана по метаданным настроенного стороннего провайдера. Эти контролируемые примеры не доказывают универсальную надёжность.",
+  "history_notice": "До этих успешных записей две Python workflow-попытки завершились ошибками протокола. История ограничений сохранена в docs/archive/mvp-readiness.md. Новая RAG-версия платной LLM заново не проверялась.",
+  "records": [
+    {
+      "language": "Python",
+      "model": "gpt-6-luna",
+      "recorded_at": "2026-10-20T08:54:57.715492+00:00",
+      "autonomous": true,
+      "manual_interventions": 0,
+      "applied": false,
+      "report_sha256": "63d920f4569d8ab3d7eb92947d613c57ec7616f386ef31ff8595ee6ff4d1ecf1",
+      "archive_sha256": "b1f879ebef84359a0e01967d70bb02e8ed5adeb5bb6fc3dcc306def20a93a80e",
+      "original": {
+        "passed": 15,
+        "failed": 2,
+        "errors": 0,
+        "runtime": "runsc",
+        "status": "completed",
+        "snapshot_sha256": "6458aa860f8c08f8639e2ef13163e4be98b88bdb7a0f37ab3c40b3726c62794f",
+        "cases": [
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-0]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units--1]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-1.5]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-2]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-10]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-0]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents--1]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-1.5]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-2]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-10001]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_pricing_rules[1-549-False-expected0]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_pricing_rules[1-549-True-expected1]",
+            "status": "failed",
+            "traceback": "units = 1, unit_cents = 549, member = True\nexpected = {'delivery': 60, 'discounted': 439, 'subtotal': 549, 'total': 499}\n\n    @pytest.mark.parametrize(\"units,unit_cents,member,expected\", [\n        (1, 549, False, {\"subtotal\": 549, \"discounted\": 549, \"delivery\": 0, \"total\": 549}),\n        (1, 549, True, {\"subtotal\": 549, \"discounted\": 439, \"delivery\": 60, \"total\": 499}),\n        (1, 625, True, {\"subtotal\": 625, \"discounted\": 500, \"delivery\": 0, \"total\": 500}),\n        (1, 1, True, {\"subtotal\": 1, \"discounted\": 0, \"delivery\": 60, \"total\": 60}),\n    ])\n    def test_pricing_rules(units, unit_cents, member, expected):\n        response = client.post(\"/estimate\", json={\"units\": units, \"unit_cents\": unit_cents, \"member\": member})\n        assert response.status_code == 200\n        body = response.json()\n>       assert {key: body[key] for key in (\"subtotal\", \"discounted\", \"delivery\", \"total\")} == expected\nE       AssertionError: assert {'delivery': ... 'total': 439} == {'delivery': ... 'total': 499}\nE         \nE         Omitting 2 identical items, use -vv to show\nE         Differing items:\nE         {'total': 439} != {'total': 499}\nE         {'delivery': 0} != {'delivery': 60}\nE         Use -v to get more diff\n\njob/tests/test_609b3c7be67d4cba92af915cc33ee03d.py:18: AssertionError"
+          },
+          {
+            "name": "test_pricing_rules[1-625-True-expected2]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_pricing_rules[1-1-True-expected3]",
+            "status": "failed",
+            "traceback": "units = 1, unit_cents = 1, member = True\nexpected = {'delivery': 60, 'discounted': 0, 'subtotal': 1, 'total': 60}\n\n    @pytest.mark.parametrize(\"units,unit_cents,member,expected\", [\n        (1, 549, False, {\"subtotal\": 549, \"discounted\": 549, \"delivery\": 0, \"total\": 549}),\n        (1, 549, True, {\"subtotal\": 549, \"discounted\": 439, \"delivery\": 60, \"total\": 499}),\n        (1, 625, True, {\"subtotal\": 625, \"discounted\": 500, \"delivery\": 0, \"total\": 500}),\n        (1, 1, True, {\"subtotal\": 1, \"discounted\": 0, \"delivery\": 60, \"total\": 60}),\n    ])\n    def test_pricing_rules(units, unit_cents, member, expected):\n        response = client.post(\"/estimate\", json={\"units\": units, \"unit_cents\": unit_cents, \"member\": member})\n        assert response.status_code == 200\n        body = response.json()\n>       assert {key: body[key] for key in (\"subtotal\", \"discounted\", \"delivery\", \"total\")} == expected\nE       AssertionError: assert {'delivery': ..., 'total': 61} == {'delivery': ..., 'total': 60}\nE         \nE         Omitting 2 identical items, use -vv to show\nE         Differing items:\nE         {'total': 61} != {'total': 60}\nE         {'discounted': 1} != {'discounted': 0}\nE         Use -v to get more diff\n\njob/tests/test_609b3c7be67d4cba92af915cc33ee03d.py:18: AssertionError"
+          },
+          {
+            "name": "test_valid_response_contains_four_fields",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_subtotal_inclusive_endpoints[1-1-1]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_subtotal_inclusive_endpoints[9-10000-90000]",
+            "status": "passed",
+            "traceback": ""
+          }
+        ]
+      },
+      "proof": {
+        "passed": 15,
+        "failed": 2,
+        "errors": 0,
+        "runtime": "runsc",
+        "status": "completed",
+        "snapshot_sha256": "4416cb675a4696bbdff5a4f41bae91d70818306da184b79461e24ce14242ec3d",
+        "cases": [
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-0]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units--1]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-1.5]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-2]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-10]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-0]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents--1]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-1.5]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-2]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-10001]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_pricing_rules[1-549-False-expected0]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_pricing_rules[1-549-True-expected1]",
+            "status": "failed",
+            "traceback": "units = 1, unit_cents = 549, member = True\nexpected = {'delivery': 60, 'discounted': 439, 'subtotal': 549, 'total': 499}\n\n    @pytest.mark.parametrize(\"units,unit_cents,member,expected\", [\n        (1, 549, False, {\"subtotal\": 549, \"discounted\": 549, \"delivery\": 0, \"total\": 549}),\n        (1, 549, True, {\"subtotal\": 549, \"discounted\": 439, \"delivery\": 60, \"total\": 499}),\n        (1, 625, True, {\"subtotal\": 625, \"discounted\": 500, \"delivery\": 0, \"total\": 500}),\n        (1, 1, True, {\"subtotal\": 1, \"discounted\": 0, \"delivery\": 60, \"total\": 60}),\n    ])\n    def test_pricing_rules(units, unit_cents, member, expected):\n        response = client.post(\"/estimate\", json={\"units\": units, \"unit_cents\": unit_cents, \"member\": member})\n        assert response.status_code == 200\n        body = response.json()\n>       assert {key: body[key] for key in (\"subtotal\", \"discounted\", \"delivery\", \"total\")} == expected\nE       AssertionError: assert {'delivery': ... 'total': 439} == {'delivery': ... 'total': 499}\nE         \nE         Omitting 2 identical items, use -vv to show\nE         Differing items:\nE         {'delivery': 0} != {'delivery': 60}\nE         {'total': 439} != {'total': 499}\nE         Use -v to get more diff\n\njob/tests/test_609b3c7be67d4cba92af915cc33ee03d.py:18: AssertionError"
+          },
+          {
+            "name": "test_pricing_rules[1-625-True-expected2]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_pricing_rules[1-1-True-expected3]",
+            "status": "failed",
+            "traceback": "units = 1, unit_cents = 1, member = True\nexpected = {'delivery': 60, 'discounted': 0, 'subtotal': 1, 'total': 60}\n\n    @pytest.mark.parametrize(\"units,unit_cents,member,expected\", [\n        (1, 549, False, {\"subtotal\": 549, \"discounted\": 549, \"delivery\": 0, \"total\": 549}),\n        (1, 549, True, {\"subtotal\": 549, \"discounted\": 439, \"delivery\": 60, \"total\": 499}),\n        (1, 625, True, {\"subtotal\": 625, \"discounted\": 500, \"delivery\": 0, \"total\": 500}),\n        (1, 1, True, {\"subtotal\": 1, \"discounted\": 0, \"delivery\": 60, \"total\": 60}),\n    ])\n    def test_pricing_rules(units, unit_cents, member, expected):\n        response = client.post(\"/estimate\", json={\"units\": units, \"unit_cents\": unit_cents, \"member\": member})\n        assert response.status_code == 200\n        body = response.json()\n>       assert {key: body[key] for key in (\"subtotal\", \"discounted\", \"delivery\", \"total\")} == expected\nE       AssertionError: assert {'delivery': ..., 'total': 61} == {'delivery': ..., 'total': 60}\nE         \nE         Omitting 2 identical items, use -vv to show\nE         Differing items:\nE         {'discounted': 1} != {'discounted': 0}\nE         {'total': 61} != {'total': 60}\nE         Use -v to get more diff\n\njob/tests/test_609b3c7be67d4cba92af915cc33ee03d.py:18: AssertionError"
+          },
+          {
+            "name": "test_valid_response_contains_four_fields",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_subtotal_inclusive_endpoints[1-1-1]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_subtotal_inclusive_endpoints[9-10000-90000]",
+            "status": "passed",
+            "traceback": ""
+          }
+        ]
+      },
+      "candidate": {
+        "passed": 17,
+        "failed": 0,
+        "errors": 0,
+        "runtime": "runsc",
+        "status": "completed",
+        "snapshot_sha256": "a5d4cf06189e6d8516adb1bb064479a0e25e486e42aacefa29d12d7689a77789",
+        "cases": [
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-0]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units--1]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-1.5]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-2]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[units-10]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-0]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents--1]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-1.5]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-2]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_invalid_quantity_or_price_returns_422[unit_cents-10001]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_pricing_rules[1-549-False-expected0]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_pricing_rules[1-549-True-expected1]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_pricing_rules[1-625-True-expected2]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_pricing_rules[1-1-True-expected3]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_valid_response_contains_four_fields",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_subtotal_inclusive_endpoints[1-1-1]",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "test_subtotal_inclusive_endpoints[9-10000-90000]",
+            "status": "passed",
+            "traceback": ""
+          }
+        ]
+      },
+      "tests": [
+        {
+          "name": "eda3f2c5-5b2a-4700-a293-be4ee0cea847.py",
+          "code": "from fastapi.testclient import TestClient\nfrom cart_api import app\n\nclient = TestClient(app)\n\nimport pytest\n\n@pytest.mark.parametrize(\"units,unit_cents,subtotal\", [(1, 1, 1), (9, 10000, 90000)])\ndef test_subtotal_inclusive_endpoints(units, unit_cents, subtotal):\n    response = client.post(\"/estimate\", json={\"units\": units, \"unit_cents\": unit_cents})\n    assert response.status_code == 200\n    assert response.json()[\"subtotal\"] == subtotal"
+        },
+        {
+          "name": "609b3c7b-e67d-4cba-92af-915cc33ee03d.py",
+          "code": "from fastapi.testclient import TestClient\nfrom cart_api import app\n\nclient = TestClient(app)\n\nimport pytest\n\n@pytest.mark.parametrize(\"units,unit_cents,member,expected\", [\n    (1, 549, False, {\"subtotal\": 549, \"discounted\": 549, \"delivery\": 0, \"total\": 549}),\n    (1, 549, True, {\"subtotal\": 549, \"discounted\": 439, \"delivery\": 60, \"total\": 499}),\n    (1, 625, True, {\"subtotal\": 625, \"discounted\": 500, \"delivery\": 0, \"total\": 500}),\n    (1, 1, True, {\"subtotal\": 1, \"discounted\": 0, \"delivery\": 60, \"total\": 60}),\n])\ndef test_pricing_rules(units, unit_cents, member, expected):\n    response = client.post(\"/estimate\", json={\"units\": units, \"unit_cents\": unit_cents, \"member\": member})\n    assert response.status_code == 200\n    body = response.json()\n    assert {key: body[key] for key in (\"subtotal\", \"discounted\", \"delivery\", \"total\")} == expected"
+        },
+        {
+          "name": "444274fb-2d30-448f-86f1-3c7117c55b3c.py",
+          "code": "from fastapi.testclient import TestClient\nfrom cart_api import app\n\nclient = TestClient(app)\n\nimport pytest\n\n@pytest.mark.parametrize(\"field,value\", [\n    (\"units\", 0), (\"units\", -1), (\"units\", 1.5), (\"units\", \"2\"), (\"units\", 10),\n    (\"unit_cents\", 0), (\"unit_cents\", -1), (\"unit_cents\", 1.5), (\"unit_cents\", \"2\"), (\"unit_cents\", 10001),\n])\ndef test_invalid_quantity_or_price_returns_422(field, value):\n    response = client.post(\"/estimate\", json={\"units\": 1, \"unit_cents\": 1, field: value})\n    assert response.status_code == 422\n"
+        },
+        {
+          "name": "eb7c6b65-d449-4927-a77d-811cf0ca672d.py",
+          "code": "from fastapi.testclient import TestClient\nfrom cart_api import app\n\nclient = TestClient(app)\n\ndef test_valid_response_contains_four_fields():\n    response = client.post(\"/estimate\", json={\"units\": 2, \"unit_cents\": 250})\n    assert response.status_code == 200\n    assert {\"subtotal\", \"discounted\", \"delivery\", \"total\"}.issubset(response.json())"
+        }
+      ],
+      "gherkin": [
+        "Feature: Estimate subtotal\nScenario Outline: Subtotal uses inclusive valid integer endpoints\nGiven an estimate request with units <units> and unit_cents <unit_cents>\nWhen I POST the request to /estimate\nThen the response has HTTP 200\nAnd subtotal equals <subtotal>\n\nExamples:\n| units | unit_cents | subtotal |\n| 1 | 1 | 1 |\n| 9 | 10000 | 90000 |",
+        "Feature: Estimate pricing\nScenario Outline: Member and non-member estimates apply documented pricing rules\nGiven a request with units <units>, unit_cents <unit_cents>, and member <member>\nWhen I POST the request to /estimate\nThen subtotal is <subtotal>\nAnd discounted is <discounted>\nAnd delivery is <delivery>\nAnd total is <total>\n\nExamples:\n| units | unit_cents | member | subtotal | discounted | delivery | total |\n| 1 | 549 | false | 549 | 549 | 0 | 549 |\n| 1 | 549 | true | 549 | 439 | 60 | 499 |\n| 1 | 625 | true | 625 | 500 | 0 | 500 |\n| 1 | 1 | true | 1 | 0 | 60 | 60 |",
+        "Feature: Estimate request validation\nScenario Outline: Invalid units or unit price are rejected\nGiven an estimate request with <field> set to <value>\nWhen I POST the request to /estimate\nThen the response has HTTP 422\n\nExamples:\n| field | value |\n| units | 0 |\n| units | -1 |\n| units | 1.5 |\n| units | \"2\" |\n| units | 10 |\n| unit_cents | 0 |\n| unit_cents | -1 |\n| unit_cents | 1.5 |\n| unit_cents | \"2\" |\n| unit_cents | 10001 |",
+        "Feature: Estimate response shape\nScenario: Valid request returns all four pricing fields\nGiven a valid request with units 2 and unit_cents 250\nWhen I POST the request to /estimate\nThen the response has HTTP 200\nAnd it contains subtotal, discounted, delivery, and total\n"
+      ],
+      "diff": "--- a/cart_api.py\n+++ b/cart_api.py\n@@ -10,6 +10,6 @@\n @app.post('/estimate')\n def estimate(item: Estimate):\n     subtotal=item.units*item.unit_cents\n-    discounted=round(subtotal*0.8) if item.member else subtotal\n-    delivery=60 if subtotal<500 else 0\n+    discounted=subtotal*80//100 if item.member else subtotal\n+    delivery=60 if discounted<500 else 0\n     return {'subtotal':subtotal,'discounted':discounted,'delivery':delivery,'total':discounted+delivery}\n",
+      "calls": [
+        {
+          "operation": "extract_requirements",
+          "outcome": "failed",
+          "error_code": "provider_transport_temporary",
+          "model": "gpt-6-luna"
+        },
+        {
+          "operation": "extract_requirements",
+          "outcome": "succeeded",
+          "error_code": null,
+          "model": "gpt-6-luna"
+        },
+        {
+          "operation": "generate_tests",
+          "outcome": "succeeded",
+          "error_code": null,
+          "model": "gpt-6-luna"
+        },
+        {
+          "operation": "validate_semantics",
+          "outcome": "succeeded",
+          "error_code": null,
+          "model": "gpt-6-luna"
+        },
+        {
+          "operation": "generate_patch",
+          "outcome": "succeeded",
+          "error_code": null,
+          "model": "gpt-6-luna"
+        }
+      ],
+      "requests": 5,
+      "failed_requests": 1,
+      "billed_usd": null
+    },
+    {
+      "language": "JS/TS",
+      "model": "gpt-6-luna",
+      "recorded_at": "2026-10-20T08:23:00.336420+00:00",
+      "autonomous": true,
+      "manual_interventions": 0,
+      "applied": false,
+      "report_sha256": "3b43a6de95b1301a3d59abf739d7d88a3c4e94eaeb8fae8ce284edb8c3c47131",
+      "archive_sha256": "5397b55bdca8e5cd19cd574d46eba65304a554e3b513ac0bdf764c5cf1952560",
+      "original": {
+        "passed": 2,
+        "failed": 2,
+        "errors": 0,
+        "runtime": "runsc",
+        "status": "completed",
+        "snapshot_sha256": null,
+        "cases": [
+          {
+            "name": "annual discount floors base and adds full fee",
+            "status": "failed",
+            "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  locator('output[data-testid=\"quote\"]')\nExpected: \"120\"\nReceived: \"112\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" locator('output[data-testid=\"quote\"]') with timeout 2500ms\n  - waiting for locator('output[data-testid=\"quote\"]')\n    9 × locator resolved to <output data-testid=\"quote\">112</output>\n      - unexpected value \"112\"\n\n\n   7 |  await page.getByLabel('Seats').fill('1'); await page.getByLabel('Plan').selectOption('basic');\n   8 |  await page.getByRole('button',{name:'Quote'}).click();\n>  9 |  await expect(quote).toHaveText('120'); await expect(notice).toHaveText('Ready');\n     |                      ^\n  10 |  await page.getByLabel('Seats').fill('8'); await page.getByLabel('Plan').selectOption('pro');\n  11 |  await page.getByRole('button',{name:'Quote'}).click();\n  12 |  await expect(quote).toHaveText('1230'); await expect(notice).toHaveText('Ready');\n    at /tmp/job/tests/test_2756abf2e078449f95d9cc961a8573d2.spec.ts:9:22"
+          },
+          {
+            "name": "invalid seat values are rejected and preserve quote",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "initial state and terms rejection preserve existing quote",
+            "status": "failed",
+            "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  locator('output[data-testid=\"quote\"]')\nExpected: \"—\"\nReceived: \"270\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" locator('output[data-testid=\"quote\"]') with timeout 2500ms\n  - waiting for locator('output[data-testid=\"quote\"]')\n    9 × locator resolved to <output data-testid=\"quote\">270</output>\n      - unexpected value \"270\"\n\n\n   9 |  await expect(quote).toHaveText('—'); await expect(notice).toHaveText('');\n  10 |  await page.getByRole('button',{name:'Quote'}).click();\n> 11 |  await expect(notice).toHaveText('Accept terms'); await expect(quote).toHaveText('—');\n     |                                                                       ^\n  12 |  await page.getByLabel('Terms').check(); await page.getByRole('button',{name:'Quote'}).click();\n  13 |  await expect(quote).toHaveText('270'); await expect(notice).toHaveText('Ready');\n  14 |  await page.getByLabel('Terms').uncheck(); await page.getByRole('button',{name:'Quote'}).click();\n    at /tmp/job/tests/test_e4a12c1f64fd48ac86bac280e4711942.spec.ts:11:71"
+          },
+          {
+            "name": "monthly quote uses plan price and adds fee",
+            "status": "passed",
+            "traceback": ""
+          }
+        ]
+      },
+      "proof": {
+        "passed": 2,
+        "failed": 2,
+        "errors": 0,
+        "runtime": "runsc",
+        "status": "completed",
+        "snapshot_sha256": null,
+        "cases": [
+          {
+            "name": "annual discount floors base and adds full fee",
+            "status": "failed",
+            "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  locator('output[data-testid=\"quote\"]')\nExpected: \"120\"\nReceived: \"112\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" locator('output[data-testid=\"quote\"]') with timeout 2500ms\n  - waiting for locator('output[data-testid=\"quote\"]')\n    9 × locator resolved to <output data-testid=\"quote\">112</output>\n      - unexpected value \"112\"\n\n\n   7 |  await page.getByLabel('Seats').fill('1'); await page.getByLabel('Plan').selectOption('basic');\n   8 |  await page.getByRole('button',{name:'Quote'}).click();\n>  9 |  await expect(quote).toHaveText('120'); await expect(notice).toHaveText('Ready');\n     |                      ^\n  10 |  await page.getByLabel('Seats').fill('8'); await page.getByLabel('Plan').selectOption('pro');\n  11 |  await page.getByRole('button',{name:'Quote'}).click();\n  12 |  await expect(quote).toHaveText('1230'); await expect(notice).toHaveText('Ready');\n    at /tmp/job/tests/test_2756abf2e078449f95d9cc961a8573d2.spec.ts:9:22"
+          },
+          {
+            "name": "invalid seat values are rejected and preserve quote",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "initial state and terms rejection preserve existing quote",
+            "status": "failed",
+            "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  locator('output[data-testid=\"quote\"]')\nExpected: \"—\"\nReceived: \"270\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" locator('output[data-testid=\"quote\"]') with timeout 2500ms\n  - waiting for locator('output[data-testid=\"quote\"]')\n    9 × locator resolved to <output data-testid=\"quote\">270</output>\n      - unexpected value \"270\"\n\n\n   9 |  await expect(quote).toHaveText('—'); await expect(notice).toHaveText('');\n  10 |  await page.getByRole('button',{name:'Quote'}).click();\n> 11 |  await expect(notice).toHaveText('Accept terms'); await expect(quote).toHaveText('—');\n     |                                                                       ^\n  12 |  await page.getByLabel('Terms').check(); await page.getByRole('button',{name:'Quote'}).click();\n  13 |  await expect(quote).toHaveText('270'); await expect(notice).toHaveText('Ready');\n  14 |  await page.getByLabel('Terms').uncheck(); await page.getByRole('button',{name:'Quote'}).click();\n    at /tmp/job/tests/test_e4a12c1f64fd48ac86bac280e4711942.spec.ts:11:71"
+          },
+          {
+            "name": "monthly quote uses plan price and adds fee",
+            "status": "passed",
+            "traceback": ""
+          }
+        ]
+      },
+      "candidate": {
+        "passed": 4,
+        "failed": 0,
+        "errors": 0,
+        "runtime": "runsc",
+        "status": "completed",
+        "snapshot_sha256": null,
+        "cases": [
+          {
+            "name": "annual discount floors base and adds full fee",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "invalid seat values are rejected and preserve quote",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "initial state and terms rejection preserve existing quote",
+            "status": "passed",
+            "traceback": ""
+          },
+          {
+            "name": "monthly quote uses plan price and adds fee",
+            "status": "passed",
+            "traceback": ""
+          }
+        ]
+      },
+      "tests": [
+        {
+          "name": "e4b8c051-da51-4ff1-aa50-ee2cfe43df93.spec.ts",
+          "code": "import {test,expect} from '@playwright/test';\ntest('monthly quote uses plan price and adds fee',async({page})=>{\n await page.goto('/');\n const quote=page.locator('output[data-testid=\"quote\"]');\n const notice=page.locator('p[data-testid=\"notice\"]');\n await expect(quote).toHaveText('—'); await expect(notice).toHaveText('');\n await expect(page.getByLabel('Seats')).toHaveValue('2');\n await expect(page.getByLabel('Plan')).toHaveValue('basic');\n await expect(page.getByLabel('Annual')).not.toBeChecked();\n await expect(page.getByLabel('Terms')).not.toBeChecked();\n await page.getByLabel('Terms').check();\n await page.getByLabel('Seats').fill('1'); await page.getByLabel('Plan').selectOption('basic');\n await page.getByRole('button',{name:'Quote'}).click();\n await expect(quote).toHaveText('150'); await expect(notice).toHaveText('Ready');\n await page.getByLabel('Seats').fill('8'); await page.getByLabel('Plan').selectOption('pro');\n await page.getByRole('button',{name:'Quote'}).click();\n await expect(quote).toHaveText('1630'); await expect(notice).toHaveText('Ready');\n await page.getByLabel('Seats').fill('3');\n await page.getByRole('button',{name:'Quote'}).click();\n await expect(quote).toHaveText('630'); await expect(notice).toHaveText('Ready');\n});"
+        },
+        {
+          "name": "2756abf2-e078-449f-95d9-cc961a8573d2.spec.ts",
+          "code": "import {test,expect} from '@playwright/test';\ntest('annual discount floors base and adds full fee',async({page})=>{\n await page.goto('/');\n const quote=page.locator('output[data-testid=\"quote\"]');\n const notice=page.locator('p[data-testid=\"notice\"]');\n await page.getByLabel('Terms').check(); await page.getByLabel('Annual').check();\n await page.getByLabel('Seats').fill('1'); await page.getByLabel('Plan').selectOption('basic');\n await page.getByRole('button',{name:'Quote'}).click();\n await expect(quote).toHaveText('120'); await expect(notice).toHaveText('Ready');\n await page.getByLabel('Seats').fill('8'); await page.getByLabel('Plan').selectOption('pro');\n await page.getByRole('button',{name:'Quote'}).click();\n await expect(quote).toHaveText('1230'); await expect(notice).toHaveText('Ready');\n await page.getByLabel('Seats').fill('3'); await page.getByLabel('Plan').selectOption('basic');\n await page.getByRole('button',{name:'Quote'}).click();\n await expect(quote).toHaveText('300'); await expect(notice).toHaveText('Ready');\n});"
+        },
+        {
+          "name": "e4a12c1f-64fd-48ac-86ba-c280e4711942.spec.ts",
+          "code": "import {test,expect} from '@playwright/test';\ntest('initial state and terms rejection preserve existing quote',async({page})=>{\n await page.goto('/');\n const quote=page.locator('output[data-testid=\"quote\"]');\n const notice=page.locator('p[data-testid=\"notice\"]');\n await expect(page.getByLabel('Seats')).toHaveValue('2');\n await expect(page.getByLabel('Plan')).toHaveValue('basic');\n await expect(page.getByLabel('Annual')).not.toBeChecked(); await expect(page.getByLabel('Terms')).not.toBeChecked();\n await expect(quote).toHaveText('—'); await expect(notice).toHaveText('');\n await page.getByRole('button',{name:'Quote'}).click();\n await expect(notice).toHaveText('Accept terms'); await expect(quote).toHaveText('—');\n await page.getByLabel('Terms').check(); await page.getByRole('button',{name:'Quote'}).click();\n await expect(quote).toHaveText('270'); await expect(notice).toHaveText('Ready');\n await page.getByLabel('Terms').uncheck(); await page.getByRole('button',{name:'Quote'}).click();\n await expect(notice).toHaveText('Accept terms'); await expect(quote).toHaveText('270');\n});"
+        },
+        {
+          "name": "93c3f8c5-8ebe-4fa7-b37a-af900d6f05b6.spec.ts",
+          "code": "import {test,expect} from '@playwright/test';\ntest('invalid seat values are rejected and preserve quote',async({page})=>{\n await page.goto('/');\n const quote=page.locator('output[data-testid=\"quote\"]');\n const notice=page.locator('p[data-testid=\"notice\"]');\n await page.getByLabel('Terms').check();\n for (const value of ['0','-1','1.5','9']) {\n  await page.getByLabel('Seats').fill(value);\n  await page.getByRole('button',{name:'Quote'}).click();\n  await expect(notice).toHaveText('Seats must be an integer from 1 to 8');\n  await expect(quote).toHaveText('—');\n }\n await page.getByLabel('Seats').fill('2'); await page.getByRole('button',{name:'Quote'}).click();\n await expect(quote).toHaveText('270'); await expect(notice).toHaveText('Ready');\n await page.getByLabel('Seats').fill('0'); await page.getByLabel('Terms').uncheck();\n await page.getByRole('button',{name:'Quote'}).click();\n await expect(notice).toHaveText('Seats must be an integer from 1 to 8');\n await expect(quote).toHaveText('270');\n});"
+        }
+      ],
+      "gherkin": [],
+      "diff": "--- a/Invoice.tsx\n+++ b/Invoice.tsx\n@@ -11,10 +11,10 @@\n  function calculate(){\n   const n=Number(seats);\n   if(!Number.isInteger(n)||n<1||n>8){setNotice('Seats must be an integer from 1 to 8');return;}\n+  if(!accepted){setNotice('Accept terms');return;}\n   const base=n*(plan==='basic'?120:200);\n-  const value=annual?Math.floor((base+30)*75/100):base+30;\n+  const value=annual?Math.floor(base*75/100)+30:base+30;\n   setQuote(String(value));\n-  if(!accepted){setNotice('Accept terms');return;}\n   setNotice('Ready');\n  }\n  return <main><h1>Team Invoice</h1>\n",
+      "calls": [
+        {
+          "operation": "extract_requirements",
+          "outcome": "succeeded",
+          "error_code": null,
+          "model": "gpt-6-luna"
+        },
+        {
+          "operation": "generate_tests",
+          "outcome": "succeeded",
+          "error_code": null,
+          "model": "gpt-6-luna"
+        },
+        {
+          "operation": "validate_semantics",
+          "outcome": "succeeded",
+          "error_code": null,
+          "model": "gpt-6-luna"
+        },
+        {
+          "operation": "generate_patch",
+          "outcome": "succeeded",
+          "error_code": null,
+          "model": "gpt-6-luna"
+        }
+      ],
+      "requests": 4,
+      "failed_requests": 0,
+      "billed_usd": null
+    }
+  ]
+}

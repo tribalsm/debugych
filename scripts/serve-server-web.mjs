@@ -32,7 +32,7 @@ export function createGateway({root,origin,aliases=[],upstream,demo=null,account
  if(workspaceMode&&(!accounts||!teamToken))throw Error('Workspace accounts and trusted backend credentials required');
  const workspaces=workspaceMode?new Workspaces(accounts,{now}):null;
  root=path.resolve(root);
- if(demo&&(demo.version!==1||!demo.routes||!demo.projectId||!Array.isArray(demo.routes['/api/projects'])||demo.routes['/api/projects'].length!==1||demo.routes['/api/projects'][0].id!==demo.projectId))throw Error('Invalid public demo snapshot');
+ if(demo&&(demo.version!==1||!demo.routes||!demo.projectId||!Array.isArray(demo.routes['/api/projects'])||demo.routes['/api/projects'].length<1||demo.routes['/api/projects'].length>8||new Set(demo.routes['/api/projects'].map(p=>p.id)).size!==demo.routes['/api/projects'].length||demo.routes['/api/projects'][0].id!==demo.projectId))throw Error('Invalid public demo snapshot');
  const sessions=new Map(),attempts=new Map();
  const hash=value=>createHash('sha256').update(value).digest('hex');
  function sweep(){for(const [key,s]of sessions)if(s.until<=now()||s.active+idleMs<=now())sessions.delete(key);for(const [key,s]of attempts)if(s.until<=now())attempts.delete(key)}

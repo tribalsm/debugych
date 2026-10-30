@@ -2,11 +2,17 @@
 
 AI QA Assistant для разработчиков и QA: загрузите код и требования, получите Gherkin и исполняемые тесты, исследуйте воспроизводимое отклонение и проверьте исправление в изолированной копии.
 
-[![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=feat%2Fproject-rag-ts-coverage)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Afeat%2Fproject-rag-ts-coverage)
+[![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=fix%2Fjury-release-demo)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Afix%2Fjury-release-demo)
 
 [Веб-приложение](https://debugych.89-22-232-119.sslip.io:9443/) · [Документация](docs/README.md) · [Подтверждённые проверки](docs/current-status.md) · [Если адрес не открывается](docs/public-access.md)
 
 После входа можно загружать собственные проекты и запускать проверки. Гостевая история сохраняется в браузере 30 дней после последнего посещения и переносится в аккаунт при входе. Гость выполняет собственные pytest/Playwright-тесты или подготовленное демо; для AI-генерации нужен аккаунт и согласие на передачу очищенного кода.
+
+## Проверяемый релиз
+
+Актуальный кандидат: `fix/jury-release-demo`. Старая ветка по умолчанию `release/desktop-1.3` не содержит всех доработок. До согласованного объединения для сборки и проверки используйте кандидата и его CI, а не старый default HEAD. [Что вошло в релиз](docs/jury-release-readiness.md).
+
+Публичный стенд показывает Python и TypeScript с частичным покрытием, Bug Proof и проверенным diff. На главной доступны исторические настоящие live AI-прогоны от 20 октября. Просмотр не запускает модель. Эти записи отделены от подготовленных контрольных тестов.
 
 ## Что работает
 

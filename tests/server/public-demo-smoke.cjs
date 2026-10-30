@@ -8,7 +8,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises');
  await page.route('**/*',r=>{if(!['GET','HEAD','OPTIONS'].includes(r.request().method())){writes.push(new URL(r.request().url()).pathname);return r.abort()}return r.continue()});
  const get=async path=>{const response=await context.request.get(origin+path);assert.equal(response.status(),200,path);assert.equal(response.headers()['x-debugych-public-demo'],'1');return response.json()};
  try{
-  const projects=await get('/api/projects');assert.equal(projects.length,1);const pid=projects[0].id;assert.equal(pid,'78167145-424b-48a8-b3f9-6eefa284f3c3');
+  const projects=await get('/api/projects');assert.ok(projects.length>=3);const pid=projects.find(p=>p.name==='Server 1.0 offline control').id;assert.equal(pid,'78167145-424b-48a8-b3f9-6eefa284f3c3');
   const bug=(await get('/api/bugs?project_id='+pid))[0],fix=(await get('/api/projects/'+pid+'/fixes')).find(f=>f.id===bug.current_fix_id);assert.ok(fix.verified&&!fix.applied);
   const checked=[];
   async function visit(name,hash,check){await page.goto(origin+'/#/'+hash);await expect(page.getByText('Публичное демо · только просмотр',{exact:true})).toBeVisible();await expect(page.getByRole('status',{name:'Загружаем рабочее пространство'})).toHaveCount(0);await check();await page.screenshot({path:out+'/'+name+'.png',fullPage:false});checked.push(name)}

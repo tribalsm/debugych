@@ -130,3 +130,5 @@
  .breadcrumbs a,.breadcrumbs button,.header-right>a{min-height:44px}
  .table-scroll-hint{display:block}
 }
+
+.live-evidence{padding:24px;margin-bottom:24px}.live-evidence p{line-height:1.7}.live-evidence>details{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}.live-evidence details details{margin:16px 0}.live-evidence summary{cursor:pointer;min-height:44px;line-height:1.7;font-weight:600}.live-evidence code{overflow-wrap:anywhere}.evidence-facts{display:flex;flex-wrap:wrap;gap:16px}.evidence-facts>div{flex:1;min-width:180px;background:#111b2b;padding:16px;border-radius:8px}.evidence-facts dt{color:#a9b9d0}.evidence-facts dd{margin:10px 0 0}.live-evidence ul{padding-left:22px;line-height:1.8}

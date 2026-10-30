@@ -24,7 +24,7 @@ jobs:
       - run: npm ci && npm run lint && npm test && npm run build
         working-directory: apps/web
       - name: Check desktop transport and account boundaries without external APIs
-        run: node --test tests/unit/desktop-bridge.test.mjs tests/server/web-cache.test.mjs tests/server/web-session.test.mjs tests/server/web-accounts.test.mjs tests/server/account-gateway.test.mjs tests/server/project-workspaces.test.mjs tests/server/gateway-origins.test.mjs tests/server/proxy-auth.test.mjs
+        run: node --test tests/unit/desktop-bridge.test.mjs tests/server/web-cache.test.mjs tests/server/web-session.test.mjs tests/server/web-accounts.test.mjs tests/server/account-gateway.test.mjs tests/server/project-workspaces.test.mjs tests/server/gateway-origins.test.mjs tests/server/proxy-auth.test.mjs tests/server/public-catalog.test.mjs
       - run: docker compose config --quiet
       - run: npx playwright install --with-deps chromium
         working-directory: apps/web

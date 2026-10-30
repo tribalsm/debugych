@@ -1,9 +1,21 @@
 {
   "version": 1,
-  "projectId": "78167145-424b-48a8-b3f9-6eefa284f3c3",
-  "notice": "Публичное демо: сохранённые контрольные запуски gVisor. Тесты и патч подготовлены для проверки инфраструктуры, не сгенерированы LLM в этом показе. Только просмотр.",
+  "projectId": "a101d859-656a-4eb1-96e9-8157696a963b",
+  "notice": "Подготовленные Python и TypeScript контроли с реальными сохранёнными gVisor-наблюдениями. Только просмотр, без новой AI-генерации. Исторические live AI-записи доступны отдельно на главной.",
   "routes": {
     "/api/projects": [
+      {
+        "id": "a101d859-656a-4eb1-96e9-8157696a963b",
+        "name": "Python · доставка и границы · gVisor",
+        "demo": false,
+        "created_at": "2026-10-30T07:45:08.705775+00:00"
+      },
+      {
+        "id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+        "name": "TypeScript · доставка и границы · gVisor",
+        "demo": false,
+        "created_at": "2026-10-30T07:45:08.705775+00:00"
+      },
       {
         "id": "78167145-424b-48a8-b3f9-6eefa284f3c3",
         "name": "Server 1.0 offline control",
@@ -2238,6 +2250,2707 @@
       "sandbox_configured": true,
       "sandbox_available": false,
       "playwright_available": false
+    },
+    "/api/projects/a101d859-656a-4eb1-96e9-8157696a963b": {
+      "id": "a101d859-656a-4eb1-96e9-8157696a963b",
+      "name": "Python · доставка и границы · gVisor",
+      "demo": false,
+      "created_at": "2026-10-30T07:45:08.705775+00:00"
+    },
+    "/api/projects/a101d859-656a-4eb1-96e9-8157696a963b/requirements": [
+      {
+        "id": "42babf60-8da0-421b-975d-aae121379906",
+        "key": "R1",
+        "text": "Shipping is free when total is at least 500 cents. Below 500 cents shipping costs 60 cents.",
+        "source": "requirements.md"
+      },
+      {
+        "id": "c52bfe0b-013f-48f6-a033-3f37f93e3d5f",
+        "key": "R2",
+        "text": "Negative amounts are rejected. Members pay 30 cents. These paths are intentionally not covered by this small demonstration suite.",
+        "source": "requirements.md"
+      }
+    ],
+    "/api/projects/a101d859-656a-4eb1-96e9-8157696a963b/test-cases": [
+      {
+        "id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+        "project_id": "a101d859-656a-4eb1-96e9-8157696a963b",
+        "requirement_id": "42babf60-8da0-421b-975d-aae121379906",
+        "requirement_key": "R1",
+        "title": "Граница бесплатной доставки",
+        "framework": "pytest",
+        "code": "from shipping import shipping\ndef test_below_threshold(): assert shipping(499) == 60\ndef test_exact_threshold(): assert shipping(500) == 0\ndef test_above_threshold(): assert shipping(501) == 0\n",
+        "origin": "prepared-demo",
+        "status": "validated",
+        "gherkin": "Feature: Shipping threshold\n  Scenario: Exact threshold\n    Given a non-member amount of 500 cents\n    When shipping is calculated\n    Then shipping costs 0 cents",
+        "test_sha256": "983623a21bdf4562f4fef95b938404ff2860efc28f90c39f167d6f4876861ef8"
+      }
+    ],
+    "/api/projects/a101d859-656a-4eb1-96e9-8157696a963b/files": [
+      {
+        "id": "68c17034-3ef6-41cd-9927-6ef8f4e2f8c7",
+        "name": "shipping.py",
+        "size": 181
+      },
+      {
+        "id": "f1ecd8b6-f6c5-4dd5-b6e2-d13da8456eab",
+        "name": "requirements.md",
+        "size": 220
+      }
+    ],
+    "/api/projects/a101d859-656a-4eb1-96e9-8157696a963b/runs": [
+      {
+        "id": "88467e15-389a-4533-99d2-da59c9a65ed3",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.747,
+        "passed": 2,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_below_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_exact_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "failed",
+            "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+            "duration": 0.001
+          },
+          {
+            "name": "test_above_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": ".F.                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________________ test_exact_threshold _____________________________\n\n>   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_d62c66672c4d470784abb394e91c75fe.py::test_exact_threshold\n1 failed, 2 passed in 0.04s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 71.42857142857143,
+            "covered_lines": 6,
+            "num_statements": 8,
+            "covered_branches": 4,
+            "num_branches": 6
+          },
+          "files": {
+            "shipping.py": {
+              "executed_lines": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "missing_lines": [
+                3,
+                5
+              ]
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "46028db9f66c227e08d10189d1a2b51a754910346dbc1a347847e276fc824e41",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 1.17,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "ae3bb9cc51fd430c9efa107a1ea710517090826ec3d82c2c7926c484ce6ebb78",
+        "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1",
+        "operation": "run",
+        "project_id": "a101d859-656a-4eb1-96e9-8157696a963b",
+        "created_at": "2026-10-30T07:45:08.705775+00:00"
+      },
+      {
+        "id": "7f94f0c4-9f0f-450b-9565-11337f3a1bc9",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.63,
+        "passed": 2,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_below_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_exact_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "failed",
+            "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+            "duration": 0.001
+          },
+          {
+            "name": "test_above_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": ".F.                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________________ test_exact_threshold _____________________________\n\n>   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_d62c66672c4d470784abb394e91c75fe.py::test_exact_threshold\n1 failed, 2 passed in 0.05s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 71.42857142857143,
+            "covered_lines": 6,
+            "num_statements": 8,
+            "covered_branches": 4,
+            "num_branches": 6
+          },
+          "files": {
+            "shipping.py": {
+              "executed_lines": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "missing_lines": [
+                3,
+                5
+              ]
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "9d310652d1d14278bcce5de6c01d048dbfeecd6279a7470734e519766caf7b51",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.917,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "ae3bb9cc51fd430c9efa107a1ea710517090826ec3d82c2c7926c484ce6ebb78",
+        "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1",
+        "operation": "confirm_proof",
+        "project_id": "a101d859-656a-4eb1-96e9-8157696a963b",
+        "bug_id": "f86da595-7dc4-451e-b583-d112c3dca5d6",
+        "created_at": "2026-10-30T07:45:08.705775+00:00",
+        "replay": {
+          "id": "7f94f0c4-9f0f-450b-9565-11337f3a1bc9",
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 1,
+          "duration": 0.63,
+          "passed": 2,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_below_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.002
+            },
+            {
+              "name": "test_exact_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "failed",
+              "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+              "duration": 0.001
+            },
+            {
+              "name": "test_above_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": ".F.                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________________ test_exact_threshold _____________________________\n\n>   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_d62c66672c4d470784abb394e91c75fe.py::test_exact_threshold\n1 failed, 2 passed in 0.05s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 71.42857142857143,
+              "covered_lines": 6,
+              "num_statements": 8,
+              "covered_branches": 4,
+              "num_branches": 6
+            },
+            "files": {
+              "shipping.py": {
+                "executed_lines": [
+                  1,
+                  2,
+                  4,
+                  6,
+                  7,
+                  8
+                ],
+                "missing_lines": [
+                  3,
+                  5
+                ]
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "9d310652d1d14278bcce5de6c01d048dbfeecd6279a7470734e519766caf7b51",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 0.917,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation",
+          "source_sha256": "ae3bb9cc51fd430c9efa107a1ea710517090826ec3d82c2c7926c484ce6ebb78",
+          "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1"
+        }
+      },
+      {
+        "id": "6348faa3-7781-4d3c-b8c5-52a407c510b4",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.688,
+        "passed": 3,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_below_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_exact_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_above_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "...                                                                      [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n3 passed in 0.03s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 71.42857142857143,
+            "covered_lines": 6,
+            "num_statements": 8,
+            "covered_branches": 4,
+            "num_branches": 6
+          },
+          "files": {
+            "shipping.py": {
+              "executed_lines": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "missing_lines": [
+                3,
+                5
+              ]
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "027bb79d0be1afb87a9ca5793d07f48af73799c8928a80e987dc8d0c5bf6c1c4",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 1.002,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "edf8728cbc91f42f4981e0234f6ad7a1bfcc84cebab8ab0654fc4f8309f311b5",
+        "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1",
+        "operation": "verify",
+        "project_id": "a101d859-656a-4eb1-96e9-8157696a963b",
+        "fix_id": "5de6b758-06a1-479c-9c23-584adfdf80a2",
+        "created_at": "2026-10-30T07:45:08.705775+00:00",
+        "verified": true,
+        "baseline": {
+          "id": "7f94f0c4-9f0f-450b-9565-11337f3a1bc9",
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 1,
+          "duration": 0.63,
+          "passed": 2,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_below_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.002
+            },
+            {
+              "name": "test_exact_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "failed",
+              "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+              "duration": 0.001
+            },
+            {
+              "name": "test_above_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": ".F.                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________________ test_exact_threshold _____________________________\n\n>   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_d62c66672c4d470784abb394e91c75fe.py::test_exact_threshold\n1 failed, 2 passed in 0.05s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 71.42857142857143,
+              "covered_lines": 6,
+              "num_statements": 8,
+              "covered_branches": 4,
+              "num_branches": 6
+            },
+            "files": {
+              "shipping.py": {
+                "executed_lines": [
+                  1,
+                  2,
+                  4,
+                  6,
+                  7,
+                  8
+                ],
+                "missing_lines": [
+                  3,
+                  5
+                ]
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "9d310652d1d14278bcce5de6c01d048dbfeecd6279a7470734e519766caf7b51",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 0.917,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation",
+          "source_sha256": "ae3bb9cc51fd430c9efa107a1ea710517090826ec3d82c2c7926c484ce6ebb78",
+          "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1"
+        },
+        "focused": {
+          "id": "9560d897-cd5e-433f-af29-0ba7d53d1e25",
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 0,
+          "duration": 0.704,
+          "passed": 3,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_below_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            },
+            {
+              "name": "test_exact_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.002
+            },
+            {
+              "name": "test_above_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.0
+            }
+          ],
+          "logs": "...                                                                      [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n3 passed in 0.02s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 71.42857142857143,
+              "covered_lines": 6,
+              "num_statements": 8,
+              "covered_branches": 4,
+              "num_branches": 6
+            },
+            "files": {
+              "shipping.py": {
+                "executed_lines": [
+                  1,
+                  2,
+                  4,
+                  6,
+                  7,
+                  8
+                ],
+                "missing_lines": [
+                  3,
+                  5
+                ]
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "368eed9925093e2c929660cc4d6fb43b6b08546c098312031a96afc589640710",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 0.985,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation",
+          "source_sha256": "edf8728cbc91f42f4981e0234f6ad7a1bfcc84cebab8ab0654fc4f8309f311b5",
+          "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1"
+        },
+        "regression": {
+          "id": "6348faa3-7781-4d3c-b8c5-52a407c510b4",
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 0,
+          "duration": 0.688,
+          "passed": 3,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "test_below_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            },
+            {
+              "name": "test_exact_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            },
+            {
+              "name": "test_above_threshold",
+              "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+              "classname": "test_d62c66672c4d470784abb394e91c75fe",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.001
+            }
+          ],
+          "logs": "...                                                                      [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n3 passed in 0.03s\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 71.42857142857143,
+              "covered_lines": 6,
+              "num_statements": 8,
+              "covered_branches": 4,
+              "num_branches": 6
+            },
+            "files": {
+              "shipping.py": {
+                "executed_lines": [
+                  1,
+                  2,
+                  4,
+                  6,
+                  7,
+                  8
+                ],
+                "missing_lines": [
+                  3,
+                  5
+                ]
+              }
+            }
+          },
+          "coverage_kind": null,
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "027bb79d0be1afb87a9ca5793d07f48af73799c8928a80e987dc8d0c5bf6c1c4",
+          "runtime": "runsc",
+          "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+          "supervisor_duration": 1.002,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation",
+          "source_sha256": "edf8728cbc91f42f4981e0234f6ad7a1bfcc84cebab8ab0654fc4f8309f311b5",
+          "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1"
+        },
+        "assessment": {
+          "original_reproduced": true,
+          "original_fixed": true,
+          "regressions_absent": true,
+          "same_test_cases": true,
+          "tests_unchanged": true,
+          "full_correctness_proven": false,
+          "regression_cases_checked": 2
+        }
+      }
+    ],
+    "/api/projects/a101d859-656a-4eb1-96e9-8157696a963b/fixes": [
+      {
+        "id": "5de6b758-06a1-479c-9c23-584adfdf80a2",
+        "project_id": "a101d859-656a-4eb1-96e9-8157696a963b",
+        "bug_id": "f86da595-7dc4-451e-b583-d112c3dca5d6",
+        "diff": "--- a/shipping.py\n+++ b/shipping.py\n@@ -3,6 +3,6 @@\n         raise ValueError(\"Negative amount\")\n     if member:\n         return 30\n-    if total > 500:\n+    if total >= 500:\n         return 0\n     return 60\n",
+        "origin": "prepared-demo",
+        "verified": true,
+        "applied": false,
+        "patch_sha256": "59d02d8bfb85d0a2408be2a9f360107e1c999c5d88a561f19dc2a9561c4f9412",
+        "verification_id": "6348faa3-7781-4d3c-b8c5-52a407c510b4",
+        "assessment": {
+          "original_reproduced": true,
+          "original_fixed": true,
+          "regressions_absent": true,
+          "same_test_cases": true,
+          "tests_unchanged": true,
+          "full_correctness_proven": false,
+          "regression_cases_checked": 2
+        },
+        "explanation": "Подготовленный минимальный diff. Проверены кандидат и полный демонстрационный набор в двух отдельных gVisor-контейнерах. Исходные проекты не изменялись."
+      }
+    ],
+    "/api/projects/a101d859-656a-4eb1-96e9-8157696a963b/ai-statistics": {
+      "attempts": 0,
+      "succeeded": 0,
+      "failed": 0,
+      "reserved_tokens": 0,
+      "reserved_cost_micro_usd": 0,
+      "calls": [],
+      "notice": "Подготовленные тесты. LLM не запускалась."
+    },
+    "/api/bugs?project_id=a101d859-656a-4eb1-96e9-8157696a963b": [
+      {
+        "id": "f86da595-7dc4-451e-b583-d112c3dca5d6",
+        "project_id": "a101d859-656a-4eb1-96e9-8157696a963b",
+        "title": "Доставка платная при точной границе 500",
+        "framework": "pytest",
+        "status": "fix_verified",
+        "file": "shipping.py",
+        "line": 6,
+        "requirement": "R1",
+        "expected": "shipping(500) returns 0 cents.",
+        "actual": "shipping(500) returns 60 cents.",
+        "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+        "code": "from shipping import shipping\ndef test_below_threshold(): assert shipping(499) == 60\ndef test_exact_threshold(): assert shipping(500) == 0\ndef test_above_threshold(): assert shipping(501) == 0\n",
+        "run_id": "88467e15-389a-4533-99d2-da59c9a65ed3",
+        "current_fix_id": "5de6b758-06a1-479c-9c23-584adfdf80a2",
+        "description": "Подготовленный контроль, не AI-генерация. Ожидание явно задано требованием R1. Падение повторено в отдельном gVisor-контейнере с тем же образом и неизменными тестами.",
+        "steps": [
+          "Открыть неизменный контрольный снимок.",
+          "Выполнить тест точной границы 500.",
+          "Сравнить 60 с ожидаемыми 0 центами."
+        ],
+        "recommendation": "Проверить включение границы в условие бесплатной доставки.",
+        "confirmation_basis": "Документированный контроль R1; отдельное повторное assertion-падение в runsc. Это подготовленный пример, не новый LLM Bug Proof."
+      }
+    ],
+    "/api/runs/88467e15-389a-4533-99d2-da59c9a65ed3": {
+      "id": "88467e15-389a-4533-99d2-da59c9a65ed3",
+      "status": "completed",
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 1,
+      "duration": 0.747,
+      "passed": 2,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "test_below_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_exact_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "failed",
+          "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+          "duration": 0.001
+        },
+        {
+          "name": "test_above_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "logs": ".F.                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________________ test_exact_threshold _____________________________\n\n>   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_d62c66672c4d470784abb394e91c75fe.py::test_exact_threshold\n1 failed, 2 passed in 0.04s\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 71.42857142857143,
+          "covered_lines": 6,
+          "num_statements": 8,
+          "covered_branches": 4,
+          "num_branches": 6
+        },
+        "files": {
+          "shipping.py": {
+            "executed_lines": [
+              1,
+              2,
+              4,
+              6,
+              7,
+              8
+            ],
+            "missing_lines": [
+              3,
+              5
+            ]
+          }
+        }
+      },
+      "coverage_kind": null,
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "46028db9f66c227e08d10189d1a2b51a754910346dbc1a347847e276fc824e41",
+      "runtime": "runsc",
+      "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+      "supervisor_duration": 1.17,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "source_sha256": "ae3bb9cc51fd430c9efa107a1ea710517090826ec3d82c2c7926c484ce6ebb78",
+      "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1",
+      "operation": "run",
+      "project_id": "a101d859-656a-4eb1-96e9-8157696a963b",
+      "created_at": "2026-10-30T07:45:08.705775+00:00"
+    },
+    "/api/runs/88467e15-389a-4533-99d2-da59c9a65ed3/coverage": {
+      "totals": {
+        "percent_covered": 71.42857142857143,
+        "covered_lines": 6,
+        "num_statements": 8,
+        "covered_branches": 4,
+        "num_branches": 6
+      },
+      "files": {
+        "shipping.py": {
+          "executed_lines": [
+            1,
+            2,
+            4,
+            6,
+            7,
+            8
+          ],
+          "missing_lines": [
+            3,
+            5
+          ]
+        }
+      }
+    },
+    "/api/runs/88467e15-389a-4533-99d2-da59c9a65ed3/artifacts": {
+      "logs": ".F.                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________________ test_exact_threshold _____________________________\n\n>   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_d62c66672c4d470784abb394e91c75fe.py::test_exact_threshold\n1 failed, 2 passed in 0.04s\n",
+      "cases": [
+        {
+          "name": "test_below_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_exact_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "failed",
+          "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+          "duration": 0.001
+        },
+        {
+          "name": "test_above_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "artifacts": []
+    },
+    "/api/runs/7f94f0c4-9f0f-450b-9565-11337f3a1bc9": {
+      "id": "7f94f0c4-9f0f-450b-9565-11337f3a1bc9",
+      "status": "completed",
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 1,
+      "duration": 0.63,
+      "passed": 2,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "test_below_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.002
+        },
+        {
+          "name": "test_exact_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "failed",
+          "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+          "duration": 0.001
+        },
+        {
+          "name": "test_above_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "logs": ".F.                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________________ test_exact_threshold _____________________________\n\n>   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_d62c66672c4d470784abb394e91c75fe.py::test_exact_threshold\n1 failed, 2 passed in 0.05s\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 71.42857142857143,
+          "covered_lines": 6,
+          "num_statements": 8,
+          "covered_branches": 4,
+          "num_branches": 6
+        },
+        "files": {
+          "shipping.py": {
+            "executed_lines": [
+              1,
+              2,
+              4,
+              6,
+              7,
+              8
+            ],
+            "missing_lines": [
+              3,
+              5
+            ]
+          }
+        }
+      },
+      "coverage_kind": null,
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "9d310652d1d14278bcce5de6c01d048dbfeecd6279a7470734e519766caf7b51",
+      "runtime": "runsc",
+      "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+      "supervisor_duration": 0.917,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "source_sha256": "ae3bb9cc51fd430c9efa107a1ea710517090826ec3d82c2c7926c484ce6ebb78",
+      "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1",
+      "operation": "confirm_proof",
+      "project_id": "a101d859-656a-4eb1-96e9-8157696a963b",
+      "bug_id": "f86da595-7dc4-451e-b583-d112c3dca5d6",
+      "created_at": "2026-10-30T07:45:08.705775+00:00",
+      "replay": {
+        "id": "7f94f0c4-9f0f-450b-9565-11337f3a1bc9",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.63,
+        "passed": 2,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_below_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_exact_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "failed",
+            "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+            "duration": 0.001
+          },
+          {
+            "name": "test_above_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": ".F.                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________________ test_exact_threshold _____________________________\n\n>   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_d62c66672c4d470784abb394e91c75fe.py::test_exact_threshold\n1 failed, 2 passed in 0.05s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 71.42857142857143,
+            "covered_lines": 6,
+            "num_statements": 8,
+            "covered_branches": 4,
+            "num_branches": 6
+          },
+          "files": {
+            "shipping.py": {
+              "executed_lines": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "missing_lines": [
+                3,
+                5
+              ]
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "9d310652d1d14278bcce5de6c01d048dbfeecd6279a7470734e519766caf7b51",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.917,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "ae3bb9cc51fd430c9efa107a1ea710517090826ec3d82c2c7926c484ce6ebb78",
+        "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1"
+      }
+    },
+    "/api/runs/7f94f0c4-9f0f-450b-9565-11337f3a1bc9/coverage": {
+      "totals": {
+        "percent_covered": 71.42857142857143,
+        "covered_lines": 6,
+        "num_statements": 8,
+        "covered_branches": 4,
+        "num_branches": 6
+      },
+      "files": {
+        "shipping.py": {
+          "executed_lines": [
+            1,
+            2,
+            4,
+            6,
+            7,
+            8
+          ],
+          "missing_lines": [
+            3,
+            5
+          ]
+        }
+      }
+    },
+    "/api/runs/7f94f0c4-9f0f-450b-9565-11337f3a1bc9/artifacts": {
+      "logs": ".F.                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________________ test_exact_threshold _____________________________\n\n>   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_d62c66672c4d470784abb394e91c75fe.py::test_exact_threshold\n1 failed, 2 passed in 0.05s\n",
+      "cases": [
+        {
+          "name": "test_below_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.002
+        },
+        {
+          "name": "test_exact_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "failed",
+          "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+          "duration": 0.001
+        },
+        {
+          "name": "test_above_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "artifacts": []
+    },
+    "/api/runs/6348faa3-7781-4d3c-b8c5-52a407c510b4": {
+      "id": "6348faa3-7781-4d3c-b8c5-52a407c510b4",
+      "status": "completed",
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 0,
+      "duration": 0.688,
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "test_below_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_exact_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_above_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "logs": "...                                                                      [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n3 passed in 0.03s\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 71.42857142857143,
+          "covered_lines": 6,
+          "num_statements": 8,
+          "covered_branches": 4,
+          "num_branches": 6
+        },
+        "files": {
+          "shipping.py": {
+            "executed_lines": [
+              1,
+              2,
+              4,
+              6,
+              7,
+              8
+            ],
+            "missing_lines": [
+              3,
+              5
+            ]
+          }
+        }
+      },
+      "coverage_kind": null,
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "027bb79d0be1afb87a9ca5793d07f48af73799c8928a80e987dc8d0c5bf6c1c4",
+      "runtime": "runsc",
+      "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+      "supervisor_duration": 1.002,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "source_sha256": "edf8728cbc91f42f4981e0234f6ad7a1bfcc84cebab8ab0654fc4f8309f311b5",
+      "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1",
+      "operation": "verify",
+      "project_id": "a101d859-656a-4eb1-96e9-8157696a963b",
+      "fix_id": "5de6b758-06a1-479c-9c23-584adfdf80a2",
+      "created_at": "2026-10-30T07:45:08.705775+00:00",
+      "verified": true,
+      "baseline": {
+        "id": "7f94f0c4-9f0f-450b-9565-11337f3a1bc9",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 0.63,
+        "passed": 2,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_below_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_exact_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "failed",
+            "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+            "duration": 0.001
+          },
+          {
+            "name": "test_above_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": ".F.                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________________ test_exact_threshold _____________________________\n\n>   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n=========================== short test summary info ============================\nFAILED job/tests/test_d62c66672c4d470784abb394e91c75fe.py::test_exact_threshold\n1 failed, 2 passed in 0.05s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 71.42857142857143,
+            "covered_lines": 6,
+            "num_statements": 8,
+            "covered_branches": 4,
+            "num_branches": 6
+          },
+          "files": {
+            "shipping.py": {
+              "executed_lines": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "missing_lines": [
+                3,
+                5
+              ]
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "9d310652d1d14278bcce5de6c01d048dbfeecd6279a7470734e519766caf7b51",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.917,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "ae3bb9cc51fd430c9efa107a1ea710517090826ec3d82c2c7926c484ce6ebb78",
+        "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1"
+      },
+      "focused": {
+        "id": "9560d897-cd5e-433f-af29-0ba7d53d1e25",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.704,
+        "passed": 3,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_below_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_exact_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.002
+          },
+          {
+            "name": "test_above_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.0
+          }
+        ],
+        "logs": "...                                                                      [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n3 passed in 0.02s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 71.42857142857143,
+            "covered_lines": 6,
+            "num_statements": 8,
+            "covered_branches": 4,
+            "num_branches": 6
+          },
+          "files": {
+            "shipping.py": {
+              "executed_lines": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "missing_lines": [
+                3,
+                5
+              ]
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "368eed9925093e2c929660cc4d6fb43b6b08546c098312031a96afc589640710",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 0.985,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "edf8728cbc91f42f4981e0234f6ad7a1bfcc84cebab8ab0654fc4f8309f311b5",
+        "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1"
+      },
+      "regression": {
+        "id": "6348faa3-7781-4d3c-b8c5-52a407c510b4",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 0.688,
+        "passed": 3,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "test_below_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_exact_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          },
+          {
+            "name": "test_above_threshold",
+            "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+            "classname": "test_d62c66672c4d470784abb394e91c75fe",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.001
+          }
+        ],
+        "logs": "...                                                                      [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n3 passed in 0.03s\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 71.42857142857143,
+            "covered_lines": 6,
+            "num_statements": 8,
+            "covered_branches": 4,
+            "num_branches": 6
+          },
+          "files": {
+            "shipping.py": {
+              "executed_lines": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "missing_lines": [
+                3,
+                5
+              ]
+            }
+          }
+        },
+        "coverage_kind": null,
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "027bb79d0be1afb87a9ca5793d07f48af73799c8928a80e987dc8d0c5bf6c1c4",
+        "runtime": "runsc",
+        "image_id": "sha256:d761122f4c34631d3efddc4acc5d52f86be9bab42c61d7a31e49d61a7ec4b5c3",
+        "supervisor_duration": 1.002,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "edf8728cbc91f42f4981e0234f6ad7a1bfcc84cebab8ab0654fc4f8309f311b5",
+        "tests_sha256": "a81bd5689adb25d0037f52394bec502feeb719d72e2256bdb1fb3b4ea71c3df1"
+      },
+      "assessment": {
+        "original_reproduced": true,
+        "original_fixed": true,
+        "regressions_absent": true,
+        "same_test_cases": true,
+        "tests_unchanged": true,
+        "full_correctness_proven": false,
+        "regression_cases_checked": 2
+      }
+    },
+    "/api/runs/6348faa3-7781-4d3c-b8c5-52a407c510b4/coverage": {
+      "totals": {
+        "percent_covered": 71.42857142857143,
+        "covered_lines": 6,
+        "num_statements": 8,
+        "covered_branches": 4,
+        "num_branches": 6
+      },
+      "files": {
+        "shipping.py": {
+          "executed_lines": [
+            1,
+            2,
+            4,
+            6,
+            7,
+            8
+          ],
+          "missing_lines": [
+            3,
+            5
+          ]
+        }
+      }
+    },
+    "/api/runs/6348faa3-7781-4d3c-b8c5-52a407c510b4/artifacts": {
+      "logs": "...                                                                      [100%]\n--------------- generated xml file: /tmp/job/reports/results.xml ---------------\n3 passed in 0.03s\n",
+      "cases": [
+        {
+          "name": "test_below_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_exact_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        },
+        {
+          "name": "test_above_threshold",
+          "test_id": "d62c6667-2c4d-4707-84ab-b394e91c75fe",
+          "classname": "test_d62c66672c4d470784abb394e91c75fe",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.001
+        }
+      ],
+      "artifacts": []
+    },
+    "/api/bugs/f86da595-7dc4-451e-b583-d112c3dca5d6": {
+      "id": "f86da595-7dc4-451e-b583-d112c3dca5d6",
+      "project_id": "a101d859-656a-4eb1-96e9-8157696a963b",
+      "title": "Доставка платная при точной границе 500",
+      "framework": "pytest",
+      "status": "fix_verified",
+      "file": "shipping.py",
+      "line": 6,
+      "requirement": "R1",
+      "expected": "shipping(500) returns 0 cents.",
+      "actual": "shipping(500) returns 60 cents.",
+      "traceback": ">   def test_exact_threshold(): assert shipping(500) == 0\nE   assert 60 == 0\nE    +  where 60 = shipping(500)\n\njob/tests/test_d62c66672c4d470784abb394e91c75fe.py:3: AssertionError",
+      "code": "from shipping import shipping\ndef test_below_threshold(): assert shipping(499) == 60\ndef test_exact_threshold(): assert shipping(500) == 0\ndef test_above_threshold(): assert shipping(501) == 0\n",
+      "run_id": "88467e15-389a-4533-99d2-da59c9a65ed3",
+      "current_fix_id": "5de6b758-06a1-479c-9c23-584adfdf80a2",
+      "description": "Подготовленный контроль, не AI-генерация. Ожидание явно задано требованием R1. Падение повторено в отдельном gVisor-контейнере с тем же образом и неизменными тестами.",
+      "steps": [
+        "Открыть неизменный контрольный снимок.",
+        "Выполнить тест точной границы 500.",
+        "Сравнить 60 с ожидаемыми 0 центами."
+      ],
+      "recommendation": "Проверить включение границы в условие бесплатной доставки.",
+      "confirmation_basis": "Документированный контроль R1; отдельное повторное assertion-падение в runsc. Это подготовленный пример, не новый LLM Bug Proof."
+    },
+    "/api/projects/2287580d-aebd-4b95-97c5-8a7ee0b306d4": {
+      "id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+      "name": "TypeScript · доставка и границы · gVisor",
+      "demo": false,
+      "created_at": "2026-10-30T07:45:08.705775+00:00"
+    },
+    "/api/projects/2287580d-aebd-4b95-97c5-8a7ee0b306d4/requirements": [
+      {
+        "id": "7843d099-85c6-4207-a7ba-c282c876de8c",
+        "key": "R1",
+        "text": "Shipping is free when total is at least 500 cents. Below 500 cents shipping costs 60 cents.",
+        "source": "requirements.md"
+      },
+      {
+        "id": "cd32d9d6-97d1-4c09-8b90-9e2920517abf",
+        "key": "R2",
+        "text": "Negative amounts are rejected. Members pay 30 cents. These paths are intentionally not covered by this small demonstration suite.",
+        "source": "requirements.md"
+      }
+    ],
+    "/api/projects/2287580d-aebd-4b95-97c5-8a7ee0b306d4/test-cases": [
+      {
+        "id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+        "project_id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+        "requirement_id": "7843d099-85c6-4207-a7ba-c282c876de8c",
+        "requirement_key": "R1",
+        "title": "Граница бесплатной доставки",
+        "framework": "playwright",
+        "code": "import {test,expect} from '@playwright/test';\ntest('Below threshold costs 60 cents',async({page})=>{\n await page.goto('/'); await page.getByLabel('Amount in cents').fill('499');\n await page.getByRole('button',{name:'Calculate'}).click();\n await expect(page.getByRole('status')).toHaveText('60');\n});\ntest('Exactly 500 cents has free shipping',async({page})=>{\n await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n await page.getByRole('button',{name:'Calculate'}).click();\n await expect(page.getByRole('status')).toHaveText('0');\n});\n",
+        "origin": "prepared-demo",
+        "status": "validated",
+        "gherkin": "Feature: Shipping threshold\n  Scenario: Exact threshold\n    Given a non-member amount of 500 cents\n    When shipping is calculated\n    Then shipping costs 0 cents",
+        "test_sha256": "b0bfc91aff5b526ca4c32d492d6947afbb1bac7608905bf889014c4ec92a2057"
+      }
+    ],
+    "/api/projects/2287580d-aebd-4b95-97c5-8a7ee0b306d4/files": [
+      {
+        "id": "4d87af3c-e345-4ff8-8d69-ab200602e738",
+        "name": "rules.ts",
+        "size": 198
+      },
+      {
+        "id": "888617d7-226e-4c54-a67d-35572a17a0fc",
+        "name": "index.html",
+        "size": 257
+      },
+      {
+        "id": "6217d93b-f456-4599-86f1-cc06ffcd4f1a",
+        "name": "main.ts",
+        "size": 193
+      },
+      {
+        "id": "7432e65e-b336-46ef-bbcf-4571246c3191",
+        "name": "requirements.md",
+        "size": 220
+      }
+    ],
+    "/api/projects/2287580d-aebd-4b95-97c5-8a7ee0b306d4/runs": [
+      {
+        "id": "fd288d44-e41a-43f0-a4c0-de6f12e6b908",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 8.576,
+        "passed": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "Below threshold costs 60 cents",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "passed",
+            "traceback": "",
+            "duration": 1.122
+          },
+          {
+            "name": "Exactly 500 cents has free shipping",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "failed",
+            "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+            "duration": 3.085
+          }
+        ],
+        "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=817\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  1) tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ─\n\n    Error: expect(locator).toHaveText(expected) failed\n\n    Locator:  getByRole('status')\n    Expected: \"0\"\n    Received: \"60\"\n    Timeout:  2500ms\n\n    Call log:\n      - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n      - waiting for getByRole('status')\n        9 × locator resolved to <output role=\"status\">60</output>\n          - unexpected value \"60\"\n\n\n       8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n       9 |  await page.getByRole('button',{name:'Calculate'}).click();\n    > 10 |  await expect(page.getByRole('status')).toHaveText('0');\n         |                                         ^\n      11 | });\n      12 |\n        at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41\n\n    Error Context: reports/results/test_d635f6efd0d74b579c50d-06c09-500-cents-has-free-shipping/error-context.md\n\n\n  1 failed\n    tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ──\n  1 passed (6.5s)\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 83.33,
+            "covered_lines": 5,
+            "num_statements": 6,
+            "covered_branches": 4,
+            "num_branches": 7
+          },
+          "files": {
+            "rules.ts": {
+              "executed_lines": [
+                2,
+                5,
+                6,
+                7
+              ],
+              "missing_lines": [
+                3
+              ]
+            },
+            "main.ts": {
+              "executed_lines": [
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": "istanbul-original-source",
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "fcc2c5f9b217cbd47e41f55c6bfd20b65bfa32f1ab175b059bbe9a0f377b0028",
+        "runtime": "runsc",
+        "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+        "supervisor_duration": 9.0,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "934b01b464353b55b6d0df6610b6d9b09dfd8cf679f379a8c2d59d363eaef781",
+        "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd",
+        "operation": "run",
+        "project_id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+        "created_at": "2026-10-30T07:45:08.705775+00:00"
+      },
+      {
+        "id": "3d63833b-f6ef-47d8-b217-3470d2567415",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 7.733,
+        "passed": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "Below threshold costs 60 cents",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.762
+          },
+          {
+            "name": "Exactly 500 cents has free shipping",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "failed",
+            "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+            "duration": 3.074
+          }
+        ],
+        "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=546\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  1) tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ─\n\n    Error: expect(locator).toHaveText(expected) failed\n\n    Locator:  getByRole('status')\n    Expected: \"0\"\n    Received: \"60\"\n    Timeout:  2500ms\n\n    Call log:\n      - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n      - waiting for getByRole('status')\n        9 × locator resolved to <output role=\"status\">60</output>\n          - unexpected value \"60\"\n\n\n       8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n       9 |  await page.getByRole('button',{name:'Calculate'}).click();\n    > 10 |  await expect(page.getByRole('status')).toHaveText('0');\n         |                                         ^\n      11 | });\n      12 |\n        at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41\n\n    Error Context: reports/results/test_d635f6efd0d74b579c50d-06c09-500-cents-has-free-shipping/error-context.md\n\n\n  1 failed\n    tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ──\n  1 passed (5.8s)\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 83.33,
+            "covered_lines": 5,
+            "num_statements": 6,
+            "covered_branches": 4,
+            "num_branches": 7
+          },
+          "files": {
+            "rules.ts": {
+              "executed_lines": [
+                2,
+                5,
+                6,
+                7
+              ],
+              "missing_lines": [
+                3
+              ]
+            },
+            "main.ts": {
+              "executed_lines": [
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": "istanbul-original-source",
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "bed3cf8338f2fe104fabec80cb4f240291a22084d2f7e1ad6b7893d4981a6418",
+        "runtime": "runsc",
+        "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+        "supervisor_duration": 8.034,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "934b01b464353b55b6d0df6610b6d9b09dfd8cf679f379a8c2d59d363eaef781",
+        "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd",
+        "operation": "confirm_proof",
+        "project_id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+        "bug_id": "c3712c2c-78cf-4705-9510-293572890193",
+        "created_at": "2026-10-30T07:45:08.705775+00:00",
+        "replay": {
+          "id": "3d63833b-f6ef-47d8-b217-3470d2567415",
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 1,
+          "duration": 7.733,
+          "passed": 1,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "Below threshold costs 60 cents",
+              "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+              "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.762
+            },
+            {
+              "name": "Exactly 500 cents has free shipping",
+              "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+              "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+              "status": "failed",
+              "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+              "duration": 3.074
+            }
+          ],
+          "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=546\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  1) tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ─\n\n    Error: expect(locator).toHaveText(expected) failed\n\n    Locator:  getByRole('status')\n    Expected: \"0\"\n    Received: \"60\"\n    Timeout:  2500ms\n\n    Call log:\n      - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n      - waiting for getByRole('status')\n        9 × locator resolved to <output role=\"status\">60</output>\n          - unexpected value \"60\"\n\n\n       8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n       9 |  await page.getByRole('button',{name:'Calculate'}).click();\n    > 10 |  await expect(page.getByRole('status')).toHaveText('0');\n         |                                         ^\n      11 | });\n      12 |\n        at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41\n\n    Error Context: reports/results/test_d635f6efd0d74b579c50d-06c09-500-cents-has-free-shipping/error-context.md\n\n\n  1 failed\n    tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ──\n  1 passed (5.8s)\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 83.33,
+              "covered_lines": 5,
+              "num_statements": 6,
+              "covered_branches": 4,
+              "num_branches": 7
+            },
+            "files": {
+              "rules.ts": {
+                "executed_lines": [
+                  2,
+                  5,
+                  6,
+                  7
+                ],
+                "missing_lines": [
+                  3
+                ]
+              },
+              "main.ts": {
+                "executed_lines": [
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": "istanbul-original-source",
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "bed3cf8338f2fe104fabec80cb4f240291a22084d2f7e1ad6b7893d4981a6418",
+          "runtime": "runsc",
+          "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+          "supervisor_duration": 8.034,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation",
+          "source_sha256": "934b01b464353b55b6d0df6610b6d9b09dfd8cf679f379a8c2d59d363eaef781",
+          "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd"
+        }
+      },
+      {
+        "id": "38d8b089-bb92-426f-8fb1-d2b289fde316",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 5.1,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "Below threshold costs 60 cents",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.79
+          },
+          {
+            "name": "Exactly 500 cents has free shipping",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.588
+          }
+        ],
+        "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=532\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  2 passed (3.3s)\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 83.33,
+            "covered_lines": 5,
+            "num_statements": 6,
+            "covered_branches": 5,
+            "num_branches": 7
+          },
+          "files": {
+            "rules.ts": {
+              "executed_lines": [
+                2,
+                5,
+                6,
+                7
+              ],
+              "missing_lines": [
+                3
+              ]
+            },
+            "main.ts": {
+              "executed_lines": [
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": "istanbul-original-source",
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "4cd44fb2f2089cb02b993018ab9df7eea0a6ab775f5c4834a202af160228af79",
+        "runtime": "runsc",
+        "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+        "supervisor_duration": 5.362,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "809e5ae803d1c1c195e88ce221595b96b9211a3653430f0bbabfab1f8277885c",
+        "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd",
+        "operation": "verify",
+        "project_id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+        "fix_id": "0e40fcde-1bb3-4b44-970e-0f7876d8d953",
+        "created_at": "2026-10-30T07:45:08.705775+00:00",
+        "verified": true,
+        "baseline": {
+          "id": "3d63833b-f6ef-47d8-b217-3470d2567415",
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 1,
+          "duration": 7.733,
+          "passed": 1,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "Below threshold costs 60 cents",
+              "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+              "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.762
+            },
+            {
+              "name": "Exactly 500 cents has free shipping",
+              "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+              "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+              "status": "failed",
+              "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+              "duration": 3.074
+            }
+          ],
+          "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=546\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  1) tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ─\n\n    Error: expect(locator).toHaveText(expected) failed\n\n    Locator:  getByRole('status')\n    Expected: \"0\"\n    Received: \"60\"\n    Timeout:  2500ms\n\n    Call log:\n      - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n      - waiting for getByRole('status')\n        9 × locator resolved to <output role=\"status\">60</output>\n          - unexpected value \"60\"\n\n\n       8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n       9 |  await page.getByRole('button',{name:'Calculate'}).click();\n    > 10 |  await expect(page.getByRole('status')).toHaveText('0');\n         |                                         ^\n      11 | });\n      12 |\n        at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41\n\n    Error Context: reports/results/test_d635f6efd0d74b579c50d-06c09-500-cents-has-free-shipping/error-context.md\n\n\n  1 failed\n    tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ──\n  1 passed (5.8s)\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 83.33,
+              "covered_lines": 5,
+              "num_statements": 6,
+              "covered_branches": 4,
+              "num_branches": 7
+            },
+            "files": {
+              "rules.ts": {
+                "executed_lines": [
+                  2,
+                  5,
+                  6,
+                  7
+                ],
+                "missing_lines": [
+                  3
+                ]
+              },
+              "main.ts": {
+                "executed_lines": [
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": "istanbul-original-source",
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "bed3cf8338f2fe104fabec80cb4f240291a22084d2f7e1ad6b7893d4981a6418",
+          "runtime": "runsc",
+          "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+          "supervisor_duration": 8.034,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation",
+          "source_sha256": "934b01b464353b55b6d0df6610b6d9b09dfd8cf679f379a8c2d59d363eaef781",
+          "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd"
+        },
+        "focused": {
+          "id": "6df0db96-fab1-4a41-8daa-8629922d65d3",
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 0,
+          "duration": 5.162,
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "Below threshold costs 60 cents",
+              "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+              "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.768
+            },
+            {
+              "name": "Exactly 500 cents has free shipping",
+              "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+              "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.617
+            }
+          ],
+          "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=531\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  2 passed (3.3s)\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 83.33,
+              "covered_lines": 5,
+              "num_statements": 6,
+              "covered_branches": 5,
+              "num_branches": 7
+            },
+            "files": {
+              "rules.ts": {
+                "executed_lines": [
+                  2,
+                  5,
+                  6,
+                  7
+                ],
+                "missing_lines": [
+                  3
+                ]
+              },
+              "main.ts": {
+                "executed_lines": [
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": "istanbul-original-source",
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "6b7cb145d4f1db9f4c24a814273a8dab747ea0e7af87481346ff542564b4602b",
+          "runtime": "runsc",
+          "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+          "supervisor_duration": 5.409,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation",
+          "source_sha256": "809e5ae803d1c1c195e88ce221595b96b9211a3653430f0bbabfab1f8277885c",
+          "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd"
+        },
+        "regression": {
+          "id": "38d8b089-bb92-426f-8fb1-d2b289fde316",
+          "status": "completed",
+          "failure_kind": null,
+          "error": null,
+          "exit_code": 0,
+          "duration": 5.1,
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "cases": [
+            {
+              "name": "Below threshold costs 60 cents",
+              "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+              "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.79
+            },
+            {
+              "name": "Exactly 500 cents has free shipping",
+              "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+              "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+              "status": "passed",
+              "traceback": "",
+              "duration": 0.588
+            }
+          ],
+          "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=532\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  2 passed (3.3s)\n",
+          "coverage": {
+            "totals": {
+              "percent_covered": 83.33,
+              "covered_lines": 5,
+              "num_statements": 6,
+              "covered_branches": 5,
+              "num_branches": 7
+            },
+            "files": {
+              "rules.ts": {
+                "executed_lines": [
+                  2,
+                  5,
+                  6,
+                  7
+                ],
+                "missing_lines": [
+                  3
+                ]
+              },
+              "main.ts": {
+                "executed_lines": [
+                  2
+                ],
+                "missing_lines": []
+              }
+            }
+          },
+          "coverage_kind": "istanbul-original-source",
+          "artifacts": [],
+          "validation": null,
+          "snapshot_sha256": "4cd44fb2f2089cb02b993018ab9df7eea0a6ab775f5c4834a202af160228af79",
+          "runtime": "runsc",
+          "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+          "supervisor_duration": 5.362,
+          "trusted_demo": false,
+          "report_trust": "untrusted-project-observation",
+          "source_sha256": "809e5ae803d1c1c195e88ce221595b96b9211a3653430f0bbabfab1f8277885c",
+          "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd"
+        },
+        "assessment": {
+          "original_reproduced": true,
+          "original_fixed": true,
+          "regressions_absent": true,
+          "same_test_cases": true,
+          "tests_unchanged": true,
+          "full_correctness_proven": false,
+          "regression_cases_checked": 1
+        }
+      }
+    ],
+    "/api/projects/2287580d-aebd-4b95-97c5-8a7ee0b306d4/fixes": [
+      {
+        "id": "0e40fcde-1bb3-4b44-970e-0f7876d8d953",
+        "project_id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+        "bug_id": "c3712c2c-78cf-4705-9510-293572890193",
+        "diff": "--- a/rules.ts\n+++ b/rules.ts\n@@ -3,6 +3,6 @@\n     throw new Error('Negative amount');\n   }\n   if (member) return 30;\n-  if (total > 500) return 0;\n+  if (total >= 500) return 0;\n   return 60;\n }\n",
+        "origin": "prepared-demo",
+        "verified": true,
+        "applied": false,
+        "patch_sha256": "5c9c9d2d0f86ec37c57a700170a9b4fa8607d2b17f1609e17a594f94b01b9986",
+        "verification_id": "38d8b089-bb92-426f-8fb1-d2b289fde316",
+        "assessment": {
+          "original_reproduced": true,
+          "original_fixed": true,
+          "regressions_absent": true,
+          "same_test_cases": true,
+          "tests_unchanged": true,
+          "full_correctness_proven": false,
+          "regression_cases_checked": 1
+        },
+        "explanation": "Подготовленный минимальный diff. Проверены кандидат и полный демонстрационный набор в двух отдельных gVisor-контейнерах. Исходные проекты не изменялись."
+      }
+    ],
+    "/api/projects/2287580d-aebd-4b95-97c5-8a7ee0b306d4/ai-statistics": {
+      "attempts": 0,
+      "succeeded": 0,
+      "failed": 0,
+      "reserved_tokens": 0,
+      "reserved_cost_micro_usd": 0,
+      "calls": [],
+      "notice": "Подготовленные тесты. LLM не запускалась."
+    },
+    "/api/bugs?project_id=2287580d-aebd-4b95-97c5-8a7ee0b306d4": [
+      {
+        "id": "c3712c2c-78cf-4705-9510-293572890193",
+        "project_id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+        "title": "Доставка платная при точной границе 500",
+        "framework": "playwright",
+        "status": "fix_verified",
+        "file": "rules.ts",
+        "line": 6,
+        "requirement": "R1",
+        "expected": "shipping(500) returns 0 cents.",
+        "actual": "shipping(500) returns 60 cents.",
+        "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+        "code": "import {test,expect} from '@playwright/test';\ntest('Below threshold costs 60 cents',async({page})=>{\n await page.goto('/'); await page.getByLabel('Amount in cents').fill('499');\n await page.getByRole('button',{name:'Calculate'}).click();\n await expect(page.getByRole('status')).toHaveText('60');\n});\ntest('Exactly 500 cents has free shipping',async({page})=>{\n await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n await page.getByRole('button',{name:'Calculate'}).click();\n await expect(page.getByRole('status')).toHaveText('0');\n});\n",
+        "run_id": "fd288d44-e41a-43f0-a4c0-de6f12e6b908",
+        "current_fix_id": "0e40fcde-1bb3-4b44-970e-0f7876d8d953",
+        "description": "Подготовленный контроль, не AI-генерация. Ожидание явно задано требованием R1. Падение повторено в отдельном gVisor-контейнере с тем же образом и неизменными тестами.",
+        "steps": [
+          "Открыть неизменный контрольный снимок.",
+          "Выполнить тест точной границы 500.",
+          "Сравнить 60 с ожидаемыми 0 центами."
+        ],
+        "recommendation": "Проверить включение границы в условие бесплатной доставки.",
+        "confirmation_basis": "Документированный контроль R1; отдельное повторное assertion-падение в runsc. Это подготовленный пример, не новый LLM Bug Proof."
+      }
+    ],
+    "/api/runs/fd288d44-e41a-43f0-a4c0-de6f12e6b908": {
+      "id": "fd288d44-e41a-43f0-a4c0-de6f12e6b908",
+      "status": "completed",
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 1,
+      "duration": 8.576,
+      "passed": 1,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "Below threshold costs 60 cents",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "passed",
+          "traceback": "",
+          "duration": 1.122
+        },
+        {
+          "name": "Exactly 500 cents has free shipping",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "failed",
+          "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+          "duration": 3.085
+        }
+      ],
+      "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=817\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  1) tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ─\n\n    Error: expect(locator).toHaveText(expected) failed\n\n    Locator:  getByRole('status')\n    Expected: \"0\"\n    Received: \"60\"\n    Timeout:  2500ms\n\n    Call log:\n      - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n      - waiting for getByRole('status')\n        9 × locator resolved to <output role=\"status\">60</output>\n          - unexpected value \"60\"\n\n\n       8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n       9 |  await page.getByRole('button',{name:'Calculate'}).click();\n    > 10 |  await expect(page.getByRole('status')).toHaveText('0');\n         |                                         ^\n      11 | });\n      12 |\n        at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41\n\n    Error Context: reports/results/test_d635f6efd0d74b579c50d-06c09-500-cents-has-free-shipping/error-context.md\n\n\n  1 failed\n    tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ──\n  1 passed (6.5s)\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 83.33,
+          "covered_lines": 5,
+          "num_statements": 6,
+          "covered_branches": 4,
+          "num_branches": 7
+        },
+        "files": {
+          "rules.ts": {
+            "executed_lines": [
+              2,
+              5,
+              6,
+              7
+            ],
+            "missing_lines": [
+              3
+            ]
+          },
+          "main.ts": {
+            "executed_lines": [
+              2
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "coverage_kind": "istanbul-original-source",
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "fcc2c5f9b217cbd47e41f55c6bfd20b65bfa32f1ab175b059bbe9a0f377b0028",
+      "runtime": "runsc",
+      "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+      "supervisor_duration": 9.0,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "source_sha256": "934b01b464353b55b6d0df6610b6d9b09dfd8cf679f379a8c2d59d363eaef781",
+      "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd",
+      "operation": "run",
+      "project_id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+      "created_at": "2026-10-30T07:45:08.705775+00:00"
+    },
+    "/api/runs/fd288d44-e41a-43f0-a4c0-de6f12e6b908/coverage": {
+      "totals": {
+        "percent_covered": 83.33,
+        "covered_lines": 5,
+        "num_statements": 6,
+        "covered_branches": 4,
+        "num_branches": 7
+      },
+      "files": {
+        "rules.ts": {
+          "executed_lines": [
+            2,
+            5,
+            6,
+            7
+          ],
+          "missing_lines": [
+            3
+          ]
+        },
+        "main.ts": {
+          "executed_lines": [
+            2
+          ],
+          "missing_lines": []
+        }
+      }
+    },
+    "/api/runs/fd288d44-e41a-43f0-a4c0-de6f12e6b908/artifacts": {
+      "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=817\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  1) tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ─\n\n    Error: expect(locator).toHaveText(expected) failed\n\n    Locator:  getByRole('status')\n    Expected: \"0\"\n    Received: \"60\"\n    Timeout:  2500ms\n\n    Call log:\n      - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n      - waiting for getByRole('status')\n        9 × locator resolved to <output role=\"status\">60</output>\n          - unexpected value \"60\"\n\n\n       8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n       9 |  await page.getByRole('button',{name:'Calculate'}).click();\n    > 10 |  await expect(page.getByRole('status')).toHaveText('0');\n         |                                         ^\n      11 | });\n      12 |\n        at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41\n\n    Error Context: reports/results/test_d635f6efd0d74b579c50d-06c09-500-cents-has-free-shipping/error-context.md\n\n\n  1 failed\n    tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ──\n  1 passed (6.5s)\n",
+      "cases": [
+        {
+          "name": "Below threshold costs 60 cents",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "passed",
+          "traceback": "",
+          "duration": 1.122
+        },
+        {
+          "name": "Exactly 500 cents has free shipping",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "failed",
+          "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+          "duration": 3.085
+        }
+      ],
+      "artifacts": []
+    },
+    "/api/runs/3d63833b-f6ef-47d8-b217-3470d2567415": {
+      "id": "3d63833b-f6ef-47d8-b217-3470d2567415",
+      "status": "completed",
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 1,
+      "duration": 7.733,
+      "passed": 1,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "Below threshold costs 60 cents",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.762
+        },
+        {
+          "name": "Exactly 500 cents has free shipping",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "failed",
+          "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+          "duration": 3.074
+        }
+      ],
+      "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=546\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  1) tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ─\n\n    Error: expect(locator).toHaveText(expected) failed\n\n    Locator:  getByRole('status')\n    Expected: \"0\"\n    Received: \"60\"\n    Timeout:  2500ms\n\n    Call log:\n      - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n      - waiting for getByRole('status')\n        9 × locator resolved to <output role=\"status\">60</output>\n          - unexpected value \"60\"\n\n\n       8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n       9 |  await page.getByRole('button',{name:'Calculate'}).click();\n    > 10 |  await expect(page.getByRole('status')).toHaveText('0');\n         |                                         ^\n      11 | });\n      12 |\n        at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41\n\n    Error Context: reports/results/test_d635f6efd0d74b579c50d-06c09-500-cents-has-free-shipping/error-context.md\n\n\n  1 failed\n    tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ──\n  1 passed (5.8s)\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 83.33,
+          "covered_lines": 5,
+          "num_statements": 6,
+          "covered_branches": 4,
+          "num_branches": 7
+        },
+        "files": {
+          "rules.ts": {
+            "executed_lines": [
+              2,
+              5,
+              6,
+              7
+            ],
+            "missing_lines": [
+              3
+            ]
+          },
+          "main.ts": {
+            "executed_lines": [
+              2
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "coverage_kind": "istanbul-original-source",
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "bed3cf8338f2fe104fabec80cb4f240291a22084d2f7e1ad6b7893d4981a6418",
+      "runtime": "runsc",
+      "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+      "supervisor_duration": 8.034,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "source_sha256": "934b01b464353b55b6d0df6610b6d9b09dfd8cf679f379a8c2d59d363eaef781",
+      "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd",
+      "operation": "confirm_proof",
+      "project_id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+      "bug_id": "c3712c2c-78cf-4705-9510-293572890193",
+      "created_at": "2026-10-30T07:45:08.705775+00:00",
+      "replay": {
+        "id": "3d63833b-f6ef-47d8-b217-3470d2567415",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 7.733,
+        "passed": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "Below threshold costs 60 cents",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.762
+          },
+          {
+            "name": "Exactly 500 cents has free shipping",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "failed",
+            "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+            "duration": 3.074
+          }
+        ],
+        "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=546\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  1) tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ─\n\n    Error: expect(locator).toHaveText(expected) failed\n\n    Locator:  getByRole('status')\n    Expected: \"0\"\n    Received: \"60\"\n    Timeout:  2500ms\n\n    Call log:\n      - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n      - waiting for getByRole('status')\n        9 × locator resolved to <output role=\"status\">60</output>\n          - unexpected value \"60\"\n\n\n       8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n       9 |  await page.getByRole('button',{name:'Calculate'}).click();\n    > 10 |  await expect(page.getByRole('status')).toHaveText('0');\n         |                                         ^\n      11 | });\n      12 |\n        at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41\n\n    Error Context: reports/results/test_d635f6efd0d74b579c50d-06c09-500-cents-has-free-shipping/error-context.md\n\n\n  1 failed\n    tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ──\n  1 passed (5.8s)\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 83.33,
+            "covered_lines": 5,
+            "num_statements": 6,
+            "covered_branches": 4,
+            "num_branches": 7
+          },
+          "files": {
+            "rules.ts": {
+              "executed_lines": [
+                2,
+                5,
+                6,
+                7
+              ],
+              "missing_lines": [
+                3
+              ]
+            },
+            "main.ts": {
+              "executed_lines": [
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": "istanbul-original-source",
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "bed3cf8338f2fe104fabec80cb4f240291a22084d2f7e1ad6b7893d4981a6418",
+        "runtime": "runsc",
+        "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+        "supervisor_duration": 8.034,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "934b01b464353b55b6d0df6610b6d9b09dfd8cf679f379a8c2d59d363eaef781",
+        "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd"
+      }
+    },
+    "/api/runs/3d63833b-f6ef-47d8-b217-3470d2567415/coverage": {
+      "totals": {
+        "percent_covered": 83.33,
+        "covered_lines": 5,
+        "num_statements": 6,
+        "covered_branches": 4,
+        "num_branches": 7
+      },
+      "files": {
+        "rules.ts": {
+          "executed_lines": [
+            2,
+            5,
+            6,
+            7
+          ],
+          "missing_lines": [
+            3
+          ]
+        },
+        "main.ts": {
+          "executed_lines": [
+            2
+          ],
+          "missing_lines": []
+        }
+      }
+    },
+    "/api/runs/3d63833b-f6ef-47d8-b217-3470d2567415/artifacts": {
+      "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=546\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  1) tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ─\n\n    Error: expect(locator).toHaveText(expected) failed\n\n    Locator:  getByRole('status')\n    Expected: \"0\"\n    Received: \"60\"\n    Timeout:  2500ms\n\n    Call log:\n      - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n      - waiting for getByRole('status')\n        9 × locator resolved to <output role=\"status\">60</output>\n          - unexpected value \"60\"\n\n\n       8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n       9 |  await page.getByRole('button',{name:'Calculate'}).click();\n    > 10 |  await expect(page.getByRole('status')).toHaveText('0');\n         |                                         ^\n      11 | });\n      12 |\n        at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41\n\n    Error Context: reports/results/test_d635f6efd0d74b579c50d-06c09-500-cents-has-free-shipping/error-context.md\n\n\n  1 failed\n    tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ──\n  1 passed (5.8s)\n",
+      "cases": [
+        {
+          "name": "Below threshold costs 60 cents",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.762
+        },
+        {
+          "name": "Exactly 500 cents has free shipping",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "failed",
+          "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+          "duration": 3.074
+        }
+      ],
+      "artifacts": []
+    },
+    "/api/runs/38d8b089-bb92-426f-8fb1-d2b289fde316": {
+      "id": "38d8b089-bb92-426f-8fb1-d2b289fde316",
+      "status": "completed",
+      "failure_kind": null,
+      "error": null,
+      "exit_code": 0,
+      "duration": 5.1,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "Below threshold costs 60 cents",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.79
+        },
+        {
+          "name": "Exactly 500 cents has free shipping",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.588
+        }
+      ],
+      "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=532\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  2 passed (3.3s)\n",
+      "coverage": {
+        "totals": {
+          "percent_covered": 83.33,
+          "covered_lines": 5,
+          "num_statements": 6,
+          "covered_branches": 5,
+          "num_branches": 7
+        },
+        "files": {
+          "rules.ts": {
+            "executed_lines": [
+              2,
+              5,
+              6,
+              7
+            ],
+            "missing_lines": [
+              3
+            ]
+          },
+          "main.ts": {
+            "executed_lines": [
+              2
+            ],
+            "missing_lines": []
+          }
+        }
+      },
+      "coverage_kind": "istanbul-original-source",
+      "artifacts": [],
+      "validation": null,
+      "snapshot_sha256": "4cd44fb2f2089cb02b993018ab9df7eea0a6ab775f5c4834a202af160228af79",
+      "runtime": "runsc",
+      "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+      "supervisor_duration": 5.362,
+      "trusted_demo": false,
+      "report_trust": "untrusted-project-observation",
+      "source_sha256": "809e5ae803d1c1c195e88ce221595b96b9211a3653430f0bbabfab1f8277885c",
+      "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd",
+      "operation": "verify",
+      "project_id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+      "fix_id": "0e40fcde-1bb3-4b44-970e-0f7876d8d953",
+      "created_at": "2026-10-30T07:45:08.705775+00:00",
+      "verified": true,
+      "baseline": {
+        "id": "3d63833b-f6ef-47d8-b217-3470d2567415",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 1,
+        "duration": 7.733,
+        "passed": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "Below threshold costs 60 cents",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.762
+          },
+          {
+            "name": "Exactly 500 cents has free shipping",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "failed",
+            "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+            "duration": 3.074
+          }
+        ],
+        "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=546\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  1) tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ─\n\n    Error: expect(locator).toHaveText(expected) failed\n\n    Locator:  getByRole('status')\n    Expected: \"0\"\n    Received: \"60\"\n    Timeout:  2500ms\n\n    Call log:\n      - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n      - waiting for getByRole('status')\n        9 × locator resolved to <output role=\"status\">60</output>\n          - unexpected value \"60\"\n\n\n       8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n       9 |  await page.getByRole('button',{name:'Calculate'}).click();\n    > 10 |  await expect(page.getByRole('status')).toHaveText('0');\n         |                                         ^\n      11 | });\n      12 |\n        at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41\n\n    Error Context: reports/results/test_d635f6efd0d74b579c50d-06c09-500-cents-has-free-shipping/error-context.md\n\n\n  1 failed\n    tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping ──\n  1 passed (5.8s)\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 83.33,
+            "covered_lines": 5,
+            "num_statements": 6,
+            "covered_branches": 4,
+            "num_branches": 7
+          },
+          "files": {
+            "rules.ts": {
+              "executed_lines": [
+                2,
+                5,
+                6,
+                7
+              ],
+              "missing_lines": [
+                3
+              ]
+            },
+            "main.ts": {
+              "executed_lines": [
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": "istanbul-original-source",
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "bed3cf8338f2fe104fabec80cb4f240291a22084d2f7e1ad6b7893d4981a6418",
+        "runtime": "runsc",
+        "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+        "supervisor_duration": 8.034,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "934b01b464353b55b6d0df6610b6d9b09dfd8cf679f379a8c2d59d363eaef781",
+        "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd"
+      },
+      "focused": {
+        "id": "6df0db96-fab1-4a41-8daa-8629922d65d3",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 5.162,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "Below threshold costs 60 cents",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.768
+          },
+          {
+            "name": "Exactly 500 cents has free shipping",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.617
+          }
+        ],
+        "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=531\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  2 passed (3.3s)\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 83.33,
+            "covered_lines": 5,
+            "num_statements": 6,
+            "covered_branches": 5,
+            "num_branches": 7
+          },
+          "files": {
+            "rules.ts": {
+              "executed_lines": [
+                2,
+                5,
+                6,
+                7
+              ],
+              "missing_lines": [
+                3
+              ]
+            },
+            "main.ts": {
+              "executed_lines": [
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": "istanbul-original-source",
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "6b7cb145d4f1db9f4c24a814273a8dab747ea0e7af87481346ff542564b4602b",
+        "runtime": "runsc",
+        "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+        "supervisor_duration": 5.409,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "809e5ae803d1c1c195e88ce221595b96b9211a3653430f0bbabfab1f8277885c",
+        "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd"
+      },
+      "regression": {
+        "id": "38d8b089-bb92-426f-8fb1-d2b289fde316",
+        "status": "completed",
+        "failure_kind": null,
+        "error": null,
+        "exit_code": 0,
+        "duration": 5.1,
+        "passed": 2,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "name": "Below threshold costs 60 cents",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.79
+          },
+          {
+            "name": "Exactly 500 cents has free shipping",
+            "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+            "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+            "status": "passed",
+            "traceback": "",
+            "duration": 0.588
+          }
+        ],
+        "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=532\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  2 passed (3.3s)\n",
+        "coverage": {
+          "totals": {
+            "percent_covered": 83.33,
+            "covered_lines": 5,
+            "num_statements": 6,
+            "covered_branches": 5,
+            "num_branches": 7
+          },
+          "files": {
+            "rules.ts": {
+              "executed_lines": [
+                2,
+                5,
+                6,
+                7
+              ],
+              "missing_lines": [
+                3
+              ]
+            },
+            "main.ts": {
+              "executed_lines": [
+                2
+              ],
+              "missing_lines": []
+            }
+          }
+        },
+        "coverage_kind": "istanbul-original-source",
+        "artifacts": [],
+        "validation": null,
+        "snapshot_sha256": "4cd44fb2f2089cb02b993018ab9df7eea0a6ab775f5c4834a202af160228af79",
+        "runtime": "runsc",
+        "image_id": "sha256:149b961d2a6c2464af57d0ca7a8d0d31bd019a572ef294ab2aa669168cd40564",
+        "supervisor_duration": 5.362,
+        "trusted_demo": false,
+        "report_trust": "untrusted-project-observation",
+        "source_sha256": "809e5ae803d1c1c195e88ce221595b96b9211a3653430f0bbabfab1f8277885c",
+        "tests_sha256": "d90f19f36619a2ccda487f593f3e6f83313c0613b08f1811b90da1f281e4f5fd"
+      },
+      "assessment": {
+        "original_reproduced": true,
+        "original_fixed": true,
+        "regressions_absent": true,
+        "same_test_cases": true,
+        "tests_unchanged": true,
+        "full_correctness_proven": false,
+        "regression_cases_checked": 1
+      }
+    },
+    "/api/runs/38d8b089-bb92-426f-8fb1-d2b289fde316/coverage": {
+      "totals": {
+        "percent_covered": 83.33,
+        "covered_lines": 5,
+        "num_statements": 6,
+        "covered_branches": 5,
+        "num_branches": 7
+      },
+      "files": {
+        "rules.ts": {
+          "executed_lines": [
+            2,
+            5,
+            6,
+            7
+          ],
+          "missing_lines": [
+            3
+          ]
+        },
+        "main.ts": {
+          "executed_lines": [
+            2
+          ],
+          "missing_lines": []
+        }
+      }
+    },
+    "/api/runs/38d8b089-bb92-426f-8fb1-d2b289fde316/artifacts": {
+      "logs": "DEBUGYCH_SITE_READY\nDEBUGYCH_BROWSER_READY_MS=532\n\nRunning 2 tests using 1 worker\n\n[1/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:2:5 › Below threshold costs 60 cents\n[2/2] tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:7:5 › Exactly 500 cents has free shipping\n  2 passed (3.3s)\n",
+      "cases": [
+        {
+          "name": "Below threshold costs 60 cents",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.79
+        },
+        {
+          "name": "Exactly 500 cents has free shipping",
+          "test_id": "d635f6ef-d0d7-4b57-9c50-d4df97befb65",
+          "classname": "test_d635f6efd0d74b579c50d4df97befb65.spec.ts",
+          "status": "passed",
+          "traceback": "",
+          "duration": 0.588
+        }
+      ],
+      "artifacts": []
+    },
+    "/api/bugs/c3712c2c-78cf-4705-9510-293572890193": {
+      "id": "c3712c2c-78cf-4705-9510-293572890193",
+      "project_id": "2287580d-aebd-4b95-97c5-8a7ee0b306d4",
+      "title": "Доставка платная при точной границе 500",
+      "framework": "playwright",
+      "status": "fix_verified",
+      "file": "rules.ts",
+      "line": 6,
+      "requirement": "R1",
+      "expected": "shipping(500) returns 0 cents.",
+      "actual": "shipping(500) returns 60 cents.",
+      "traceback": "Error: expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"0\"\nReceived: \"60\"\nTimeout:  2500ms\n\nCall log:\n  - Expect \"toHaveText\" getByRole('status') with timeout 2500ms\n  - waiting for getByRole('status')\n    9 × locator resolved to <output role=\"status\">60</output>\n      - unexpected value \"60\"\n\n\n   8 |  await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n   9 |  await page.getByRole('button',{name:'Calculate'}).click();\n> 10 |  await expect(page.getByRole('status')).toHaveText('0');\n     |                                         ^\n  11 | });\n  12 |\n    at /tmp/job/tests/test_d635f6efd0d74b579c50d4df97befb65.spec.ts:10:41",
+      "code": "import {test,expect} from '@playwright/test';\ntest('Below threshold costs 60 cents',async({page})=>{\n await page.goto('/'); await page.getByLabel('Amount in cents').fill('499');\n await page.getByRole('button',{name:'Calculate'}).click();\n await expect(page.getByRole('status')).toHaveText('60');\n});\ntest('Exactly 500 cents has free shipping',async({page})=>{\n await page.goto('/'); await page.getByLabel('Amount in cents').fill('500');\n await page.getByRole('button',{name:'Calculate'}).click();\n await expect(page.getByRole('status')).toHaveText('0');\n});\n",
+      "run_id": "fd288d44-e41a-43f0-a4c0-de6f12e6b908",
+      "current_fix_id": "0e40fcde-1bb3-4b44-970e-0f7876d8d953",
+      "description": "Подготовленный контроль, не AI-генерация. Ожидание явно задано требованием R1. Падение повторено в отдельном gVisor-контейнере с тем же образом и неизменными тестами.",
+      "steps": [
+        "Открыть неизменный контрольный снимок.",
+        "Выполнить тест точной границы 500.",
+        "Сравнить 60 с ожидаемыми 0 центами."
+      ],
+      "recommendation": "Проверить включение границы в условие бесплатной доставки.",
+      "confirmation_basis": "Документированный контроль R1; отдельное повторное assertion-падение в runsc. Это подготовленный пример, не новый LLM Bug Proof."
     }
   }
 }
