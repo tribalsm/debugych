@@ -46,3 +46,16 @@ test('only the bound workspace can request a new login after session expiry',asy
 test('typing a different username without its password does not reuse the previous account',async()=>{
  const {page,browser}=await fixture(true);try{await expect(page.locator('#workspace')).toBeVisible();await page.locator('#connection').click();await expect(page.locator('#account-username')).toHaveValue('jury-contract');await page.locator('#account-username').fill('different-contract');await page.locator('#save').click();await expect(page.locator('#status')).toContainText('Введите пароль');await expect(page.locator('#workspace')).toBeHidden();assert.equal(await page.evaluate(()=>calls.filter(c=>c.name==='start_application').length),1);assert.equal(await page.evaluate(()=>calls.filter(c=>c.name==='account_sign_in').length),0);}finally{await browser.close()}
 });
+test('switching Local and Remote preserves the configured HTTPS server',async()=>{
+ const {page,browser}=await fixture(false);try{
+  await expect(page.locator('#settings')).toBeVisible();
+  await page.evaluate(()=>{window.cfg.api_url='https://qa.example.test'});
+  await page.locator('#connection').click();
+  await expect(page.locator('#api')).toHaveValue('https://qa.example.test');
+  await page.locator('#mode').selectOption('local');
+  await expect(page.locator('#api')).toHaveValue('http://127.0.0.1:8000');
+  await page.locator('#mode').selectOption('remote');
+  await expect(page.locator('#api')).toHaveValue('https://qa.example.test');
+  assert.equal(await page.evaluate(()=>calls.filter(c=>c.name==='account_sign_in').length),0);
+ }finally{await browser.close()}
+});

@@ -15,5 +15,6 @@
 
 10. [Локальный RAG и pgvector](project-retrieval.md)
 11. [Матрица кейса и демонстрация](case9-readiness.md), [четыре этапа проверки](release-four-stages.md)
+12. [Аудит опубликованного сайта и Desktop 1.3.1](site-desktop-audit.md)
 
 Сервер: [развёртывание](debugych-server-1.0.md). Desktop: [Windows](windows-desktop.md), [удалённый UI](desktop-thin-client.md). [Исторические отчёты](archive/README.md).

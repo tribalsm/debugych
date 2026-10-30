@@ -24,7 +24,7 @@ test('anonymous history persists in SQLite, slides 30 days, claims and expires w
 });
 test('HTTP workspace isolation, guest no-AI execution, CSRF, transfer, logout confirmation and cleanup',async()=>{
  const root=await mkdtemp(path.join(tmpdir(),'debugych-workspace-http-'));await writeFile(path.join(root,'index.html'),'<h1>Workspace</h1>');
- let clock=Date.now();const accounts=new Accounts(':memory:',{now:()=>clock}),projects=[],records=new Map(),calls=[];let busy=false;
+ let clock=Date.now();const accounts=new Accounts(':memory:',{now:()=>clock}),projects=[],records=new Map(),calls=[];let busy=false,asyncProposal=false;
  const backend=http.createServer(async(req,res)=>{
   calls.push([req.method,req.url]);let raw='';for await(const c of req)raw+=c;
   const reply=(status,value)=>{res.writeHead(status,{'Content-Type':'application/json'});res.end(JSON.stringify(value))};
@@ -33,6 +33,12 @@ test('HTTP workspace isolation, guest no-AI execution, CSRF, transfer, logout co
   if(req.url==='/api/projects'&&req.method==='GET')return reply(200,projects);
   if(req.url==='/api/projects'&&req.method==='POST'){const p={id:randomUUID(),name:JSON.parse(raw).name,demo:false};projects.push(p);return reply(201,p)}
   if(req.url==='/api/bugs')return reply(200,[...records.values()].filter(r=>r.kind==='bug'));
+  if(req.method==='POST'&&/\/api\/bugs\/[^/]+\/(propose-fix|verify-fix)$/.test(req.url)){
+   const bug=records.get(req.url.replace(/\/(propose-fix|verify-fix)$/,''));
+   if(req.url.endsWith('/propose-fix')&&!asyncProposal)return reply(200,{id:randomUUID(),project_id:bug.project_id,bug_id:bug.id,diff:'--- a/calc.py\n+++ b/calc.py',verified:false});
+   const run={id:randomUUID(),project_id:bug.project_id,status:'queued',operation:asyncProposal?'propose_fix':'verify'};
+   records.set('/api/runs/'+run.id,run);return reply(202,run);
+  }
   const p=projects.find(p=>req.url.startsWith('/api/projects/'+p.id));
   if(p){if(req.method==='DELETE'){if(busy)return reply(409,{});projects.splice(projects.indexOf(p),1);return reply(200,{deleted:true})}if(req.url.endsWith('/runs')&&req.method==='POST'){const r={id:randomUUID(),project_id:p.id,status:'completed'};records.set('/api/runs/'+r.id,r);return reply(202,r)}if(req.url.endsWith('/files'))return reply(200,[]);return reply(200,p)}
   const r=records.get(req.url);if(r)return reply(200,r);reply(404,{});
@@ -78,6 +84,18 @@ test('HTTP workspace isolation, guest no-AI execution, CSRF, transfer, logout co
   records.get('/api/runs/'+ciRun.value.id).status='completed';busy=false;
   assert.equal((await request('/api/projects/'+ciid,{method:'DELETE',cookie:member})).status,200);records.delete('/api/runs/'+ciRun.value.id);
   assert.equal((await request('/api/projects/'+pid+'/runs',{method:'POST',cookie:member,body:{}})).status,202);
+  // Prepared demo proposals are synchronous Fix records, not queued Run IDs.
+  const proposal=await request('/api/bugs/'+bug.id+'/propose-fix',{method:'POST',cookie:member,body:{}});assert.equal(proposal.status,200);
+  const verified=await request('/api/bugs/'+bug.id+'/verify-fix',{method:'POST',cookie:member,body:{}});assert.equal(verified.status,202);
+  assert.equal(calls.some(c=>c[1]==='/api/runs/'+proposal.value.id),false);
+  assert.equal((await request('/api/bugs/'+bug.id+'/verify-fix',{method:'POST',cookie:member,body:{}})).status,429);
+  records.get('/api/runs/'+verified.value.id).status='completed';
+  asyncProposal=true;
+  const pending=await request('/api/bugs/'+bug.id+'/propose-fix',{method:'POST',cookie:member,body:{}});assert.equal(pending.status,202);
+  assert.equal((await request('/api/bugs/'+bug.id+'/verify-fix',{method:'POST',cookie:member,body:{}})).status,429);
+  records.get('/api/runs/'+pending.value.id).status='completed';
+  const again=await request('/api/bugs/'+bug.id+'/verify-fix',{method:'POST',cookie:member,body:{}});assert.equal(again.status,202);
+  records.get('/api/runs/'+again.value.id).status='completed';
   const second=await request('/api/projects',{method:'POST',cookie:guest2,body:{name:'Expires'}});busy=true;clock+=31*86400000;
   assert.equal((await request('/auth/session',{cookie:guest2})).value.authenticated,false);
   // A new valid session triggers asynchronous cleanup; busy work is retained.

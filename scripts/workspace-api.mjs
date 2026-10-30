@@ -97,7 +97,12 @@ export function workspaceAPI({api,store,proxy,tokenFor,now=Date.now}){
     if(state.status!==200||!['completed','failed','cancelled','manual_review_required'].includes(state.value.status))throw new AccountError(429,'Предыдущий запуск ещё выполняется');
    }
    store.reserveRun(s,req);if(!['owner','admin'].includes(s.role))store.consume('global','workspace-run',40);executions.set(s.id,{project_id:pid,until:now()+600000});
-   return proxy(req,res,token,s,{capture:true,after:async value=>{if(value?.id)executions.set(s.id,{id:value.id,project_id:pid,until:now()+600000});else executions.delete(s.id)}});
+   return proxy(req,res,token,s,{capture:true,after:async value=>{
+    // A prepared demo returns a completed Fix document, not a background Run.
+    // Keep admission for real queued jobs, including live patch generation.
+    const synchronousPatch=operation==='propose-fix'&&value?.bug_id===record?.id&&typeof value?.diff==='string';
+    if(value?.id&&!synchronousPatch)executions.set(s.id,{id:value.id,project_id:pid,until:now()+600000});else executions.delete(s.id);
+   }});
    }finally{runChecks.delete(s.id)}
   }
   return proxy(req,res,token,s);
