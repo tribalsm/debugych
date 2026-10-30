@@ -99,3 +99,34 @@
 .testing-success{padding:24px}.testing-success .qa-card-heading{gap:16px;flex-wrap:wrap}.testing-success-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}.testing-success-grid>div{display:flex;flex-direction:column;gap:8px;padding:20px;border:1px solid var(--border,#303b4c);border-radius:12px;background:rgba(45,96,180,.06)}.testing-success-grid strong{font-size:32px;color:#ecf3ff}.testing-success-grid small{color:#a9b9d0}.testing-success select{margin-left:8px}.testing-success .muted{color:#a9b9d0;line-height:1.6}@media(max-width:640px){.testing-success{padding:16px}.testing-success-grid{grid-template-columns:1fr}}
 
 .context-search form{display:grid;gap:8px}.context-query-row{display:flex;gap:12px}.context-query-row input{flex:1;min-width:0}.context-search details{margin-top:12px}.context-search p{line-height:1.6;color:#a9b9d0}@media(max-width:640px){.context-query-row{flex-direction:column}}
+
+/* The editor responds to its available space, including the mascot rail. */
+.companion-main{container-name:workspace;container-type:inline-size}
+.public-demo-banner form{min-width:0;max-width:100%}
+.public-demo-banner .primary{white-space:normal;max-width:100%;text-align:center}
+.page-heading>div{min-width:0}
+.page-heading h1,.project-name,.directory-item>span{overflow-wrap:anywhere}
+.code-toolbar{flex-wrap:wrap;min-width:0}
+.code-toolbar>span{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.code-toolbar button{flex-shrink:0}
+.code-view pre{max-height:min(650px,65svh)}
+.diff-disclosure .diff{max-height:min(520px,65svh)}
+.case-row code{overflow-wrap:anywhere;white-space:normal}
+.table-scroll{max-width:100%;overscroll-behavior-x:contain}
+.table-scroll:focus-visible{outline:2px solid #8ab4ff;outline-offset:-2px}
+.table-scroll-hint{display:none;color:#a9b9d0;font-size:11px;line-height:1.6;margin:12px 0}
+.breadcrumbs a,.header-right>a{display:inline-flex;align-items:center;min-height:32px}
+@container workspace (max-width:900px){
+ .studio-workspace,.bug-grid{grid-template-columns:minmax(0,1fr)}
+ .studio-index{position:static}
+ .test-index{max-height:280px}
+ .bug-grid>.panel:first-child{position:static;max-height:280px;overflow-y:auto}
+ .table-scroll-hint{display:block}
+}
+@media(max-width:680px){
+ .primary,.secondary{max-width:100%;min-height:44px;white-space:normal}
+ .code-toolbar button,.studio-editor .tabs button,.projectbar .textbutton{min-height:44px}
+ .mobile-menu,.drawer-close{min-width:44px;min-height:44px}
+ .breadcrumbs a,.breadcrumbs button,.header-right>a{min-height:44px}
+ .table-scroll-hint{display:block}
+}
