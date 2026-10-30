@@ -2,7 +2,7 @@
 
 AI QA Assistant для разработчиков и QA: загрузите код и требования, получите Gherkin и исполняемые тесты, исследуйте воспроизводимое отклонение и проверьте исправление в изолированной копии.
 
-[![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=fix%2Fjury-release-demo)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Afix%2Fjury-release-demo)
+[![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=release%2Fdesktop-1.3)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Arelease%2Fdesktop-1.3)
 
 [Веб-приложение](https://debugych.89-22-232-119.sslip.io:9443/) · [Документация](docs/README.md) · [Подтверждённые проверки](docs/current-status.md) · [Если адрес не открывается](docs/public-access.md)
 
@@ -10,7 +10,7 @@ AI QA Assistant для разработчиков и QA: загрузите ко
 
 ## Проверяемый релиз
 
-Актуальный кандидат: `fix/jury-release-demo`. Старая ветка по умолчанию `release/desktop-1.3` не содержит всех доработок. До согласованного объединения для сборки и проверки используйте кандидата и его CI, а не старый default HEAD. [Что вошло в релиз](docs/jury-release-readiness.md).
+Актуальная версия находится в основной ветке `release/desktop-1.3`. Проверенный кандидат `fix/jury-release-demo` объединён с разрешения владельца через PR #1, merge `e6ab877`. Содержимое merge совпадает с прошедшим CI кандидатом. [Что вошло в релиз](docs/jury-release-readiness.md).
 
 Публичный стенд показывает Python и TypeScript с частичным покрытием, Bug Proof и проверенным diff. На главной доступны исторические настоящие live AI-прогоны от 20 октября. Просмотр не запускает модель. Эти записи отделены от подготовленных контрольных тестов.
 
@@ -26,7 +26,7 @@ AI QA Assistant для разработчиков и QA: загрузите ко
 | Fix & Verify | Минимальный diff, проверка патча и регрессии в копии, отдельное подтверждение применения |
 | Отчёты и экспорт | История и метрики успешности, PNG/JSON, JUnit XML, Gherkin/Python/JS и пакет GitHub Actions для запуска в gVisor |
 
-Текущая интеграционная ветка локально прошла **228 backend-тестов** и **38 браузерных сценариев в Compose** (ещё 2 skip), включая новый pgvector-поиск и исходные TS/TSX-строки. [Результаты и ограничения](docs/release-four-stages.md). [Предыдущий CI 692fa45 полностью зелёный](https://github.com/tribalsm/debugych/actions/runs/40974831116); новый прогон текущего кода доступен по бейджу выше.
+Проверенный релиз прошёл **228 backend-тестов**, **49 браузерных сценариев** (7 skip) и **54 браузерных сценария в Compose** (2 skip), включая pgvector-поиск, исходные TS/TSX-строки и новые публичные контроли. [Полный CI кандидата](https://github.com/tribalsm/debugych/actions/runs/41022421543) успешен; платных LLM-запросов в нём нет. [Результаты и ограничения](docs/jury-release-readiness.md).
 
 [7 критериев кейса и сценарий демонстрации](docs/case9-readiness.md) · [Метрики и CI-экспорт](docs/testing-metrics-ci.md) · [Локальный RAG](docs/project-retrieval.md).
 
