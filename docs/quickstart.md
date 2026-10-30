@@ -2,7 +2,7 @@
 
 ## Требования к хосту
 
-Нужны Python 3, Docker Compose 2.24.4+ и Linux Docker Engine с зарегистрированным runsc. На Windows запускайте команды внутри подготовленного WSL2/Linux-окружения. Наличие Docker Desktop само по себе не доказывает поддержку gVisor.
+Нужны Docker Compose 2.24.4+ и Linux Docker Engine с зарегистрированным runsc. Python 3 на хосте нужен только для необязательного preflight/launcher, а не для прямого запуска Compose. На Windows запускайте команды внутри подготовленного WSL2/Linux-окружения. Наличие Docker Desktop само по себе не доказывает поддержку gVisor.
 
 На выделенном Debian/Ubuntu Docker-хосте администратор может выполнить `sudo bash infra/install-gvisor.sh`. Скрипт устанавливает runtime и перезапускает Docker. Сначала проверьте влияние на остальные контейнеры. Локальный launcher сам не устанавливает пакеты, не меняет daemon.json и не вызывает restart Docker.
 
@@ -21,13 +21,37 @@ python3 scripts/preflight.py --json
 
 ## Запуск приложения
 
+Из корня репозитория, без обязательного launcher:
+
+```sh
+docker-compose up --build
+```
+
+Для Docker CLI plugin: `docker compose up --build`. Дефисный entrypoint означает совместимый вызов Compose v2, не поддержку устаревшего Python Compose v1. `infra/install-gvisor.sh` при подготовке хоста устанавливает `infra/docker-compose` как совместимый entrypoint, только если `docker-compose` отсутствует. Все сервисы, тома, образы и зависимости описаны в корневом docker-compose.yml. Для остановки выполните `docker-compose down` (или `docker compose down`) с тем же окружением из той же папки. Для прямого запуска действует обычное определение имени проекта Compose, включая COMPOSE_PROJECT_NAME и -p.
+
+Откройте http://127.0.0.1:8080/ после запуска сервисов. LLM-ключ не нужен для старта и исполнения загруженных тестов. Этот запуск требует подготовленного runsc. Без него supervisor не healthy и worker не запускается; уже запущенные API/web не доказывают готовность тестирования. Установка runtime и перезапуск Docker при старте приложения не выполняются.
+
+### Дополнительный запуск с предварительной диагностикой
+
+Если нужен отказ до сборки при неподготовленном хосте или занятых портах:
+
 ```sh
 sh scripts/start-compose.sh
 ```
 
 После успешного preflight выполняется `docker compose --project-name debugych-local -f docker-compose.yml up --build -d --wait`. Откройте http://127.0.0.1:8080/. Для изолированного запуска можно задать DEBUGYCH_LOCAL_PROJECT; имя проверяется, порты остаются теми же. Порты доступны только на loopback. Для удалённого Linux-хоста используйте защищённый SSH-туннель либо отдельную production-инструкцию; не открывайте dev-API на 0.0.0.0.
 
+Для остановки launcher-стенда используйте `docker compose -p debugych-local down` (либо имя из DEBUGYCH_LOCAL_PROJECT). Не запускайте прямой и launcher-стенд одновременно с разными именами: их host-порты совпадают. Preflight относится к дополнительному launcher, не к обязательному способу запуска приложения.
+
 Сборка Playwright с Chromium может потребовать времени и сетевого доступа к реестрам пакетов. Пользовательский тестовый sandbox сетевого доступа не получает. Если зависимости нельзя загрузить, сборка не объявляется успешной.
+
+## Буквальная проверка критерия 7 в CI
+
+Отдельное задание `compose-direct` в `.github/workflows/ci.yml` подготавливает gVisor только на выделенном одноразовом GitHub-hosted runner, затем выполняет `tests/compose/direct_start_smoke.py`. Проверка стартует процесс с аргументами ровно `docker-compose up --build`, без launcher и compose.test.yml. Дочерний процесс остаётся в foreground, пока тестовый harness отдельно проверяет готовность сервисов. COMPOSE_PROJECT_NAME задаёт уникальный проект для безопасной очистки, остальные Compose-overlay переменные убираются. LLM_API_KEY явно пустой.
+
+Проверяются HTTP веб-интерфейса, отсутствие доступного AI-провайдера, готовность gVisor supervisor и загрузка/исполнение собственных Python и TypeScript Playwright-тестов из `tests/compose/user_import_smoke.py`. Результаты должны быть pytest 2/2 и Playwright 1/1, runtime runsc, запросов к LLM и применений патча 0. Журнал foreground-процесса, журнал сервисов и `result.json` публикуются в CI-артефакте `direct-compose-evidence`. Искусственный LLM-провайдер и полный AI workflow проверяются другим заданием с явно указанным test overlay.
+
+Этот CI harness намеренно не запускается на общем пользовательском хосте. Он удаляет только уникальный Compose-проект и его тома на одноразовом runner. Данная проверка не означает, что runsc устанавливается самим приложением или что произвольный Windows Docker backend поддерживает gVisor.
 
 ## Типичные остановки
 
