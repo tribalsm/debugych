@@ -1,11 +1,20 @@
 # Архитектура и контракты
 
+Актуализировано 30 октября 2026 года. Результаты проверок: [текущее состояние](current-status.md).
+
+## Публичный доступ и владение проектами
+
+В production nginx передаёт запросы доверенному Node gateway, который обслуживает frontend и проверяет аккаунты, HttpOnly-сессии и владельца проекта перед приватным FastAPI. PostgreSQL хранит проекты и результаты; отдельный приватный SQLite-том gateway хранит аккаунты, гостевую историю, владение проектами и квоты. Гость изолирован от чужих проектов; вход переносит его историю в аккаунт. Администратор и владелец могут сопровождать все проекты. Backend Bearer является служебным доступом, не пользовательским токеном. [Контракт и ограничения](project-workspaces.md).
+
+Локальный Compose без production overlay является окружением разработки. Он не должен публиковаться в интернет как многопользовательский сервис.
+
+
 ## Границы
 
 Web → FastAPI → PostgreSQL; API ставит UUID задания в Redis / Celery. Worker извлекает документы, вызывает LLM или HTTP runner. API не импортирует и не исполняет исходники пользователя. В локальном режиме вместо PostgreSQL/Redis доступны SQLite / FastAPI BackgroundTasks; это режим разработки, не модель производственной отказоустойчивости.
 
 - `apps/api`: REST, хранение файлов по UUID, SQLAlchemy, очередь.
-- `services/ai`: RequirementAnalyzer (контекст), CodeAnalyzer (AST), TestPlanner (связи), TestGenerator (LLM JSON), FailureAnalyzer (классификация), FixGenerator (подготовленный демопатч), VerificationEngine (сравнение наборов тестов).
+- `services/ai`: RequirementAnalyzer (контекст), CodeAnalyzer (AST), TestPlanner (связи), TestGenerator (LLM JSON), FailureAnalyzer (классификация), FixGenerator (предложение исправления; для доверенного демо подготовленный патч), VerificationEngine (сравнение наборов тестов).
 - `services/runner/main.py`: legacy HTTP service доверенного демо; вход только `{ "fixed": false|true }`. Он не принимает загруженный код. Выход: status, duration, passed, failed, cases, logs, coverage, fixed, trusted_demo.
 - `services/runner/supervisor.py`: доверенный controller загруженных Python-проектов, отдельный HTTP `/execute` с Bearer token, только структурированный `SandboxJob`. Создаёт одноразовый обязательный runsc container по зафиксированному image ID, без mounts и сети. Контракт и результат в `contracts.py`, код внутри sandbox в `harness.py` и `pytest_bootstrap.py`. Сетевые/collection/resource ошибки не становятся Confirmed.
 - `demo/sample-python-app`: неизменяемые доверенные исходники и контрольный pytest. Требования отдельно от oracle, описания дефекта не отправляются в AI-контекст.
@@ -25,7 +34,7 @@ Project: UUID, name, demo, created_at. Record: UUID, project_id FK, kind, data J
 | bug | BugFinding | requirement_id, run_id, expected, actual, file, line, traceback, code, steps, status |
 | fix | FixProposal | bug_id, before, after, diff, verified, verification_id, assessment, applied, original_storage |
 
-CoverageReport хранится в run.data.coverage в исходном coverage.py JSON. Логи и кейсы доступны через artifacts endpoint. Файловые screenshot/trace артефакты браузерной проверки пока остаются в Playwright report, не в API-хранилище.
+CoverageReport хранится в run.data.coverage. Логи и кейсы доступны через artifacts endpoint. Для загруженного Playwright поддерживаются ограниченные PNG/JSON-артефакты в API-хранилище с UUID и SHA256. Полные trace/video для произвольных проектов не заявляются.
 
 JSON records выбраны ради небольшого первого среза; это не отдельные ORM модели для каждой конкурсной сущности. Внешние ссылки между документами проверяет прикладной код. Для дальнейшего развития вынести TestCase, Execution, Finding и Fix в отдельные таблицы с FK, revision и timestamps; добавить блокировки и идемпотентность постановки заданий.
 
@@ -41,13 +50,13 @@ JSON records выбраны ради небольшого первого сре�
 | GET /api/projects/{uuid}/requirements | Требования |
 | GET /api/projects/{uuid}/test-cases | Сценарии |
 | PATCH /api/test-cases/{uuid} | title, gherkin, code; только обычный проект |
-| GET/POST /api/projects/{uuid}/runs | История / выполнение демо |
+| GET/POST /api/projects/{uuid}/runs | История / выполнение сохранённых тестов |
 | GET /api/runs/{uuid} | Статус и результат |
 | GET /api/runs/{uuid}/coverage | Измеренный coverage JSON |
 | GET /api/runs/{uuid}/artifacts | logs, cases |
 | GET /api/bugs?project_id={uuid} | Проблемы |
 | GET /api/bugs/{uuid} | Доказательство |
-| POST /api/bugs/{uuid}/propose-fix | Демо proposal / diff |
+| POST /api/bugs/{uuid}/propose-fix | Предложение / diff для загруженного проекта либо доверенного демо |
 | POST /api/bugs/{uuid}/verify-fix | 202 + verification job |
 | POST /api/bugs/{uuid}/apply-fix | `{ "confirm": true }`, только verified |
 | GET /api/projects/{uuid}/fixes | История патчей |
@@ -65,17 +74,15 @@ Suspected означает предположение, reproduced — факти
 
 ## AI и ограничения
 
-OpenAI-compatible `/chat/completions`, JSON object и Pydantic schema. От 1 до 2 попыток, лимит входа/выхода, HTTP timeout 90s; worker hard timeout 270s. JSON traceability проходит отдельную проверку. Загруженные инструкции рассматриваются как данные в системном prompt. Сгенерированный код никогда не исполняется в API / worker. Live LLM и провайдерская совместимость без ключа не проверены. pgvector отложен: нет embeddings pipeline и необходимости для небольшого контекста. Текущая версия не предоставляет отдельного поискового endpoint.
+OpenAI-compatible `/chat/completions`, строгая локальная Pydantic-валидация и JSON Schema либо явно настроенный совместимый JSON-режим. Количество попыток, токены, deadline и оценка расходов ограничены конфигурацией и общей дневной квотой. Текущие значения проверяйте в приватном окружении; секреты не выводятся в журналы. Загруженные инструкции считаются данными, а не командами для платформы. Сгенерированный код не исполняется в API или worker.
 
-## Приоритет интеграции
+Live Python и JS/TS циклы подтверждены на небольших независимых контролях в датированных отчётах. Текущий баланс и доступность провайдера не доказываются наличием ключа. Добавлен проектный индекс pgvector с локальными мультиязычными ONNX-эмбеддингами и текстовым fallback. /api/projects/{id}/context-search проверяет область проекта через gateway. Подбор фрагментов используется после извлечения требований; полный контекст repair/patch по-прежнему ограничен. Подробности: [поиск контекста](project-retrieval.md).
 
-1. Linux CI: Compose smoke, PostgreSQL migration и Celery end-to-end, quotas.
-2. Внешний sandbox supervisor: одноразовая среда, ограниченный declarative artifact contract, без socket в API и sandbox.
-3. Передача exact test/source hashes runner, независимый requirement oracle, фиксация версии плана.
-4. Общая LLM-генерация fix с проверяемым unified diff, запретом изменения тестов и повторной верификацией хэшей.
-5. Browser runner и артефакты в общем API, Istanbul coverage, затем quality/mutations.
+## Воспроизводимость и применение исправлений
 
-Пункты 1–3 в части локального Compose, внешнего runsc supervisor и snapshots реализованы. Загруженные Python-проекты поддерживают Confirmed через human requirement review + replay и Fix Verified через три изолированных прогона. Модули `apps/api/bug_workflow.py`, `apps/api/sandbox_client.py`, `services/ai/patches.py`, UI `BugLab.tsx`; контракты и состояния описаны в `fix-and-verify.md`. State SHA256 охватывает исходники, документы, требования, Gherkin и тестовый код; row lock и copy-on-write защищают apply. Удалённый CI и полностью независимый автоматический oracle остаются будущей работой.
+Снимок связывает исходники, документы, требования, Gherkin и тесты с SHA256. Изменение состояния не должно приписывать старую валидацию новому коду. Bug Proof использует проверку ожидания и replay; Fix & Verify проверяет исходный, целевой и регрессионный наборы. Row lock, проверка хэшей и copy-on-write защищают отдельное применение патча. Универсальный независимый oracle для любых требований не заявляется.
+
+Текущие реализации: apps/api/bug_workflow.py, apps/api/sandbox_client.py, services/ai/patches.py и UI BugLab.tsx. [Контракты Fix & Verify](fix-and-verify.md). [Свидетельства CI](current-status.md).
 
 ## JS/TS browser profile
 
@@ -89,4 +96,4 @@ Runner возвращает bounded PNG/JSON envelope. `apps/api/run_artifacts.p
 
 Два этапа генерации: document-grounded requirements с точными цитатами, затем связанный тестовый план. AST/text code structure не исполняет приложение. Важные изменения состояния до/во время генерации блокируют сохранение устаревшего плана. Требования сохраняют source/quote и участвуют в state hash.
 
-JS/TS implementation-патчи теперь используют общий Fix & Verify: host не исполняет их синтаксическую проверку, вместо этого build/collection и исходный/целевой/регрессионный прогоны проверяются в gVisor. Тесты/конфигурация/ожидания остаются неизменными; отдельное apply-подтверждение сохранено. Протокол, финансовые допущения и честная граница live-проверки: `ai-engine.md`.
+JS/TS implementation-патчи теперь используют общий Fix & Verify: host не исполняет их синтаксическую проверку, вместо этого build/collection и исходный/целевой/регрессионный прогоны проверяются в gVisor. Тесты/конфигурация/ожидания остаются неизменными; отдельное apply-подтверждение сохранено. Протокол и финансовые ограничения: [AI Engine](ai-engine.md). Датированные live-результаты: [история MVP](archive/mvp-readiness.md).

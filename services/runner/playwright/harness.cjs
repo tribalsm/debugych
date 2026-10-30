@@ -107,25 +107,34 @@ async function main(job) {
       }
     } for(const child of s.suites||[]) observations(child);}
     for(const suite of report.suites||[]) observations(suite);
-    const raw=Buffer.from(JSON.stringify(normalized));
-    if(raw.length<=MAX) artifacts.push({name:'playwright-report.json',media_type:'application/json',data:raw.toString('base64')});
     let coverage=null;
-    const map=createCoverageMap({});
+    let map=createCoverageMap({}),coverageKind='istanbul-generated-js';
     for(const name of fs.readdirSync(reports).filter(n=>/^coverage-[a-f0-9]+\.json$/.test(n)).slice(0,100)) {
       map.merge(JSON.parse(read(reports+'/'+name,1000000)));
     }
     if(map.files().length) {
-      const summary=map.getCoverageSummary();const files={};
-      for(const name of map.files().slice(0,100)) {
-        if(name.startsWith('/')||name.includes('..')) continue;
-        const lines=map.fileCoverageFor(name).getLineCoverage();
-        files[name]={executed_lines:Object.keys(lines).filter(l=>lines[l]>0).map(Number),missing_lines:Object.keys(lines).filter(l=>!lines[l]).map(Number)};
+      let files={};
+      try{
+        const mapped=await require('/opt/runtime/coverage.cjs').remapCoverage(map,Object.fromEntries(job.files.map(f=>[f.path,f.content])));
+        map=mapped.map;files=mapped.files;coverageKind=mapped.kind;normalized.coverage_scope=mapped.scope;
+      }catch{
+        normalized.coverage_scope='Source map unavailable or invalid; generated JavaScript lines only';
+        for(const name of map.files().slice(0,100)){
+          const relative=path.relative('/tmp/job/project',name).replaceAll('\\','/');
+          if(relative.startsWith('../')||path.isAbsolute(relative))continue;
+          const lines=map.fileCoverageFor(name).getLineCoverage();
+          files[relative]={executed_lines:Object.keys(lines).filter(l=>lines[l]>0).map(Number),missing_lines:Object.keys(lines).filter(l=>!lines[l]).map(Number)};
+        }
       }
+      const summary=map.getCoverageSummary();
       coverage={totals:{percent_covered:summary.lines.pct==='Unknown'?0:summary.lines.pct,covered_lines:summary.lines.covered,num_statements:summary.lines.total,covered_branches:summary.branches.covered,num_branches:summary.branches.total},files};
       const data=Buffer.from(JSON.stringify(map.toJSON()));
       if(data.length<=MAX) artifacts.push({name:'coverage-istanbul.json',media_type:'application/json',data:data.toString('base64')});
     }
-    return {status:completed?'completed':'failed',failure_kind:completed?null:'test_collection_or_infrastructure',error:completed?null:(globalErrors||'Playwright did not complete'),exit_code:exit,duration:(Date.now()-started)/1000,cases,logs:read(reports+'/browser.log',1000000).toString().slice(-24000),coverage,coverage_kind:'istanbul-generated-js',artifacts};
+    normalized.coverage_kind=coverageKind;
+    const raw=Buffer.from(JSON.stringify(normalized));
+    if(raw.length<=MAX) artifacts.push({name:'playwright-report.json',media_type:'application/json',data:raw.toString('base64')});
+    return {status:completed?'completed':'failed',failure_kind:completed?null:'test_collection_or_infrastructure',error:completed?null:(globalErrors||'Playwright did not complete'),exit_code:exit,duration:(Date.now()-started)/1000,cases,logs:read(reports+'/browser.log',1000000).toString().slice(-24000),coverage,coverage_kind:coverageKind,artifacts};
   } finally {server.kill('SIGKILL');fs.closeSync(log);}
 }
 let input='';process.stdin.setEncoding('utf8');

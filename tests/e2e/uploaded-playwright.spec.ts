@@ -31,8 +31,10 @@ test('Загруженный TypeScript → Playwright в gVisor → отчёт 
  expect((await download).suggestedFilename()).toBe('playwright-report.json');
  await navigate(page,'Отчёт');
  await openAnalytics(page); await expect(page.getByText('требований связаны с выполненными assertions',{exact:false})).toBeVisible();
- await expect(page.getByText('Istanbul · собранный JavaScript',{exact:false})).toBeVisible();
+ await expect(page.getByText('Istanbul · исходные JS/TS/TSX',{exact:false})).toBeVisible();
  await expect(page.getByRole('link',{name:'coverage-istanbul.json',exact:true})).toBeVisible();
+ await expect(page.getByText('main.ts',{exact:true})).toBeVisible();
+ await expect(page.getByText('main.ts.compiled.js',{exact:true})).toHaveCount(0);
  await navigate(page,'Ошибки');
  await expect(page.getByText('Воспроизведено, требует проверки').first()).toBeVisible();
  await expect(page.getByRole('button',{name:'Предложить исправление'})).toBeDisabled();

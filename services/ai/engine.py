@@ -157,9 +157,10 @@ class TestGenerator:
         contract=extracted.acceptance_contract if browser_contract else None
         adapter.acceptance_contract=contract.model_dump() if contract else None
         adapter.review_drafts=[]
+        if getattr(adapter,'retrieve_source',None):source=adapter.retrieve_source(files,requirements)
         acceptance={'acceptance_contract':contract.model_dump()} if contract else {}
         plan=adapter.generate('generate_tests',scenario_schema(requirements,framework) if validator else Plan,
-            'Study code structure and apply every relevant item of planning_checklist. Every supplied requirement MUST have at least one executable scenario linked by key. '
+            'Study code structure and apply every relevant item of planning_checklist. Source entries marked partial are retrieved fragments with original line ranges, not complete files. Never infer absent behavior or requirements from missing context. Every supplied requirement MUST have at least one executable scenario linked by key. '
             'Tag each scenario dimensions with applicable checks; tags are planning claims, not proof of quality. Test each documented clause, not just one example per requirement. '
             'Keep the initial suite compact: use parameterization instead of redundant code, usually one or two modules per requirement. '
             'Consider boundary values, invalid types/formats, specified exceptions, states, business invariants, parameter combinations, negatives and documented authorization. '

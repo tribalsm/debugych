@@ -40,7 +40,7 @@ def run_uploaded(db, job):
             for case in cases:
                 classification = FailureAnalyzer.classify(case, bool(requirement), False)
                 if classification in ('reproduced','suspected'):
-                    add_record(db,job.project_id,'bug',{'title':case['name'],'status':classification,'description':'AI-тест воспроизвёл отклонение. Ожидаемый результат требует независимой проверки; дефект автоматически не подтверждён.',
+                    add_record(db,job.project_id,'bug',{'title':case['name'],'status':classification,'description':'Тест воспроизвёл отклонение. Ожидаемый результат требует независимой проверки; дефект автоматически не подтверждён.',
                                'requirement':requirement.data['key'] if requirement else '', 'requirement_id':str(submitted.requirement_id),
                                'run_id':job.id,'framework':'playwright' if snapshot.profile=='playwright' else 'pytest','file':'tests/test_'+test_id.replace('-','')+('.spec.ts' if snapshot.profile=='playwright' else '.py'),'line':None,
                                'expected':requirement.data['text'] if requirement else 'Проверить assertion теста',
@@ -152,7 +152,8 @@ def process(job_id):
             logging.error('Job %s failed: %s', job_id,type(error).__name__)
             job = db.get(Record, job_id)
             from services.ai.privacy import redact
-            update(db, job, status='failed', error=redact(str(error))[0][:1500])
+            from services.ai.validation import ManualReview
+            update(db, job, status='manual_review_required' if isinstance(error,ManualReview) else 'failed', error=redact(str(error))[0][:1500])
 
 def dispatch(job_id, background):
     if os.getenv('TASK_MODE', 'local') == 'celery':

@@ -1,0 +1,27 @@
+name: Independent public access
+on:
+  push:
+    branches: [feat/project-rag-ts-coverage]
+    paths:
+      - .github/workflows/public-access.yml
+      - tests/server/public-address-smoke.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-access:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tests/server/public-address-smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: independent-public-access
+          path: outputs/server10/rag-ts/public-access.json

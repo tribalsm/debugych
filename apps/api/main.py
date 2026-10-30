@@ -150,6 +150,21 @@ def projects():
     with Session() as db:
         return [serialize(p) for p in db.scalars(select(Project).order_by(Project.created_at.desc()))]
 
+@app.get('/api/storage-usage')
+def storage_usage():
+    from sqlalchemy import func,cast,Text
+    from apps.api.run_artifacts import directory
+    total=0
+    for folder in (DATA,directory()):
+        if folder.is_dir():
+            total+=sum(p.stat().st_size for p in folder.iterdir() if p.is_file() and not p.is_symlink())
+    with Session() as db:
+        # Four bytes per character conservatively bound UTF-8 JSON payloads.
+        total+=4*(db.scalar(select(func.sum(func.length(cast(Record.data,Text))))) or 0)
+        from apps.api.db import ContextChunk
+        total+=4*(db.scalar(select(func.sum(func.length(ContextChunk.content)+func.length(cast(ContextChunk.embedding,Text))+512))) or 0)
+    return {'estimated_bytes':total}
+
 @app.post('/api/projects', status_code=201)
 def create_project(value: NewProject):
     if not value.name.strip():
@@ -330,6 +345,44 @@ def run(pid: UUID, background: BackgroundTasks):
         applied = any(r.data.get('applied') for r in db.scalars(select(Record).where(Record.project_id == str(pid), Record.kind == 'fix')))
         return new_job(db, pid, 'run', background, fixed=applied)
 
+@app.post('/api/projects/{pid}/import-tests',status_code=201)
+def import_uploaded_tests(pid: UUID, selection: dict | None = None):
+    from apps.api.user_tests import import_tests
+    with Session() as db:return import_tests(db,str(pid), selection)
+
+class ContextQuery(BaseModel):
+    model_config={'extra':'forbid','strict':True}
+    query: str = Field(min_length=2,max_length=1000)
+    limit: int = Field(default=6,ge=1,le=10)
+
+from threading import BoundedSemaphore
+_retrieval_admission=BoundedSemaphore(2)
+
+@app.post('/api/projects/{pid}/context-search')
+def context_search(pid: UUID,value: ContextQuery):
+    from apps.api.ai_runtime import texts
+    from apps.api.retrieval import index,search
+    if len(value.query.strip())<2:raise HTTPException(422,'Введите поисковый запрос')
+    if not _retrieval_admission.acquire(blocking=False):raise HTTPException(429,'Поиск занят. Повторите после завершения текущих запросов.')
+    try:
+        with Session() as db:
+            project_or_404(db,pid)
+            try:
+                files,_=texts(db,str(pid),plain_only=True);metadata=index(db,str(pid),files)
+                metadata['document_scope']='source-and-markdown'
+                return search(db,str(pid),value.query,metadata,value.limit)
+            except ValueError as error:raise HTTPException(422,'Индекс не построен: проверьте объём проекта и допустимые файлы') from error
+    finally:_retrieval_admission.release()
+
+@app.delete('/api/projects/{pid}')
+def delete_uploaded_project(pid: UUID):
+    from apps.api.user_tests import delete_project
+    with Session() as db:return delete_project(db,str(pid))
+
+@app.get('/api/test-cases/{tid}')
+def test_case(tid: UUID):
+    with Session() as db:return serialize(record_or_404(db,tid,'test'))
+
 @app.patch('/api/test-cases/{tid}')
 def edit_test(tid: UUID, value: EditTest):
     with Session() as db:
@@ -499,10 +552,16 @@ def apply_fix(bid: UUID, approval: Approval):
         return serialize(fix)
 
 @app.get('/api/exports')
-def exports(project_id: UUID, format: Literal['feature', 'py', 'js'] = 'feature'):
+def exports(project_id: UUID, format: Literal['feature', 'py', 'js', 'junit', 'ci'] = 'feature', run_id: UUID | None = None):
     with Session() as db:
         project_or_404(db, project_id)
+        if format == 'junit':
+            from apps.api.ci_exports import export_junit
+            return Response(export_junit(db,str(project_id),run_id),media_type='application/xml',headers={'Content-Disposition':'attachment; filename="debugych-junit.xml"'})
         rows = db.scalars(select(Record).where(Record.project_id == str(project_id), Record.kind == 'test')).all()
+        if format == 'ci':
+            from apps.api.ci_exports import export_ci
+            return Response(export_ci(rows),media_type='application/zip',headers={'Content-Disposition':'attachment; filename="debugych-ci.zip"'})
         values = [r.data['gherkin'] if format == 'feature' else r.data['code'] for r in rows if format == 'feature' or r.data['framework'] == ('pytest' if format == 'py' else 'playwright')]
         if not values:
             raise HTTPException(404, 'Нет сценариев для выбранного формата')

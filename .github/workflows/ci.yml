@@ -11,13 +11,20 @@ jobs:
         with: {python-version: '3.12'}
       - run: pip install -r requirements.txt
       - run: pytest
+      - name: Check current documentation and local launcher
+        run: |
+          python scripts/check-doc-links.py README.md docs/README.md docs/current-status.md docs/quickstart.md docs/public-access.md docs/free-public-address.md docs/testing-metrics-ci.md docs/project-retrieval.md docs/case9-readiness.md docs/release-four-stages.md docs/architecture.md docs/accounts-and-roles.md docs/debugych-server-1.0.md docs/public-demo.md docs/archive
+          sh -n scripts/start-compose.sh
+          sh -n infra/server/renew-nginx.sh
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm, cache-dependency-path: apps/web/package-lock.json}
+      - run: npm --prefix infra/playwright ci
+      - run: node --test tests/unit/source_maps.test.cjs
       - run: node --test tests/unit/browser_lifecycle.test.cjs
       - run: npm ci && npm run lint && npm test && npm run build
         working-directory: apps/web
       - name: Check desktop transport and account boundaries without external APIs
-        run: node --test tests/unit/desktop-bridge.test.mjs tests/server/web-cache.test.mjs tests/server/web-session.test.mjs tests/server/web-accounts.test.mjs tests/server/account-gateway.test.mjs tests/server/proxy-auth.test.mjs
+        run: node --test tests/unit/desktop-bridge.test.mjs tests/server/web-cache.test.mjs tests/server/web-session.test.mjs tests/server/web-accounts.test.mjs tests/server/account-gateway.test.mjs tests/server/project-workspaces.test.mjs tests/server/gateway-origins.test.mjs tests/server/proxy-auth.test.mjs tests/server/public-catalog.test.mjs
       - run: docker compose config --quiet
       - run: npx playwright install --with-deps chromium
         working-directory: apps/web
@@ -55,8 +62,12 @@ jobs:
         working-directory: apps/web
       - name: Install mandatory gVisor runtime
         run: sudo bash infra/install-gvisor.sh
+      - name: Check registered runtime before building the stack
+        run: python scripts/preflight.py --project debugych
       - run: docker compose -f docker-compose.yml -f compose.test.yml up --build -d --wait
       - run: python tests/compose/stack_smoke.py
+      - run: python tests/compose/user_import_smoke.py
+      - run: python tests/compose/retrieval_smoke.py
       - run: npm run test:e2e
         working-directory: apps/web
         env:
@@ -73,6 +84,8 @@ jobs:
         run: docker compose exec -T supervisor python < work/oracle-probe.py
       - name: Verify React TSX and CSS inside gVisor
         run: docker compose exec -T supervisor python < tests/compose/react_smoke.py
+      - name: Verify original TypeScript line and branch mappings in gVisor
+        run: docker compose exec -T supervisor python < tests/compose/source_map_smoke.py
       - name: Verify browser ownership and context isolation after failed tests
         run: docker compose exec -T supervisor python < tests/compose/browser_lifecycle_probe.py
       - name: Run sandbox boundary and resource probes

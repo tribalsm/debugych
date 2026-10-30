@@ -1,0 +1,10 @@
+[Unit]
+Description=Check the Debugych HTTPS certificate daily
+
+[Timer]
+OnCalendar=*-*-* 02:17:00 UTC
+RandomizedDelaySec=30m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

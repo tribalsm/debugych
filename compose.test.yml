@@ -6,6 +6,7 @@ services:
     volumes: ["./tests/compose/llm_stub.py:/app/llm_stub.py:ro", "./tests/compose/planner_fixtures.py:/app/planner_fixtures.py:ro"]
     networks: [backend]
   api:
+    mem_limit: 768m
     environment:
       # Offline reviewer/adjudicator/patch stages need more than four stub replies.
       LLM_MAX_CALLS: "6"
@@ -17,6 +18,8 @@ services:
       LLM_MAX_DAILY_CALLS: "500"
       LLM_MAX_DAILY_USD: "1000"
   worker:
+    mem_limit: 768m
+    command: [celery, -A, apps.api.jobs.celery, worker, --loglevel=INFO, --concurrency=1, --prefetch-multiplier=1]
     environment:
       # Offline reviewer/adjudicator/patch stages need more than four stub replies.
       LLM_MAX_CALLS: "6"

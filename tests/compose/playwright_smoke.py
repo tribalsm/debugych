@@ -50,7 +50,7 @@ def main():
         assert run['profile']=='playwright' and run['runtime']=='runsc'
         assert run['passed']==2 and run['failed']==1 and not run['errors'],run
         assert run['coverage']['totals']['percent_covered']>0
-        assert run['coverage_kind']=='istanbul-generated-js'
+        assert run['coverage_kind']=='istanbul-original-source'
         assert run['snapshot_sha256'] and run['image_id'].startswith('sha256:')
         count=artifacts(run)
         bugs=request('/api/bugs?project_id='+pid)

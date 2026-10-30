@@ -9,6 +9,7 @@ os.environ['DATABASE_URL']='sqlite:///'+(Path(temporary.name)/'test.db').as_posi
 os.environ['DATA_DIR']=str(Path(temporary.name)/'data')
 os.environ['TASK_MODE']='local'
 os.environ['SANDBOX_ENABLED']='0'
+os.environ['RAG_EMBEDDINGS']='lexical'
 os.environ.pop('LLM_API_KEY',None)
 
 @pytest.fixture(scope='session',autouse=True)
