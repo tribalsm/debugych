@@ -24,6 +24,23 @@ def test_embeddings_are_local_and_fallback_is_explicit(monkeypatch,tmp_path):
     monkeypatch.setattr(urllib.request,'urlopen',lambda *args,**kwargs:io.BytesIO(b'corrupt fixture'))
     with pytest.raises(ValueError,match='checksum'):prepare(tmp_path/'corrupt')
     assert not list((tmp_path/'corrupt').rglob('*.download'))
+    from concurrent.futures import ThreadPoolExecutor
+    from functools import lru_cache
+    from threading import Barrier
+    import sys,time
+    from services.ai import retrieval
+    loads=[];barrier=Barrier(2)
+    def stop_before_inference(_):raise ValueError('controlled fallback after loading')
+    @lru_cache(maxsize=2)
+    def slow_model(directory):
+        loads.append(directory);time.sleep(.05)
+        return SimpleNamespace(encode_batch=stop_before_inference),None
+    monkeypatch.setitem(sys.modules,'numpy',SimpleNamespace())
+    monkeypatch.setattr(retrieval,'model',slow_model)
+    def parallel_query():barrier.wait(timeout=5);return encode(['payment'])
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results=list(pool.map(lambda _:parallel_query(),range(2)))
+    assert len(loads)==1 and all(result[0]==FALLBACK_ID for result in results)
 
 def test_chunks_preserve_lines_redact_and_exclude_private_oracles():
     files=[('requirements.md','R1. Payment accepted.\nR2. Reset.\n'),('app.py','API_KEY="super-private-value"\n'+'x'*2000),('.env','TOP_SECRET'),('oracles/test_private.py','RIGHT_PATCH')]

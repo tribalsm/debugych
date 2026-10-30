@@ -66,7 +66,7 @@
 
 Текущий код публикуется отдельной веткой. Результат нового полного прогона находится в [checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Afeat%2Fproject-rag-ts-coverage), независимая read-only проверка трёх HTTPS-страниц из GitHub-hosted runner в [Independent public access](https://github.com/tribalsm/debugych/actions/workflows/public-access.yml). Артефакт public-access.json содержит статусы и отметки стандартной TLS-проверки, без credentials и содержимого проектов. Эти CI-результаты нужно читать отдельно от локальных чисел выше; незавершённое задание не считается прошедшим.
 
-В конце проверки дополнительно исправлен cold-build fallback: недоступность публичного хранилища embedding-весов не мешает собрать приложение с текстовым поиском. Отсутствие сети и повреждение весов проверены offline; checksum guard не отключается.
+В конце проверки дополнительно исправлен cold-build fallback: недоступность публичного хранилища embedding-весов не мешает собрать приложение с текстовым поиском. Отсутствие сети, повреждение весов и две параллельные попытки холодной загрузки проверены offline; checksum guard не отключается.
 
 ## Оставшиеся ограничения
 

@@ -25,8 +25,10 @@ def main():
         upload(ids[0],'garden.md','Water basil and tomatoes every morning. Flowers need fertile soil.')
         upload(ids[1],'private.md','Private payment rules belonging to a different project.')
         query={'query':'Оплата при равенстве остатка на счёте и суммы покупки','limit':1}
-        private=request(f'/api/projects/{ids[1]}/context-search',query)
-        result=request(f'/api/projects/{ids[0]}/context-search',query)
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            result,private=list(pool.map(lambda pid:request(f'/api/projects/{pid}/context-search',query),ids))
+        assert private['mode']=='pgvector-semantic'
         assert result['mode']=='pgvector-semantic',result['mode']
         assert result['matches'][0]['path']=='requirements.md',result['matches']
         assert all('Private payment' not in m['content'] for m in result['matches'])

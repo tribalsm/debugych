@@ -44,8 +44,10 @@ def encode(texts):
         return FALLBACK_ID,[lexical(t) for t in texts]
     try:
         import numpy as np
-        tokenizer,session=model(directory);vectors=[]
+        vectors=[]
         with _lock:
+            # lru_cache alone allows concurrent cache misses to load two models.
+            tokenizer,session=model(directory)
             for start in range(0,len(texts),2):
                 batch=tokenizer.encode_batch(texts[start:start+2]);mask=np.array([t.attention_mask for t in batch],dtype=np.int64)
                 inputs={'input_ids':np.array([t.ids for t in batch],dtype=np.int64),'attention_mask':mask,'token_type_ids':np.array([t.type_ids for t in batch],dtype=np.int64)}
