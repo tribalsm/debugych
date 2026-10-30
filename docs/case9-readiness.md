@@ -10,7 +10,7 @@
 | 4. coverage.py / Istanbul | Python lines/branches; esbuild source maps + Istanbul для исходного JS/TS/TSX | При отсутствии достоверной карты явный fallback на compiled JS; старые отчёты не переписываются |
 | 5. Экспорт | Gherkin/Python/JS, QA JSON, JUnit XML, GitHub Actions package; tests/integration/test_ci_exports.py | Скачанный CI-клиент проверен через HTTPS; чужой GitHub-hosted pipeline отдельно не запускался |
 | 6. QA dashboard | Dashboard/Reports, фактические результаты, покрытие, история, раздельные case pass rate и run success rate | Повторы учитываются отдельно; успех не доказывает полноту тестирования |
-| 7. Compose и архитектура | scripts/start-compose.sh, read-only preflight, FastAPI/PostgreSQL/Redis/Celery, собственные образы | Хост должен заранее иметь Linux Docker, Compose и runsc; универсальная установка gVisor одной командой не заявляется |
+| 7. Compose и архитектура | Корневой docker-compose.yml: прямой `docker-compose up --build` (Compose v2) или `docker compose up --build`; FastAPI/PostgreSQL/Redis/Celery, собственные образы. CI compose-direct: буквальная foreground-команда без test overlay и ключа, затем загрузка и исполнение pytest/Playwright в runsc; артефакт direct-compose-evidence. Launcher с preflight необязателен | Хост должен заранее иметь Linux Docker, Compose и runsc. Это запуск на подготовленном хосте, не установка gVisor на пустой машине. Прохождение проверки подтверждает только завершённый успешный CI-прогон, не наличие самого задания |
 
 Дополнительно: pgvector и локальные мультиязычные эмбеддинги с текстовым fallback реализуют условный пункт раздела 6 пользовательского ТЗ. См. [поиск](project-retrieval.md). Его обязательность в официальном чек-листе отдельно не подтверждена.
 
