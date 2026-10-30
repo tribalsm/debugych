@@ -2,7 +2,7 @@
 
 AI QA Assistant для разработчиков и QA: загрузите код и требования, получите Gherkin и исполняемые тесты, исследуйте воспроизводимое отклонение и проверьте исправление в изолированной копии.
 
-[![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=feat%2Fqa-metrics-ci-export)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Afeat%2Fqa-metrics-ci-export)
+[![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=feat%2Fproject-rag-ts-coverage)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Afeat%2Fproject-rag-ts-coverage)
 
 [Веб-приложение](https://debugych.89-22-232-119.sslip.io:9443/) · [Документация](docs/README.md) · [Подтверждённые проверки](docs/current-status.md) · [Если адрес не открывается](docs/public-access.md)
 
@@ -15,14 +15,14 @@ AI QA Assistant для разработчиков и QA: загрузите ко
 | Требования и Gherkin | Требования с цитатами, план и сценарии через структурированные ответы LLM |
 | Автотесты | Генерация pytest и Playwright, строгая валидация, импорт пользовательских тестов |
 | Выполнение | Одноразовые gVisor/runsc sandbox без внешней сети, реальные кейсы и traceback |
-| Покрытие | coverage.py для Python, Istanbul для собранного JavaScript, строки и ветви |
+| Покрытие | coverage.py для Python, Istanbul с source maps для исходного JS/TS/TSX, строки и ветви |
 | Bug Proof | Проверка ожидания по требованию и повторное воспроизведение; инфраструктурная ошибка не считается дефектом |
 | Fix & Verify | Минимальный diff, проверка патча и регрессии в копии, отдельное подтверждение применения |
 | Отчёты и экспорт | История и метрики успешности, PNG/JSON, JUnit XML, Gherkin/Python/JS и пакет GitHub Actions для запуска в gVisor |
 
-Проверенная основа `0066dc3`: **197 backend-тестов**, **31 браузерный сценарий**, **36 сценариев в Compose**. В браузерных сериях дополнительно 7 и 2 пропуска; причины и границы приведены в [отчёте](docs/current-status.md). [Оба задания CI прошли](https://github.com/tribalsm/debugych/actions/runs/40821353420). Новые изменения проверяются отдельным CI текущей ветки.
+Текущая интеграционная ветка локально прошла **228 backend-тестов** и **38 браузерных сценариев в Compose** (ещё 2 skip), включая новый pgvector-поиск и исходные TS/TSX-строки. [Результаты и ограничения](docs/release-four-stages.md). [Предыдущий CI 692fa45 полностью зелёный](https://github.com/tribalsm/debugych/actions/runs/40974831116); новый прогон текущего кода доступен по бейджу выше.
 
-[Метрики и настройка CI-экспорта](docs/testing-metrics-ci.md).
+[7 критериев кейса и сценарий демонстрации](docs/case9-readiness.md) · [Метрики и CI-экспорт](docs/testing-metrics-ci.md) · [Локальный RAG](docs/project-retrieval.md).
 
 ## Запуск
 
@@ -41,8 +41,8 @@ LLM-ключ для старта приложения не требуется. �
 ## Границы применимости
 
 - Зависимости sandbox фиксированы; пользовательские npm scripts и pip install не запускаются. Поддерживаются pytest и браузерный Playwright-профиль с index.html в корне.
-- Покрытие TypeScript относится к собранному JavaScript, без source-map привязки к исходным строкам.
-- Java можно загрузить; исполнения Java нет. pgvector/embeddings пока не реализованы. Обязательность этого слоя нужно сверить с оригинальным ТЗ.
+- Покрытие относится к инструментированным модулям. Если source maps недостоверны, отчёт явно помечается как compiled JS; старые измерения не переписываются.
+- Java можно загрузить; исполнения Java нет. pgvector работает с локальными эмбеддингами и текстовым fallback. Индекс ограничен 160 фрагментами; поддержка произвольного monorepo не заявляется.
 - Автономный live-цикл ранее подтверждён на небольших независимых Python и JS/TS контролях, а не на любых репозиториях. [Датированный отчёт](docs/archive/mvp-readiness.md).
 - Неоднозначность требований останавливает автоматическую проверку. Успешный набор не доказывает отсутствие всех дефектов.
 - Бесплатный адрес использует sslip.io и порт 9443. Порт 443 сохранён за VPN. Доступность из конкретной корпоративной или мобильной сети требует отдельной проверки.

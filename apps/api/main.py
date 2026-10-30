@@ -161,6 +161,8 @@ def storage_usage():
     with Session() as db:
         # Four bytes per character conservatively bound UTF-8 JSON payloads.
         total+=4*(db.scalar(select(func.sum(func.length(cast(Record.data,Text))))) or 0)
+        from apps.api.db import ContextChunk
+        total+=4*(db.scalar(select(func.sum(func.length(ContextChunk.content)+func.length(cast(ContextChunk.embedding,Text))+512))) or 0)
     return {'estimated_bytes':total}
 
 @app.post('/api/projects', status_code=201)
@@ -347,6 +349,30 @@ def run(pid: UUID, background: BackgroundTasks):
 def import_uploaded_tests(pid: UUID, selection: dict | None = None):
     from apps.api.user_tests import import_tests
     with Session() as db:return import_tests(db,str(pid), selection)
+
+class ContextQuery(BaseModel):
+    model_config={'extra':'forbid','strict':True}
+    query: str = Field(min_length=2,max_length=1000)
+    limit: int = Field(default=6,ge=1,le=10)
+
+from threading import BoundedSemaphore
+_retrieval_admission=BoundedSemaphore(2)
+
+@app.post('/api/projects/{pid}/context-search')
+def context_search(pid: UUID,value: ContextQuery):
+    from apps.api.ai_runtime import texts
+    from apps.api.retrieval import index,search
+    if len(value.query.strip())<2:raise HTTPException(422,'Введите поисковый запрос')
+    if not _retrieval_admission.acquire(blocking=False):raise HTTPException(429,'Поиск занят. Повторите после завершения текущих запросов.')
+    try:
+        with Session() as db:
+            project_or_404(db,pid)
+            try:
+                files,_=texts(db,str(pid),plain_only=True);metadata=index(db,str(pid),files)
+                metadata['document_scope']='source-and-markdown'
+                return search(db,str(pid),value.query,metadata,value.limit)
+            except ValueError as error:raise HTTPException(422,'Индекс не построен: проверьте объём проекта и допустимые файлы') from error
+    finally:_retrieval_admission.release()
 
 @app.delete('/api/projects/{pid}')
 def delete_uploaded_project(pid: UUID):

@@ -33,7 +33,24 @@ class AIBudget(Base):
     tokens: Mapped[int]=mapped_column(BigInteger,default=0)
     cost_micro: Mapped[int]=mapped_column(BigInteger,default=0)
 
-engine = create_engine(os.getenv('DATABASE_URL', 'sqlite:///./debugych.db'), **({'connect_args': {'check_same_thread': False}} if os.getenv('DATABASE_URL', 'sqlite').startswith('sqlite') else {}))
+from sqlalchemy.types import UserDefinedType
+class VectorType(UserDefinedType):
+    cache_ok=True
+    def get_col_spec(self,**kw):return 'VECTOR(384)'
+
+class ContextChunk(Base):
+    __tablename__='context_chunks'
+    id: Mapped[str]=mapped_column(String(36),primary_key=True,default=uid)
+    project_id: Mapped[str]=mapped_column(ForeignKey('projects.id',ondelete='CASCADE'),index=True)
+    version: Mapped[str]=mapped_column(String(64),index=True)
+    encoder: Mapped[str]=mapped_column(String(80))
+    path: Mapped[str]=mapped_column(String(200))
+    start_line: Mapped[int]=mapped_column()
+    end_line: Mapped[int]=mapped_column()
+    content: Mapped[str]=mapped_column(Text())
+    embedding: Mapped[str]=mapped_column(Text().with_variant(VectorType(),'postgresql'))
+
+engine = create_engine(os.getenv('DATABASE_URL', 'sqlite:///./debugych.db'), hide_parameters=True, **({'connect_args': {'check_same_thread': False}} if os.getenv('DATABASE_URL', 'sqlite').startswith('sqlite') else {}))
 Session = sessionmaker(engine, expire_on_commit=False)
 
 def add_record(db, project_id, kind, data):

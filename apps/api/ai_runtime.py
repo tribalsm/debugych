@@ -26,10 +26,13 @@ def reserve(tokens,micro,settings):
             db.rollback();raise AIError('daily_budget_exhausted')
         db.commit()
 
-def texts(db,pid):
+def texts(db,pid,plain_only=False):
     from apps.api.jobs import DATA
     from apps.api.uploads import extract_text
     rows=db.scalars(select(Record).where(Record.project_id==pid,Record.kind=='file')).all()
+    if plain_only:
+        rows=[r for r in rows if not r.data['name'].lower().endswith(('.pdf','.docx'))]
+        if sum(r.data.get('size',0) for r in rows)>2000000:raise ValueError('Text index exceeds limit')
     return sanitize_files([(r.data['name'],extract_text(r.data['name'],(DATA/r.data['storage']).read_bytes())) for r in rows])
 
 def preview(db,pid):
@@ -71,6 +74,12 @@ def session(db,job):
         add_record(db,job.project_id,'ai_call',{'job_id':job.id,**event})
         db.commit()
     adapter=AIAdapter(settings,reserve=reserve,audit=audit)
+    def retrieve(files,requirements):
+        from apps.api.retrieval import generation_context
+        selected,metadata=generation_context(db,job.project_id,files,requirements)
+        job.data={**job.data,'context_retrieval':metadata};db.commit()
+        return selected
+    adapter.retrieve_source=retrieve
     token=active_adapter.set(adapter)
     try:yield adapter
     finally:active_adapter.reset(token)

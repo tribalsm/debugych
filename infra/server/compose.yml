@@ -44,7 +44,7 @@ services:
       LLM_MAX_DAILY_USD: ${LLM_MAX_DAILY_USD:-1}
     volumes:
       - /etc/debugych/owner-hashes:/run/secrets/owner-hashes:ro
-    mem_limit: 512m
+    mem_limit: 768m
     cpus: 0.5
     pids_limit: 128
     restart: unless-stopped
@@ -62,7 +62,7 @@ services:
       LLM_MODEL: ${LLM_MODEL:-gpt-6-luna}
       LLM_MAX_DAILY_CALLS: ${LLM_MAX_DAILY_CALLS:-6}
       LLM_MAX_DAILY_USD: ${LLM_MAX_DAILY_USD:-1}
-    mem_limit: 512m
+    mem_limit: 768m
     pids_limit: 128
     restart: unless-stopped
   supervisor:

@@ -76,4 +76,7 @@ def delete_project(db,pid):
                 add(DATA,item.get('before_storage'));add(DATA,item.get('after_storage'))
     for target in set(targets):target.unlink(missing_ok=True)
     for row in rows:db.delete(row)
+    from apps.api.db import ContextChunk
+    from sqlalchemy import delete
+    db.execute(delete(ContextChunk).where(ContextChunk.project_id==pid))
     db.delete(project);db.commit();return {'deleted':True,'project_id':pid}

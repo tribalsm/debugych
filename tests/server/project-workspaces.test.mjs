@@ -56,6 +56,7 @@ test('HTTP workspace isolation, guest no-AI execution, CSRF, transfer, logout co
   assert.equal((await request('/api/exports?project_id='+pid+'&%70roject_id='+randomUUID(),{cookie:guest})).status,400);
   assert.equal(calls.length,beforeDuplicates);
   for(const method of ['GET','DELETE','POST'])assert.equal((await request('/api/projects/'+pid,{method,cookie:guest2,body:method==='POST'?{}:undefined})).status,404);
+  assert.equal((await request('/api/projects/'+pid+'/context-search',{method:'POST',cookie:guest2,body:{query:'private project'}})).status,404);
   const bug={id:randomUUID(),project_id:pid,kind:'bug'},run={id:randomUUID(),project_id:pid},tc={id:randomUUID(),project_id:pid};records.set('/api/bugs/'+bug.id,bug);records.set('/api/runs/'+run.id,run);records.set('/api/test-cases/'+tc.id,tc);
   for(const url of ['/api/bugs/'+bug.id,'/api/runs/'+run.id,'/api/test-cases/'+tc.id,'/api/runs/'+run.id+'/artifacts/'+randomUUID(),'/api/exports?project_id='+pid])assert.equal((await request(url,{cookie:guest2})).status,404);
   assert.equal((await request('/api/bugs',{cookie:guest2})).value.length,0);

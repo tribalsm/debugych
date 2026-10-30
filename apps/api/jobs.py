@@ -152,7 +152,8 @@ def process(job_id):
             logging.error('Job %s failed: %s', job_id,type(error).__name__)
             job = db.get(Record, job_id)
             from services.ai.privacy import redact
-            update(db, job, status='failed', error=redact(str(error))[0][:1500])
+            from services.ai.validation import ManualReview
+            update(db, job, status='manual_review_required' if isinstance(error,ManualReview) else 'failed', error=redact(str(error))[0][:1500])
 
 def dispatch(job_id, background):
     if os.getenv('TASK_MODE', 'local') == 'celery':

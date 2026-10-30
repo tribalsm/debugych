@@ -29,9 +29,11 @@ async function main() {
     build.onLoad({filter:/\/tmp\/job\/project\/.*\.(?:[cm]?js|jsx|tsx?)$/i},async args=>{
       const extension=path.extname(args.path).slice(1);
       const loader=extension==='mjs'||extension==='cjs'?'js':extension;
-      const transformed=await esbuild.transform(fs.readFileSync(args.path,'utf8'),{loader,format:'esm',target:'es2022',jsx:'automatic'});
-      const name=path.relative(root,args.path)+'.compiled.js';
-      const contents=createInstrumenter({esModules:true,compact:false,coverageGlobalScope:'globalThis',coverageGlobalScopeFunc:false}).instrumentSync(transformed.code,name);
+      const source=fs.readFileSync(args.path,'utf8');
+      const transformed=await esbuild.transform(source,{loader,format:'esm',target:'es2022',jsx:'automatic',sourcemap:'external',sourcefile:args.path});
+      const name=args.path+'.compiled.js';
+      const inputMap=require('./coverage.cjs').trustedInputMap(JSON.parse(transformed.map),args.path,source);
+      const contents=createInstrumenter({esModules:true,compact:false,coverageGlobalScope:'globalThis',coverageGlobalScopeFunc:false}).instrumentSync(transformed.code,name,inputMap);
       return {contents,loader:'js',resolveDir:path.dirname(args.path)};
     });
   }};

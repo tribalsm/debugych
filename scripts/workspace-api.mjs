@@ -47,7 +47,7 @@ export function workspaceAPI({api,store,proxy,tokenFor,now=Date.now}){
   }
   if(pathname==='/api/demo-web'&&method==='GET')return proxy(req,res,token,s);
   if(!s.guest&&['/docs','/openapi.json'].includes(pathname)&&method==='GET')return proxy(req,res,token,s);
-  let pid,record,operation='',match=pathname.match(/^\/api\/projects\/([^/]+)(?:\/(files|requirements|test-cases|runs|fixes|ai-context|ai-statistics|analyze|autonomous|accept-ai-draft|source-archive|import-tests))?$/);
+  let pid,record,operation='',match=pathname.match(/^\/api\/projects\/([^/]+)(?:\/(files|requirements|test-cases|runs|fixes|ai-context|ai-statistics|analyze|autonomous|accept-ai-draft|source-archive|import-tests|context-search))?$/);
   if(match){pid=match[1];operation=match[2]||'';await ensure(s,pid)}
   else if(pathname==='/api/exports'&&method==='GET'){pid=u.searchParams.get('project_id');await ensure(s,pid)}
   else if((match=pathname.match(/^\/api\/(bugs|runs|test-cases)\/([^/]+)(?:\/(coverage|artifacts|confirm-proof|propose-fix|verify-fix|apply-fix)(?:\/([a-f0-9-]+))?)?$/))){
@@ -69,6 +69,10 @@ export function workspaceAPI({api,store,proxy,tokenFor,now=Date.now}){
    if(!(operation==='analyze'&&project.status===200&&project.value.demo))throw new AccountError(403,'Для AI-генерации войдите в аккаунт. В гостевом режиме можно загрузить собственные тесты или запустить подготовленное демо.');
   }
   if(!['GET','HEAD','POST','PATCH','DELETE'].includes(method))throw new AccountError(405,'Метод не разрешён');
+  if(operation==='context-search'){
+   if(method!=='POST')throw new AccountError(405,'Для поиска используйте POST');
+   await capacity(token);return proxy(req,res,token,s);
+  }
   if(method==='DELETE'){
    if(operation||!pathname.startsWith('/api/projects/'))throw new AccountError(405,'Удаление недоступно');
    const result=await call(pathname,token,{method});if([200,404].includes(result.status)){store.remove(pid);releaseProject(pid)}return reply(res,result.status,result.value,s);

@@ -13,4 +13,7 @@
 
 9. [Метрики успешности, JUnit и GitHub Actions](testing-metrics-ci.md)
 
+10. [Локальный RAG и pgvector](project-retrieval.md)
+11. [Матрица кейса и демонстрация](case9-readiness.md), [четыре этапа проверки](release-four-stages.md)
+
 Сервер: [развёртывание](debugych-server-1.0.md). Desktop: [Windows](windows-desktop.md), [удалённый UI](desktop-thin-client.md). [Исторические отчёты](archive/README.md).
