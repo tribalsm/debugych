@@ -4,7 +4,7 @@ AI QA Assistant для разработчиков и QA: загрузите ко
 
 [![checks](https://github.com/tribalsm/debugych/actions/workflows/ci.yml/badge.svg?branch=release%2Fdesktop-1.3)](https://github.com/tribalsm/debugych/actions/workflows/ci.yml?query=branch%3Arelease%2Fdesktop-1.3)
 
-[Веб-приложение](https://debugych.89-22-232-119.sslip.io:9443/) · [Документация](docs/README.md) · [Подтверждённые проверки](docs/current-status.md) · [Если адрес не открывается](docs/public-access.md)
+[Веб-приложение](https://debugych.46-226-161-120.sslip.io:9443/) · [Документация](docs/README.md) · [Подтверждённые проверки](docs/current-status.md) · [Если адрес не открывается](docs/public-access.md)
 
 После входа можно загружать собственные проекты и запускать проверки. Гостевая история сохраняется в браузере 30 дней после последнего посещения и переносится в аккаунт при входе. Гость выполняет собственные pytest/Playwright-тесты или подготовленное демо; для AI-генерации нужен аккаунт и согласие на передачу очищенного кода.
 

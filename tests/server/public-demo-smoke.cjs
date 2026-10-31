@@ -2,7 +2,7 @@
 const {chromium,expect}=require(process.env.DEBUGYCH_PLAYWRIGHT_MODULE||'@playwright/test');
 const assert=require('node:assert/strict'),fs=require('node:fs/promises');
 (async()=>{
- const origin=process.env.DEBUGYCH_PUBLIC_URL||'https://debugych.89-22-232-119.sslip.io:9443',out=process.env.DEBUGYCH_PUBLIC_EVIDENCE||'outputs/server10/public-demo';await fs.mkdir(out,{recursive:true});
+ const origin=process.env.DEBUGYCH_PUBLIC_URL||'https://debugych.46-226-161-120.sslip.io:9443',out=process.env.DEBUGYCH_PUBLIC_EVIDENCE||'outputs/server10/public-demo';await fs.mkdir(out,{recursive:true});
  const browser=await chromium.launch({headless:true}),context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'}),page=await context.newPage();const errors=[],writes=[];
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',r=>{if(!['GET','HEAD','OPTIONS'].includes(r.request().method())){writes.push(new URL(r.request().url()).pathname);return r.abort()}return r.continue()});
@@ -12,9 +12,9 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises');
   const bug=(await get('/api/bugs?project_id='+pid))[0],fix=(await get('/api/projects/'+pid+'/fixes')).find(f=>f.id===bug.current_fix_id);assert.ok(fix.verified&&!fix.applied);
   const checked=[];
   async function visit(name,hash,check){await page.goto(origin+'/#/'+hash);await expect(page.getByText('Публичное демо · только просмотр',{exact:true})).toBeVisible();await expect(page.getByRole('status',{name:'Загружаем рабочее пространство'})).toHaveCount(0);await check();await page.screenshot({path:out+'/'+name+'.png',fullPage:false});checked.push(name)}
-  await visit('dashboard','',async()=>expect(page.getByRole('button',{name:'Новый проект',exact:true})).toBeDisabled());
-  await page.getByRole('button',{name:'Попробовать демо',exact:true}).click();await expect(page).toHaveURL(origin+'/#/workspace/overview?project='+pid);await expect(page.getByRole('heading',{name:'Результаты последнего запуска',exact:true})).toBeVisible();checked.push('dashboard-opens-control-project');
-  await visit('projects','projects',async()=>expect(page.getByRole('button',{name:/Server 1\.0 offline control.*Загруженный проект/})).toBeVisible());
+  await visit('dashboard','',async()=>expect(page.getByRole('heading',{name:'Привет! Я Дебагыч. Проверим твой код?',exact:true})).toBeVisible());
+  await page.getByRole('button',{name:'Попробовать демо',exact:true}).click();await expect(page).toHaveURL(origin+'/#/workspace/overview?project='+projects[0].id);await expect(page.getByRole('heading',{name:'Результаты последнего запуска',exact:true})).toBeVisible();checked.push('dashboard-opens-default-saved-project');
+  await visit('projects','projects',async()=>expect(page.getByRole('button',{name:/Server 1\.0 offline control.*Сохранённая демонстрация/})).toBeVisible());
   await visit('tests',`workspace/tests?project=${pid}&run=${bug.run_id}`,async()=>{await expect(page.getByRole('heading',{name:'Фактические результаты pytest'})).toBeVisible();await expect(page.getByRole('button',{name:'Запустить тесты',exact:true})).toBeDisabled();await expect(page.getByRole('button',{name:'Редактировать сценарий'})).toBeDisabled()});
   const q=`workspace/bugs?project=${pid}&bug=${bug.id}&fix=${fix.id}`;
   await visit('proof',q+'&section=proof',async()=>{await expect(page.getByRole('heading',{name:bug.title,exact:true}).first()).toBeVisible();await expect(page.getByRole('button',{name:'Предложить исправление',exact:true})).toBeDisabled();await expect(page.getByRole('button',{name:'Проверить исправление',exact:true})).toBeDisabled();await expect(page.getByRole('button',{name:'Подтвердить применение',exact:true})).toBeDisabled()});

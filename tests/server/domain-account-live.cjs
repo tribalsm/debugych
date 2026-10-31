@@ -1,7 +1,7 @@
 // Explicit new-domain check. Own temporary projects only, no LLM or patch application.
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path');
 test('new HTTPS domain supports account login, uploads, gVisor and exact-origin CSRF',{skip:!process.env.DEBUGYCH_DOMAIN_ACCOUNT_CHECK,timeout:180000},async()=>{
- const url='https://debugych.89-22-232-119.sslip.io:9443';
+ const url='https://debugych.46-226-161-120.sslip.io:9443';
  const {chromium}=require(process.env.DEBUGYCH_PLAYWRIGHT_MODULE||'@playwright/test');
  const data=JSON.parse(await fs.readFile(process.env.DEBUGYCH_ACCOUNT_CREDENTIALS,'utf8')),user=data.accounts.find(a=>a.role==='jury');assert.ok(user);
  const out=path.resolve('outputs/server10/free-domain');await fs.mkdir(out,{recursive:true});
@@ -17,7 +17,7 @@ test('new HTTPS domain supports account login, uploads, gVisor and exact-origin 
    const p=await json(await api.post(url+'/api/projects',{headers,data:{name:'New domain control '+profile+' '+Date.now()}}));ids.push(p.id);
    for(const [name,code]of Object.entries(files))await json(await api.post(url+'/api/projects/'+p.id+'/files',{headers,multipart:{file:{name,mimeType:'text/plain',buffer:Buffer.from(code)}}}));
    await json(await api.post(url+'/api/projects/'+p.id+'/import-tests',{headers}));
-   assert.equal((await api.post(url+'/api/projects/'+p.id+'/runs',{headers:{Origin:'https://debugych.89-22-232-119.nip.io:9443'}})).status(),403);
+   assert.equal((await api.post(url+'/api/projects/'+p.id+'/runs',{headers:{Origin:'https://debugych.46-226-161-120.sslip.io:9443'}})).status(),403);
    const job=await json(await api.post(url+'/api/projects/'+p.id+'/runs',{headers})),r=await wait(job.id);
    assert.equal(r.status,'completed');assert.equal(r.runtime,'runsc');assert.equal(r.passed,count);assert.equal(r.failed,0);assert.equal(r.errors,0);
    assert.equal((await json(await api.get(url+'/api/projects/'+p.id+'/ai-statistics'))).attempts,0);

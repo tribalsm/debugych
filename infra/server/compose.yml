@@ -8,7 +8,7 @@ services:
     build: {context: ., dockerfile: infra/server/web.Dockerfile}
     ports: ["127.0.0.1:18081:8080"]
     environment:
-      PUBLIC_ORIGIN: ${DEBUGYCH_PUBLIC_ORIGIN:-https://debugych.89-22-232-119.sslip.io:9443}
+      PUBLIC_ORIGIN: ${DEBUGYCH_PUBLIC_ORIGIN:-https://debugych.46-226-161-120.sslip.io:9443}
       PUBLIC_ORIGIN_ALIASES: ${DEBUGYCH_PUBLIC_ORIGIN_ALIASES:-}
       API_UPSTREAM: http://api:8000
       PUBLIC_DEMO_FILE: /app/demo.json

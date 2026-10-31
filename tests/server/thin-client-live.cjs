@@ -3,7 +3,7 @@
 const {chromium,expect}=require(require.resolve('@playwright/test',{paths:[require('node:path').resolve('apps/web')]}));
 const {spawn}=require('node:child_process'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict'),net=require('node:net');
 const {createHash}=require('node:crypto');
-const server='https://debugych.89-22-232-119.nip.io:9443';
+const server='https://debugych.46-226-161-120.sslip.io:9443';
 const project='78167145-424b-48a8-b3f9-6eefa284f3c3';
 const digest=b=>createHash('sha256').update(b).digest('hex');
 const nativeFetch=global.fetch;global.fetch=(url,options={})=>nativeFetch(url,{signal:AbortSignal.timeout(15000),...options});

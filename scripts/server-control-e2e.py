@@ -17,7 +17,7 @@ import time
 from uuid import UUID, uuid4
 import zipfile
 
-HOST = 'debugych.89-22-232-119.nip.io'
+HOST = 'debugych.46-226-161-120.sslip.io'
 PORT = 9443
 SSH_CONFIG = os.environ.get('DEBUGYCH_SSH_CONFIG', str(Path.home() / '.ssh' / 'config'))
 REMOTE = 'cd /opt/debugych/releases/server10-3bba37d && docker compose -p debugych-server --env-file /etc/debugych/production.env -f docker-compose.yml -f infra/server/compose.yml'

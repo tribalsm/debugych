@@ -6,7 +6,7 @@ async function fixture(saved=false){
  await page.route('**/*',async route=>{const url=new URL(route.request().url());if(url.hostname==='desktop.test'){const file=url.pathname==='/'?'index.html':url.pathname.slice(1);assert.ok(['index.html','shell.js','shell.css'].includes(file));return route.fulfill({body:await fs.readFile(path.resolve(__dirname,'../../apps/desktop/shell',file)),contentType:file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':'text/html'})}return route.fulfill({body:'<!doctype html><h1>Contract workspace</h1>',contentType:'text/html'})});
  await page.addInitScript(saved=>{
   window.calls=[];window.listeners={};window.savedAccount=saved;window.accountUsername='jury-contract';
-  window.cfg={mode:'remote',api_url:'https://debugych.89-22-232-119.nip.io:9443',backend_root:'',route_ip:'',config_directory:'Contract profile'};
+  window.cfg={mode:'remote',api_url:'https://debugych.46-226-161-120.sslip.io:9443',backend_root:'',route_ip:'',config_directory:'Contract profile'};
   window.ctx={backendUrl:cfg.api_url,frontendUrl:'',projectId:'',revision:0,petVisible:false};
   window.__TAURI__={event:{listen:async(n,f)=>{listeners[n]=f}},core:{invoke:async(n,args)=>{
    calls.push({name:n,args});

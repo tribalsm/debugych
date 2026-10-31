@@ -4,7 +4,7 @@ const fs=require('node:fs/promises'),assert=require('node:assert/strict'),crypto
 const secrets=new Set();
 (async()=>{
  let raw='';for await(const chunk of process.stdin)raw+=chunk;const input=JSON.parse(raw);raw='';secrets.add(input.token);for(const u of input.bootstrap)secrets.add(u.password);
- const base='https://debugych.89-22-232-119.nip.io:9443',out='outputs/server10/accounts-live';await fs.mkdir(out,{recursive:true});
+ const base='https://debugych.46-226-161-120.sslip.io:9443',out='outputs/server10/accounts-live';await fs.mkdir(out,{recursive:true});
  const id=Date.now().toString(36),juryName='qa-jury-'+id,teamName='qa-team-'+id,password=crypto.randomBytes(24).toString('base64url'),replacement=crypto.randomBytes(24).toString('base64url');secrets.add(password);secrets.add(replacement);
  await fs.writeFile(out+'/qa-users.json',JSON.stringify([juryName,teamName]));
  const browser=await chromium.launch({headless:true}),context=await browser.newContext({viewport:{width:1280,height:1000}}),page=await context.newPage(),owner=await browser.newContext();let stale;

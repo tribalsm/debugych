@@ -1,6 +1,6 @@
 # Аккаунты, жюри и команда
 
-Обновлено 30 октября 2026 года. Production включает PROJECT_WORKSPACES=1; [контракт владения и квот](project-workspaces.md). Регистрация: https://debugych.89-22-232-119.sslip.io:9443/auth/register. Вход: https://debugych.89-22-232-119.sslip.io:9443/auth/login.
+Обновлено 30 октября 2026 года. Production включает PROJECT_WORKSPACES=1; [контракт владения и квот](project-workspaces.md). Регистрация: https://debugych.46-226-161-120.sslip.io:9443/auth/register. Вход: https://debugych.46-226-161-120.sslip.io:9443/auth/login.
 
 ## Профили и права
 

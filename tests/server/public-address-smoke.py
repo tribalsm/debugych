@@ -1,10 +1,11 @@
 """Public read-only HTTPS availability from an independent runner. No credentials."""
 import json
+import os
 from pathlib import Path
 import ssl
 import urllib.request
 
-BASE='https://debugych.89-22-232-119.sslip.io:9443'
+BASE=os.environ.get('DEBUGYCH_PUBLIC_URL','https://debugych.46-226-161-120.sslip.io:9443').rstrip('/')
 
 def main():
     checks=[]

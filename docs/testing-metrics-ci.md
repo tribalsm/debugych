@@ -35,7 +35,7 @@ Assertions становятся `<failure>`, ошибки выполнения �
 1. Подготовьте и проверьте тесты своего проекта в Дебагыче.
 2. Во вкладке «Отчёт» скачайте «GitHub Actions .zip» и проверьте содержимое.
 3. Распакуйте пакет в корень соответствующего репозитория, сохранив `.github/workflows/debugych-qa.yml` и `debugych_ci/`.
-4. Добавьте repository variable `DEBUGYCH_BASE_URL` с HTTPS-origin доверенного сервера, например `https://debugych.89-22-232-119.sslip.io:9443`.
+4. Добавьте repository variable `DEBUGYCH_BASE_URL` с HTTPS-origin доверенного сервера, например `https://debugych.46-226-161-120.sslip.io:9443`.
 5. Добавьте Actions secrets `DEBUGYCH_USERNAME` и `DEBUGYCH_PASSWORD` выделенного обычного аккаунта. Администратор, owner token и LLM API key не нужны.
 6. Запустите workflow «Debugych QA» вручную в Actions. Автоматический запуск для pull_request_target и передача секретов fork PR не включены.
 
