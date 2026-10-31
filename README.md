@@ -8,6 +8,18 @@ AI QA Assistant для разработчиков и QA: загрузите ко
 
 После входа можно загружать собственные проекты и запускать проверки. Гостевая история сохраняется в браузере 30 дней после последнего посещения и переносится в аккаунт при входе. Гость выполняет собственные pytest/Playwright-тесты или подготовленное демо; для AI-генерации нужен аккаунт и согласие на передачу очищенного кода.
 
+<!-- debugych-contest-trailer:start -->
+## Видеотрейлер
+
+[![Дебагыч - конкурсный трейлер, 3:42](docs/media/debugych-trailer-preview.jpg)](https://github.com/tribalsm/debugych/releases/download/contest-trailer-2026-10-31/debugych_contest_dynamic_narrated_1080p.mp4)
+
+[Открыть / скачать MP4](https://github.com/tribalsm/debugych/releases/download/contest-trailer-2026-10-31/debugych_contest_dynamic_narrated_1080p.mp4) · [Страница релиза](https://github.com/tribalsm/debugych/releases/tag/contest-trailer-2026-10-31)
+
+**3:42 · Full HD · 30 FPS.** В ролике показаны интерфейс, Bug Proof, Fix & Verify и Desktop Pet. Результаты проверок относятся к сохранённому контрольному прогону, а не к новому live-запуску. Патч проверен, но не применён.
+
+> Шуточное некоммерческое видео. AI-озвучка предоставлена пользователем, права на голос не подтверждены.
+<!-- debugych-contest-trailer:end -->
+
 ## Проверяемый релиз
 
 Актуальная версия находится в основной ветке `release/desktop-1.3`. Проверенный кандидат `fix/jury-release-demo` объединён с разрешения владельца через PR #1, merge `e6ab877`. Содержимое merge совпадает с прошедшим CI кандидатом. [Что вошло в релиз](docs/jury-release-readiness.md).
