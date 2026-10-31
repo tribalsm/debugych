@@ -62,6 +62,14 @@ fn bundled_default()->Config{
  let file=std::env::current_exe().ok().and_then(|p|p.parent().map(|p|p.join("resources/server-default.json")));
  if let Some(file)=file{if file.is_file(){let url=file.metadata().ok().filter(|m|m.len()<=4096).and_then(|_|fs::read(&file).ok()).and_then(|b|serde_json::from_slice::<serde_json::Value>(&b).ok()).and_then(|v|v["api_url"].as_str().map(str::to_owned)).unwrap_or_else(||"invalid".into());let route=fs::read(&file).ok().and_then(|b|serde_json::from_slice::<serde_json::Value>(&b).ok()).and_then(|v|v["route_ip"].as_str().map(str::to_owned)).unwrap_or_default();return Config{mode:"remote".into(),api_url:url,route_ip:route,..Config::default()}}}Config::default()
 }
+// Only retired production origins migrate. Custom servers and local mode stay intact.
+fn migrate_retired_origin(c:&mut Config)->bool{
+ if c.mode!="remote"{return false}
+ let retired=["https://debugych.89-22-232-119.sslip.io:9443","https://debugych.89-22-232-119.nip.io:9443"];
+ if !retired.contains(&c.api_url.trim_end_matches('/')){return false}
+ c.api_url="https://debugych.46-226-161-120.sslip.io:9443".into();
+ c.route_ip.clear();c.project_id.clear();c.revision+=1;true
+}
 fn boot(app:&tauri::AppHandle)->Result<String,String>{
  let conflicts=legacy::conflicts();if !conflicts.is_empty(){return Err(format!("Работает старая portable-версия. Закройте её через меню Выход и нажмите Повторить. Данные и старые ярлыки сохранены.\n{}",conflicts.join("\n")))}
  let state=app.state::<Runtime>();let c=state.config.lock().unwrap().clone();if !valid(&c){return Err("Проверьте настройки подключения".into())}
@@ -104,7 +112,8 @@ fn main(){
  if std::env::var_os("DEBUGYCH_DESKTOP_PROFILE").is_some(){use std::hash::{Hash,Hasher};let mut hash=std::collections::hash_map::DefaultHasher::new();std::env::var_os("DEBUGYCH_DESKTOP_PROFILE").hash(&mut hash);ctx.config_mut().identifier.push_str(&format!(".qa{:x}",hash.finish()));}
  let app=tauri::Builder::default().plugin(tauri_plugin_single_instance::init(|app,_,_|{let _=restore_main(app);}))
  .setup(|app|{
-  let path=config_path(app.handle()).unwrap();let cfg=fs::read(path).ok().and_then(|b|serde_json::from_slice::<Config>(&b).ok()).filter(valid).unwrap_or_else(bundled_default);
+  let path=config_path(app.handle()).unwrap();let mut cfg=fs::read(path).ok().and_then(|b|serde_json::from_slice::<Config>(&b).ok()).filter(valid).unwrap_or_else(bundled_default);
+  if migrate_retired_origin(&mut cfg){persist(app.handle(),&cfg)?;}
   app.manage(Runtime{config:Mutex::new(cfg),status:Mutex::new(String::new()),busy:Mutex::new(false),web:Mutex::new(None),wsl:Mutex::new(None),bootstrap:Mutex::new(None),frontend:Mutex::new(String::new()),closing:AtomicBool::new(false),context_gate:Mutex::new(())});
   let folder=config_dir(app.handle())?;
   if let Ok(exe)=std::env::current_exe(){let _=fs::write(exe.parent().unwrap().join("native-runtime.json"),serde_json::json!({"configDirectory":folder,"processId":std::process::id()}).to_string());}
@@ -132,3 +141,18 @@ fn migrate_pet(folder:&std::path::Path)->std::io::Result<()>{
  if std::env::var_os("DEBUGYCH_DESKTOP_PROFILE").is_none(){for name in ["preferences.json","companion.json","chat-history.json"]{let target=folder.join("pet").join(name);let source=legacy.join(name);if !target.exists()&&source.is_file()&&source.metadata()?.len()<=65536{fs::create_dir_all(target.parent().unwrap())?;fs::copy(source,target)?;}}}Ok(())
 }
 #[cfg(test)]mod tests{use super::*;#[test]fn endpoints_do_not_accept_keys_cleartext_remote_or_local_paths(){assert!(valid(&Config::default()));for u in ["http://example.com","https://user:secret@example.com","https://example.com/api","https://example.com/#key"]{assert!(!valid(&Config{mode:"remote".into(),api_url:u.into(),..Config::default()}));}assert!(valid(&Config{mode:"remote".into(),api_url:"https://example.com".into(),..Config::default()}));}}
+
+#[cfg(test)]mod origin_migration_tests{
+ use super::*;
+ #[test]fn retired_origins_migrate_without_reusing_credentials_or_project(){
+  for url in ["https://debugych.89-22-232-119.sslip.io:9443","https://debugych.89-22-232-119.nip.io:9443/"]{
+   let mut c=Config{mode:"remote".into(),api_url:url.into(),route_ip:"89.22.232.119".into(),project_id:"saved-project".into(),pet_visible:true,..Config::default()};
+   assert!(migrate_retired_origin(&mut c));assert_eq!(c.api_url,"https://debugych.46-226-161-120.sslip.io:9443");assert!(valid(&c));assert!(c.route_ip.is_empty()&&c.project_id.is_empty());assert!(c.pet_visible);assert!(!migrate_retired_origin(&mut c));
+  }
+ }
+ #[test]fn custom_local_and_similar_origins_are_unchanged(){
+  for (mode,url) in [("local","http://127.0.0.1:8000"),("remote","https://custom.example"),("remote","https://debugych.89-22-232-119.sslip.io:9443.evil.example")]{
+   let mut c=Config{mode:mode.into(),api_url:url.into(),..Config::default()};assert!(!migrate_retired_origin(&mut c));assert_eq!(c.api_url,url);
+  }
+ }
+}
