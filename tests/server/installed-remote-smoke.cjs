@@ -8,7 +8,7 @@ const archiveManifest=buffer=>JSON.parse(require('node:child_process').execFileS
  'import sys,io,zipfile,json,hashlib; z=zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())); print(json.dumps(sorted((i.filename,hashlib.sha256(z.read(i)).hexdigest()) for i in z.infolist() if not i.is_dir())))'],{input:buffer,encoding:'utf8'}));
 (async()=>{
  const base=process.env.DEBUGYCH_INSTALLED_ORIGIN;
- const publicWeb=base==='https://debugych.89-22-232-119.nip.io:9443';
+ const publicWeb=base==='https://debugych.46-226-161-120.sslip.io:9443';
  const verifyAgain=publicWeb&&process.env.DEBUGYCH_VERIFY_EXISTING_FIX==='1';let allowedVerification='',uiVerification=null;
  assert.ok(publicWeb||/^http:\/\/127\.0\.0\.1:\d+$/.test(base||''));
  const pid='78167145-424b-48a8-b3f9-6eefa284f3c3';

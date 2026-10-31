@@ -1,5 +1,5 @@
 const invoke=window.__TAURI__.core.invoke,$=id=>document.getElementById(id);
-let remoteApi='https://debugych.89-22-232-119.sslip.io:9443';
+let remoteApi='https://debugych.46-226-161-120.sslip.io:9443';
 let busy=false,authBusy=false,savedAccount=false,savedUsername='',context,frameOrigin='',frameUrl='',pendingRoute='',frameSession='',frameReady=false,bindingChanging=false;
 function clearWorkspace(){frameUrl='';frameOrigin='';frameReady=false;pendingRoute='';$('back').hidden=true;$('workspace').hidden=true;$('workspace').src='about:blank';}
 function authControls(value){authBusy=value;for(const id of ['save','account-sign-out','mode','api','account-username','account-password','route-ip','server-token','backend'])$(id).disabled=value;if(!value)$('account-sign-out').disabled=!savedAccount;}

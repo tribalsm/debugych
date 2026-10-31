@@ -1,7 +1,7 @@
 // Explicit opt-in: own temporary project, local embedding and gVisor, no paid AI.
 const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path');
 const {chromium}=require('../../apps/web/node_modules/@playwright/test');
-const BASE='https://debugych.89-22-232-119.sslip.io:9443';
+const BASE='https://debugych.46-226-161-120.sslip.io:9443';
 async function main(){
  assert.equal(process.env.DEBUGYCH_RETRIEVAL_LIVE_CHECK,'1');
  const credentials=JSON.parse(await fs.readFile(process.env.DEBUGYCH_ACCOUNT_CREDENTIALS,'utf8')),user=credentials.accounts.find(a=>a.role==='jury');assert.ok(user);

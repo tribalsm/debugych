@@ -1,11 +1,11 @@
-# Fill debugych.89-22-232-119.sslip.io, /etc/letsencrypt/live/debugych-sslip-20261030/fullchain.pem and /etc/letsencrypt/live/debugych-sslip-20261030/privkey.pem with verified existing values.
+# Fill debugych.46-226-161-120.sslip.io, /etc/letsencrypt/live/debugych-ip-20261031/fullchain.pem and /etc/letsencrypt/live/debugych-ip-20261031/privkey.pem with verified existing values.
 # 443 is already used by VPN. A separate TLS port avoids stopping it.
 # Do not enable until DNS/certificate/authentication and gVisor have passed.
 server {
     listen 9443 ssl;
-    server_name debugych.89-22-232-119.sslip.io;
-    ssl_certificate /etc/letsencrypt/live/debugych-sslip-20261030/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/debugych-sslip-20261030/privkey.pem;
+    server_name debugych.46-226-161-120.sslip.io;
+    ssl_certificate /etc/letsencrypt/live/debugych-ip-20261031/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/debugych-ip-20261031/privkey.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
     client_max_body_size 40m;
     client_body_timeout 30s;
@@ -36,10 +36,10 @@ server {
 # Debugych free-address HTTP redirect
 server {
     listen 80;
-    server_name debugych.89-22-232-119.sslip.io;
+    server_name debugych.46-226-161-120.sslip.io;
     location ^~ /.well-known/acme-challenge/ {
         root /var/lib/debugych-acme;
         default_type text/plain;
     }
-    location / { return 301 https://debugych.89-22-232-119.sslip.io:9443$request_uri; }
+    location / { return 301 https://debugych.46-226-161-120.sslip.io:9443$request_uri; }
 }
